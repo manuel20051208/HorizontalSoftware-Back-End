@@ -7,3 +7,60 @@ services:
       - 'POSTGRES_USER=${DB_USER:-horizontal}'
     ports:
       - '5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      # El backend espera a que Postgres este realmente listo antes de arrancar
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-horizontal} -d ${DB_NAME:-horizontal}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 'horizontal-backend:latest'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Carga el .env (JWT, CORS, seed, pasarela, credenciales de BD...)
+    env_file:
+      - .env
+    environment:
+      # Dentro de la red de compose se conecta al servicio 'postgres' por su nombre
+      - 'DB_URL=jdbc:postgresql://postgres:5432/${DB_NAME:-horizontal}'
+      - 'DB_USER=${DB_USER:-horizontal}'
+      - 'DB_PASSWORD=${DB_PASSWORD:-secret}'
+      # Dentro del contenedor NO hay Docker: se desactiva la integracion docker-compose
+      - 'DOCKER_COMPOSE_ENABLED=false'
+      # Pool de conexiones a Postgres (min/max). Ajusta segun carga y limite de Postgres.
+      - 'DB_POOL_MIN=${DB_POOL_MIN:-2}'
+      - 'DB_POOL_MAX=${DB_POOL_MAX:-10}'
+      # La JVM respeta la memoria del contenedor (no un heap fijo): usa % del limite asignado
+      - 'JAVA_OPTS=-XX:MaxRAMPercentage=75 -XX:InitialRAMPercentage=50'
+    ports:
+      - '8080:8080'
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          # Topes duros: el contenedor NUNCA pasa de esto, aunque la carga suba (evita que tumbe el host)
+          cpus: '1.5'
+          memory: 768M
+        reservations:
+          # Minimo garantizado para que el API no se quede sin recursos
+          cpus: '0.25'
+          memory: 256M
+
+volumes:
+  postgres-data:

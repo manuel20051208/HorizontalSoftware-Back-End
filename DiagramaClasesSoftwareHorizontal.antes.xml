@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="V8wEmshVYFbSh1J9g9kn">
+    <mxGraphModel dx="1296" dy="711" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2500" pageHeight="1800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-90" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#36393d;" value="Inmueble" vertex="1">
+          <mxGeometry height="280" width="330" x="1105" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-91" parent="YRAnUoF8bt_mvkdkwp-y-90" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;div&gt;-&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;usuariosRelacionado:&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;List&amp;lt;Usuario&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;-&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;direccionInmueble: String&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;- parqueadero: Parqueadero&lt;/div&gt;&lt;div&gt;- zonaComunes : List&amp;lt;ZonaComun&amp;gt;&lt;/div&gt;&lt;div&gt;- liquidacion: Liquidacion&amp;nbsp;&lt;/div&gt;&lt;div&gt;- r&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;egistroPagos:&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;List&amp;lt;Pago&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;- isActive: Boolean&lt;/div&gt;&lt;div&gt;- notificaciones : List&amp;lt;&lt;span style=&quot;text-align: center;&quot;&gt;Notificacion&lt;/span&gt;&amp;gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="143" width="330" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-92" parent="YRAnUoF8bt_mvkdkwp-y-90" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="330" y="169" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-93" parent="YRAnUoF8bt_mvkdkwp-y-90" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Inmueble(id: Long, direccionInmueble: String, parqueadero: Parqueadero, isActive: Boolean)&lt;br&gt;+ pagoAlDiaAdministracion(liquidacion : Liquidacion): boolean&lt;div&gt;+ mostrarUsuarios(List&amp;lt;Usuario&amp;gt;): List&amp;lt;String&amp;gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="103" width="330" y="177" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-94" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;" value="ReglaReserva" vertex="1">
+          <mxGeometry height="236" width="260" x="540" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-95" parent="YRAnUoF8bt_mvkdkwp-y-94" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- id : Long&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: initial; background-color: transparent;&quot;&gt;- anticipacionMinimaHoras : Int&lt;/span&gt;&lt;/div&gt;&lt;div&gt;- duracionMaximaHoras : int&lt;/div&gt;&lt;div&gt;- horasAntelacionPenalidad : int&lt;/div&gt;&lt;div&gt;- TarifaPenalidad : BigDecimal&lt;/div&gt;&lt;div&gt;- admin : Administrador&lt;/div&gt;" vertex="1">
+          <mxGeometry height="94" width="260" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-96" parent="YRAnUoF8bt_mvkdkwp-y-94" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="260" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-97" parent="YRAnUoF8bt_mvkdkwp-y-94" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ ReglaReserva(id: Long, anticipacionMinimaHoras: int, duracionMaximaHoras: int, horasAntelacionPenalidad: int, tarifaPenalidad: BigDecimal, admin: Administrador)&lt;br&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;+actualizarReglas(nuevaAnticipacion : int, nuevaDuracion : int)&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="108" width="260" y="128" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-102" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;" value="Liquidacion" vertex="1">
+          <mxGeometry height="339" width="310" x="1845" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-103" parent="YRAnUoF8bt_mvkdkwp-y-102" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- id : Long&lt;/div&gt;&lt;div&gt;- inmueble : Inmueble&lt;/div&gt;&lt;div&gt;- periodo : LocalDate&lt;/div&gt;&lt;div&gt;- fechaGeneracion : LocalDate&lt;/div&gt;&lt;div&gt;- fechaLimite : LocalDate&lt;/div&gt;&lt;div&gt;- cuotaAdministracion : BigDecimal&lt;/div&gt;&lt;div&gt;- valorServiciosComunes : BigDecimal&lt;/div&gt;&lt;div&gt;- valorMultas : BigDecimal&lt;/div&gt;&lt;div&gt;- total : BigDecimal&lt;/div&gt;&lt;div&gt;- estado : String&lt;/div&gt;" vertex="1">
+          <mxGeometry height="151" width="310" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-104" parent="YRAnUoF8bt_mvkdkwp-y-102" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="310" y="177" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-105" parent="YRAnUoF8bt_mvkdkwp-y-102" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Liquidacion(id: Long, inmueble: Inmueble, periodo: LocalDate, fechaLimite: LocalDate, cuotaAdministracion: BigDecimal, valorServiciosComunes: BigDecimal, valorMultas: BigDecimal)&lt;br&gt;+ generarLiquidacion(inmueble: Inmueble) : Liquidacion&lt;br&gt;+ calcularTotal() : BigDecimal&lt;br&gt;+ estaVencida() : Boolean&lt;br&gt;+ marcarEnMora()&lt;br&gt;+ marcarAlDia()" vertex="1">
+          <mxGeometry height="154" width="310" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-106" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#36393d;" value="Notificacion" vertex="1">
+          <mxGeometry height="260" width="340" x="515" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-107" parent="YRAnUoF8bt_mvkdkwp-y-106" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br&gt;- usuarios : List&amp;lt;Usuario&amp;gt;&lt;br&gt;- mensaje : String&lt;br&gt;- tipoNotificacion : String&lt;br&gt;- fechaEnvio : LocalDateTime" vertex="1">
+          <mxGeometry height="84" width="340" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-108" parent="YRAnUoF8bt_mvkdkwp-y-106" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="340" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-109" parent="YRAnUoF8bt_mvkdkwp-y-106" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Notificacion(id: Long, usuarios: List&lt;Usuario&gt;, mensaje: String, tipoNotificacion: String, fechaEnvio: LocalDateTime)&lt;br&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;+ enviarNotificacion() : Boolean&lt;/span&gt;&lt;/div&gt;+ notificarReserva(reserva: ReservaZonaComun)&lt;br&gt;+ notificarPagoPendiente(inmueble: Inmueble)&lt;div&gt;+ notificarActualizacionDePago(&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;inmueble: Inmueble, usuarios : List&amp;lt;Usuario&amp;gt;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;+ notificarVisita(&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;inmueble: Inmueble&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="142" width="340" y="118" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-110" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;" value="Pago" vertex="1">
+          <mxGeometry height="320" width="310" x="915" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-111" parent="YRAnUoF8bt_mvkdkwp-y-110" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div style=&quot;&quot;&gt;- id : Long&lt;br/&gt;- inmueble : Inmueble&lt;br/&gt;- monto : BigDecimal&lt;br/&gt;- fechaPago : LocalDate&lt;br/&gt;- concepto : String&lt;br/&gt;- metodoPago : String&lt;br/&gt;- estado : String&lt;br/&gt;- referencia : String&lt;/div&gt;" vertex="1">
+          <mxGeometry height="124" width="310" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-112" parent="YRAnUoF8bt_mvkdkwp-y-110" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="310" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-113" parent="YRAnUoF8bt_mvkdkwp-y-110" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Pago(id: Long, inmueble: Inmueble, monto: BigDecimal, fechaPago: LocalDate, concepto: String, metodoPago: String, referencia: String)&lt;br&gt;+ registrarPago(inmueble : Inmueble) : Pago&lt;br&gt;+ validarMonto(liquidacion : Liquidacion) : Boolean&lt;br&gt;+ estaAprobado(pago : Pago) : Boolean&lt;br&gt;+ anularPago()&lt;br&gt;+ generarComprobante() : String&lt;div&gt;+ actualizarEstado(pago : Pago) Liquidacion&lt;/div&gt;" vertex="1">
+          <mxGeometry height="162" width="310" y="158" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-114" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;" value="Rompimiento" vertex="1">
+          <mxGeometry height="250" width="240" x="215" y="600" as="geometry">
+            <mxRectangle height="30" width="120" x="370" y="360" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-115" parent="YRAnUoF8bt_mvkdkwp-y-114" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;div&gt;- zonaComun : ZonaComun&lt;/div&gt;&lt;div&gt;- reglaReserva : ReglaReserva&lt;/div&gt;&lt;div&gt;- fechaAplicacion : LocalDate&lt;/div&gt;&lt;div&gt;- activa : Boolean&lt;/div&gt;&lt;div&gt;- observaciones : String&lt;/div&gt;" vertex="1">
+          <mxGeometry height="104" width="240" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-116" parent="YRAnUoF8bt_mvkdkwp-y-114" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="240" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-117" parent="YRAnUoF8bt_mvkdkwp-y-114" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Rompimiento(id: Long, zonaComun: ZonaComun, reglaReserva: ReglaReserva, fechaAplicacion: LocalDate, observaciones: String)&lt;br&gt;+ aplicarRegla ()&lt;div&gt;+ inactivarRegla()&amp;nbsp;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="112" width="240" y="138" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-118" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;" value="ZonaComun" vertex="1">
+          <mxGeometry height="230" width="250" x="575" y="609" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-119" parent="YRAnUoF8bt_mvkdkwp-y-118" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- id : Long&lt;/div&gt;&lt;div&gt;- nombreZonaComun : String&lt;div&gt;- capacidad : int&lt;/div&gt;&lt;div&gt;&lt;div&gt;- horaInicio : LocalTime&lt;/div&gt;&lt;div&gt;- horaFin : LocalTime&lt;/div&gt;&lt;div&gt;- isActive: Boolean&lt;/div&gt;&lt;div&gt;- reglasAsignadas : List&amp;lt;&lt;span style=&quot;text-align: center; background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;Rompimiento&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="106.5" width="250" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-120" parent="YRAnUoF8bt_mvkdkwp-y-118" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="250" y="132.5" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-121" parent="YRAnUoF8bt_mvkdkwp-y-118" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ ZonaComun(id: Long, nombreZonaComun: String, capacidad: int, horaInicio: LocalTime, horaFin: LocalTime)&lt;br&gt;+ cambiarEstado()" vertex="1">
+          <mxGeometry height="89.5" width="250" y="140.5" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-122" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-114" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.002;entryY=0.105;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.763;exitY=-0.005;exitDx=0;exitDy=0;exitPerimeter=0;endArrow=diamondThin;endFill=0;fontSize=12;endSize=15;" target="YRAnUoF8bt_mvkdkwp-y-94">
+          <mxGeometry relative="1" x="-0.3987" as="geometry">
+            <Array as="points">
+              <mxPoint x="398.1" y="144.8" />
+            </Array>
+            <mxPoint x="55" y="559.9" as="sourcePoint" />
+            <mxPoint x="85" y="299.99800000000005" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-123" connectable="0" parent="YRAnUoF8bt_mvkdkwp-y-122" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=fontFamily,fontColor,fontStyle,textOpacity,labelBorderColor,labelBorderWidth,labelBackgroundColor,defaultLabelBackgroundColor,labelPadding;fontSize=16;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.5532" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-124" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-119" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1.002;entryY=0.708;entryDx=0;entryDy=0;endSize=10;exitX=0.007;exitY=0.617;exitDx=0;exitDy=0;exitPerimeter=0;entryPerimeter=0;" target="YRAnUoF8bt_mvkdkwp-y-115">
+          <mxGeometry relative="1" x="-0.3292" as="geometry">
+            <Array as="points">
+              <mxPoint x="576.8" y="699.6" />
+            </Array>
+            <mxPoint x="455" y="700.01" as="sourcePoint" />
+            <mxPoint x="515" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-125" connectable="0" parent="YRAnUoF8bt_mvkdkwp-y-124" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=fontFamily,fontColor,fontStyle,textOpacity,labelBorderColor,labelBorderWidth,labelBackgroundColor,defaultLabelBackgroundColor,labelPadding;fontSize=16;" value="1..*" vertex="1">
+          <mxGeometry relative="1" x="-0.3619" as="geometry">
+            <mxPoint x="-24" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-126" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;" value="Usuario" vertex="1">
+          <mxGeometry height="450" width="270" x="1595" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-127" parent="YRAnUoF8bt_mvkdkwp-y-126" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- id: Long&lt;/div&gt;&lt;div&gt;- identificacion: Long&lt;/div&gt;&lt;div&gt;- nombreCompleto: String&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: initial;&quot;&gt;- fechaNacimiento: LocalDate&lt;/span&gt;&lt;/div&gt;&lt;div&gt;- correoElectronico: String&lt;/div&gt;&lt;div&gt;- contrasena: PasswordEncoder&lt;/div&gt;&lt;div&gt;- fechaCreacionCuenta: LocalDate&lt;/div&gt;&lt;div&gt;- tipoUsuario: String&lt;/div&gt;&lt;div&gt;- token: String&lt;/div&gt;&lt;div&gt;- active: Boolean&lt;/div&gt;&lt;div&gt;- notificacionLeida : Boolean&lt;/div&gt;" vertex="1">
+          <mxGeometry height="170" width="270" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-128" parent="YRAnUoF8bt_mvkdkwp-y-126" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="270" y="196" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-129" parent="YRAnUoF8bt_mvkdkwp-y-126" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Usuario(id: Long, identificacion: Long, nombreCompleto: String, fechaNacimiento: LocalDate, correoElectronico: String, contrasena: PasswordEncoder, tipoUsuario: String)&lt;br&gt;+ isActive() : Boolean&lt;div&gt;+ iniciarSesion(correo : String, contrasena : PasswordEncoder) : usuario&lt;/div&gt;&lt;div&gt;+ cambiarContraseña(&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;inmueble: Inmueble, id Long&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;+ cerrarSesion()&lt;/div&gt;&lt;div&gt;+ activarCuenta(&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;correo : String, contrasena : PasswordEncoder&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;) : Boolean&lt;/span&gt;&lt;/div&gt;&lt;div&gt;+ recuperarContraseña()&lt;/div&gt;&lt;div&gt;+ marcarNotificacionLeida(inmueble: Inmueble, id Long)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="246" width="270" y="204" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-130" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;endSize=10;" target="YRAnUoF8bt_mvkdkwp-y-132">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="875" y="361.4" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-131" connectable="0" parent="YRAnUoF8bt_mvkdkwp-y-130" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=fontFamily,fontColor,fontStyle,textOpacity,labelBorderColor,labelBorderWidth,labelBackgroundColor,defaultLabelBackgroundColor,labelPadding;defaultLabelBackgroundColor=page;fontSize=16;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.2549" y="-3" as="geometry">
+            <mxPoint x="-3" y="-31" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-132" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;" value="Administrador" vertex="1">
+          <mxGeometry height="310" width="360" x="970" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-133" parent="YRAnUoF8bt_mvkdkwp-y-132" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- inicioContrato: LocalDate&lt;/div&gt;&lt;div&gt;- venceContrato: LocalDate&amp;nbsp;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="44" width="360" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-134" parent="YRAnUoF8bt_mvkdkwp-y-132" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="360" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-135" parent="YRAnUoF8bt_mvkdkwp-y-132" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Administrador(inicioContrato: LocalDate, venceContrato: LocalDate)&lt;br&gt;+ modificarActive(identificacion: Long, idToken : Long) : NoAdmin&lt;div&gt;+ gestionarCuentaUsuario()&lt;/div&gt;&lt;div&gt;+ configurarMultas(inmueble: Inmueble, adminId : Long)&lt;/div&gt;&lt;div&gt;+ configurarTarifas(&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;inmueble: Inmueble,&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;adminId : Long&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;+ ConfigurarZonasComunes(&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;inmueble: Inmueble ,&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;adminId : Long&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;+ ConfigurarNuevaReglaReserva(&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;inmueble: Inmueble,&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;adminId : Long&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;+ conciliarPagosAdministracion(&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;inmueble: Inmueble,&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;adminId : Long&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;) : Pago&lt;/span&gt;&lt;/div&gt;&lt;div&gt;+ consultarConfirmacionLectura&lt;/div&gt;" vertex="1">
+          <mxGeometry height="232" width="360" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-136" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-139" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;endArrow=diamondThin;endFill=0;fontSize=10;strokeWidth=1;endSize=15;" target="YRAnUoF8bt_mvkdkwp-y-153">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-137" connectable="0" parent="YRAnUoF8bt_mvkdkwp-y-136" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=fontFamily,fontColor,fontStyle,textOpacity,labelBorderColor,labelBorderWidth,labelBackgroundColor,defaultLabelBackgroundColor,labelPadding;fontSize=16;defaultLabelBackgroundColor=page;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="-0.333" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-138" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-139" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;endArrow=block;endFill=0;dashed=1;endSize=10;" target="YRAnUoF8bt_mvkdkwp-y-174">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1185" y="545" />
+              <mxPoint x="1275" y="545" />
+              <mxPoint x="1275" y="507" />
+            </Array>
+            <mxPoint x="1335" y="305" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-139" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;" value="Residente" vertex="1">
+          <mxGeometry height="287" width="330" x="855" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-140" parent="YRAnUoF8bt_mvkdkwp-y-139" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- inmueble: Inmueble&amp;nbsp;&lt;/div&gt;&lt;div&gt;- invitados: List&amp;lt;&lt;span style=&quot;text-align: center; background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;UsuarioAutorizado&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;- auto : Auto&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="330" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-141" parent="YRAnUoF8bt_mvkdkwp-y-139" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="330" y="76" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-142" parent="YRAnUoF8bt_mvkdkwp-y-139" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Residente(inmueble: Inmueble, auto: Auto)&lt;br&gt;+ verReservas(id : Long) : List&amp;lt;&lt;span style=&quot;text-align: center;&quot;&gt;ReservaZonaComun&lt;/span&gt;&amp;gt;&lt;div&gt;+ cambiarEstadoInvitado(invitado: u&lt;span style=&quot;text-align: center; background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;suarioAutorizado,&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;id: Long&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;) : Boolean&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;+ consultarEstadoCuenta(&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;inmueble: Inmueble,&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;id : Long&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;) : Liquidacion&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;+ consultarHistorialPago(&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;id : Long&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;) : List&amp;lt;Pago&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;+ cambiarEstadoInvitados&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;(invitados :&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;List&amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff)); text-align: center;&quot;&gt;UsuarioAutorizado&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;) : Boolean&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;+ reservarZonaComun (&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;id : Long&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;) : ZonaComun&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;+ cancelarReservaZonaComun(&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;idAdmin : Long&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;+ consultarNotificacion(inmueble: Inmueble, id : Long) List&amp;lt;Notificacion&amp;gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="203" width="330" y="84" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-143" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-144" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.997;entryY=0.572;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;exitX=0.5;exitY=0;exitDx=0;exitDy=0;dashed=1;endArrow=block;endFill=0;entryPerimeter=0;endSize=10;" target="YRAnUoF8bt_mvkdkwp-y-174">
+          <mxGeometry relative="1" x="-0.3035" as="geometry">
+            <Array as="points">
+              <mxPoint x="1990" y="290" />
+              <mxPoint x="1990" y="160" />
+              <mxPoint x="1555" y="160" />
+              <mxPoint x="1555" y="510.6" />
+            </Array>
+            <mxPoint x="1555" y="305" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-144" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;" value="Vigilante" vertex="1">
+          <mxGeometry height="176" width="320" x="1945" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-145" parent="YRAnUoF8bt_mvkdkwp-y-144" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- inicioContrato: LocalDate&lt;/div&gt;&lt;div&gt;- venceContrato: LocalDate&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="34" width="320" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-146" parent="YRAnUoF8bt_mvkdkwp-y-144" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="320" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-147" parent="YRAnUoF8bt_mvkdkwp-y-144" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Vigilante(inicioContrato: LocalDate, venceContrato: LocalDate)&lt;br&gt;+ verificarAccesoZonaComun(usuario: Usuario) : Boolean&lt;div&gt;+ existeInvitado(identificacion: Long) : Boolean&lt;/div&gt;&lt;div&gt;+ consultarReservas() List&amp;lt;ZonaComun&amp;gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="108" width="320" y="68" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-148" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-145" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;endArrow=block;endFill=0;endSize=10;" target="YRAnUoF8bt_mvkdkwp-y-127">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-149" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-139" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.268;entryY=0.002;entryDx=0;entryDy=0;entryPerimeter=0;defaultLabelBackgroundColor=page;exitX=0.5;exitY=1;exitDx=0;exitDy=0;endSize=15;endArrow=diamondThin;endFill=1;" target="YRAnUoF8bt_mvkdkwp-y-90">
+          <mxGeometry relative="1" x="-0.0927" as="geometry">
+            <Array as="points">
+              <mxPoint x="1020" y="790" />
+              <mxPoint x="1193.4" y="790" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-150" connectable="0" parent="YRAnUoF8bt_mvkdkwp-y-149" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=fontFamily,fontColor,fontStyle,textOpacity,labelBorderColor,labelBorderWidth,labelBackgroundColor,defaultLabelBackgroundColor,labelPadding;defaultLabelBackgroundColor=page;fontSize=16;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.1332" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-151" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-118" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;endArrow=block;endFill=0;endSize=10;" target="YRAnUoF8bt_mvkdkwp-y-90">
+          <mxGeometry relative="1" x="0.1208" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="810" />
+              <mxPoint x="1270" y="810" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-152" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-153" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;dashed=1;endArrow=block;endFill=0;endSize=10;entryX=0.441;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" target="YRAnUoF8bt_mvkdkwp-y-174">
+          <mxGeometry relative="1" x="-0.3111" as="geometry">
+            <Array as="points" />
+            <mxPoint x="1405" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-153" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;" value="UsuarioAutorizado" vertex="1">
+          <mxGeometry height="130" width="270" x="1285" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-154" parent="YRAnUoF8bt_mvkdkwp-y-153" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- venceAutorizacion : LocalDate" vertex="1">
+          <mxGeometry height="34" width="270" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-155" parent="YRAnUoF8bt_mvkdkwp-y-153" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="270" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-156" parent="YRAnUoF8bt_mvkdkwp-y-153" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ UsuarioAutorizado(venceAutorizacion: LocalDate)&lt;br&gt;+ buscarRelacionResidente(): List&amp;lt;Residente&amp;gt;" vertex="1">
+          <mxGeometry height="62" width="270" y="68" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-157" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-159" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;endArrow=diamondThin;endFill=1;endSize=15;" target="YRAnUoF8bt_mvkdkwp-y-142">
+          <mxGeometry relative="1" x="0.0386" as="geometry">
+            <Array as="points">
+              <mxPoint x="845" y="960" />
+              <mxPoint x="845" y="860" />
+              <mxPoint x="997.8" y="860" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-158" connectable="0" parent="YRAnUoF8bt_mvkdkwp-y-157" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;1&lt;/font&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.0275" y="4" as="geometry">
+            <mxPoint x="-147" y="4" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-159" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;" value="ReservaZonaComun" vertex="1">
+          <mxGeometry height="223" width="300" x="190" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-160" parent="YRAnUoF8bt_mvkdkwp-y-159" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;- id : Long&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;- duenoReserva: Residente&lt;/span&gt;&lt;/div&gt;&lt;div&gt;- zonaComun: ZonaComun&lt;/div&gt;" vertex="1">
+          <mxGeometry height="64" width="300" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-161" parent="YRAnUoF8bt_mvkdkwp-y-159" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="300" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-162" parent="YRAnUoF8bt_mvkdkwp-y-159" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ ReservaZonaComun(id: Long, duenoReserva: Residente, zonaComun: ZonaComun)&lt;br&gt;+ mostrarZonasComunes () : List&amp;lt;ZonaComun&amp;gt;&lt;div&gt;+ verificarDisponibilidad(hora : LocalTime) : Boolean&lt;div&gt;+ validarHorario&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(hora : LocalTime) : Boolean&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;+ estaHabilitado(duenoReserva: Residente) : Boolean&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="125" width="300" y="98" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-163" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-159" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;endArrow=diamondThin;endFill=1;endSize=15;entryX=0.62;entryY=1.006;entryDx=0;entryDy=0;entryPerimeter=0;" target="YRAnUoF8bt_mvkdkwp-y-121">
+          <mxGeometry relative="1" x="0.3646" as="geometry">
+            <Array as="points">
+              <mxPoint x="730" y="900" />
+            </Array>
+            <mxPoint x="725" y="780" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-164" connectable="0" parent="YRAnUoF8bt_mvkdkwp-y-163" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=fontFamily,fontColor,fontStyle,textOpacity,labelBorderColor,labelBorderWidth,labelBackgroundColor,defaultLabelBackgroundColor,labelPadding;defaultLabelBackgroundColor=page;fontSize=16;" value="1" vertex="1">
+          <mxGeometry relative="1" x="0.3412" as="geometry">
+            <mxPoint x="-140" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-169" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-142" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;endArrow=block;endFill=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=1.003;exitY=0.889;exitDx=0;exitDy=0;endSize=10;exitPerimeter=0;" target="YRAnUoF8bt_mvkdkwp-y-126">
+          <mxGeometry relative="1" x="-0.3055" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-174" parent="1" style="html=1;whiteSpace=wrap;fillColor=#ffcc99;strokeColor=#36393d;" value="&lt;span style=&quot;font-weight: 700;&quot;&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt; NoAdmin&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="170" x="1345" y="482" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-175" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-107" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;endArrow=diamondThin;endFill=0;endSize=15;startSize=5;sourcePerimeterSpacing=0;fixedPointSpacing=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;exitX=1.001;exitY=0.156;exitDx=0;exitDy=0;exitPerimeter=0;" target="YRAnUoF8bt_mvkdkwp-y-126">
+          <mxGeometry relative="1" x="-0.0349" as="geometry">
+            <Array as="points">
+              <mxPoint x="890" y="1039.1" />
+              <mxPoint x="890" y="1700" />
+              <mxPoint x="1797.5" y="1700" />
+            </Array>
+            <mxPoint x="855" y="1040" as="sourcePoint" />
+            <mxPoint x="1797.5" y="640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-176" connectable="0" parent="YRAnUoF8bt_mvkdkwp-y-175" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=fontFamily,fontColor,fontStyle,textOpacity,labelBorderColor,labelBorderWidth,labelBackgroundColor,defaultLabelBackgroundColor,labelPadding;defaultLabelBackgroundColor=page;fontSize=16;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="-0.4555" y="-3" as="geometry">
+            <mxPoint x="283" y="-3" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-177" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-135" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.001;entryY=0.273;entryDx=0;entryDy=0;entryPerimeter=0;defaultLabelBackgroundColor=page;endArrow=block;endFill=0;exitX=1;exitY=0.427;exitDx=0;exitDy=0;exitPerimeter=0;endSize=10;" target="YRAnUoF8bt_mvkdkwp-y-127">
+          <mxGeometry relative="1" x="-0.3097" as="geometry">
+            <Array as="points">
+              <mxPoint x="1375" y="350" />
+              <mxPoint x="1375" y="262.4" />
+            </Array>
+            <mxPoint x="1245" y="403" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-178" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-91" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;endArrow=diamondThin;endFill=0;endSize=15;" target="YRAnUoF8bt_mvkdkwp-y-129">
+          <mxGeometry relative="1" x="0.0702" as="geometry">
+            <Array as="points">
+              <mxPoint x="1925" y="990" />
+              <mxPoint x="1925" y="487" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-179" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-153" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.706;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;endArrow=block;endFill=0;entryPerimeter=0;endSize=10;" target="YRAnUoF8bt_mvkdkwp-y-142">
+          <mxGeometry relative="1" x="0.1529" as="geometry">
+            <Array as="points">
+              <mxPoint x="1420" y="717.3" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-183" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-110" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.539;entryY=0.995;entryDx=0;entryDy=0;entryPerimeter=0;defaultLabelBackgroundColor=page;endSize=10;" target="YRAnUoF8bt_mvkdkwp-y-93">
+          <mxGeometry relative="1" x="-0.0147" as="geometry">
+            <Array as="points">
+              <mxPoint x="1282.9" y="1123.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-184" connectable="0" parent="YRAnUoF8bt_mvkdkwp-y-183" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=fontFamily,fontColor,fontStyle,textOpacity,labelBorderColor,labelBorderWidth,labelBackgroundColor,defaultLabelBackgroundColor,labelPadding;defaultLabelBackgroundColor=page;fontSize=16;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.1566" y="-3" as="geometry">
+            <mxPoint x="-19" y="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-186" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-91" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;entryX=0.997;entryY=0.882;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=diamondThin;endFill=0;endSize=15;" target="YRAnUoF8bt_mvkdkwp-y-121">
+          <mxGeometry relative="1" x="-0.0109" as="geometry">
+            <mxPoint x="625" y="790" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-217" connectable="0" parent="YRAnUoF8bt_mvkdkwp-y-186" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=fontFamily,fontColor,fontStyle,textOpacity,labelBorderColor,labelBorderWidth,labelBackgroundColor,defaultLabelBackgroundColor,labelPadding;defaultLabelBackgroundColor=page;fontSize=16;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="-0.1646" y="-1" as="geometry">
+            <mxPoint x="142" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-1" connectable="0" parent="YRAnUoF8bt_mvkdkwp-y-186" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;" value="&lt;span style=&quot;font-size: 16px;&quot;&gt;0..*&lt;/span&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.3277" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QGA8RCapW5C3ISAy7pz5-8" edge="1" parent="1" source="QGA8RCapW5C3ISAy7pz5-2" style="edgeStyle=none;curved=1;rounded=0;curveGeometry=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;defaultLabelBackgroundColor=page;startSize=8;endSize=15;entryX=0.893;entryY=1.023;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=diamondThin;endFill=1;" target="YRAnUoF8bt_mvkdkwp-y-93" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1455" y="1115" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-188" connectable="0" parent="QGA8RCapW5C3ISAy7pz5-8" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=fontFamily,fontColor,fontStyle,textOpacity,labelBorderColor,labelBorderWidth,labelBackgroundColor,defaultLabelBackgroundColor,labelPadding;fontSize=16;defaultLabelBackgroundColor=page;" value="0..1" vertex="1">
+          <mxGeometry relative="1" x="0.2244" as="geometry">
+            <mxPoint x="-1" y="24" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QGA8RCapW5C3ISAy7pz5-2" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#E5CCFF;strokeColor=#000000;" value="Paqueadero" vertex="1">
+          <mxGeometry height="170" width="230" x="1285" y="1189" as="geometry" />
+        </mxCell>
+        <mxCell id="QGA8RCapW5C3ISAy7pz5-3" parent="QGA8RCapW5C3ISAy7pz5-2" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br/&gt;- inmueble : Inmueble&lt;br/&gt;- valorMensual : BigDecimal" vertex="1">
+          <mxGeometry height="60" width="230" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="QGA8RCapW5C3ISAy7pz5-4" parent="QGA8RCapW5C3ISAy7pz5-2" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;labelPerimeter=1;" value="" vertex="1">
+          <mxGeometry height="8" width="230" y="86" as="geometry" />
+        </mxCell>
+        <mxCell id="QGA8RCapW5C3ISAy7pz5-5" parent="QGA8RCapW5C3ISAy7pz5-2" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Paqueadero(id: Long, inmueble: Inmueble, valorMensual: BigDecimal)&lt;br&gt;+ obtenerValorMensual() : BigDecimal" vertex="1">
+          <mxGeometry height="76" width="230" y="94" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-215" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-190" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.998;entryY=0.802;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;endArrow=diamondThin;endFill=1;endSize=15;entryPerimeter=0;" target="YRAnUoF8bt_mvkdkwp-y-142">
+          <mxGeometry relative="1" x="-0.1035" as="geometry">
+            <Array as="points">
+              <mxPoint x="1370" y="800" />
+              <mxPoint x="1370" y="736.8" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-216" connectable="0" parent="YRAnUoF8bt_mvkdkwp-y-215" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=fontFamily,fontColor,fontStyle,textOpacity,labelBorderColor,labelBorderWidth,labelBackgroundColor,defaultLabelBackgroundColor,labelPadding;defaultLabelBackgroundColor=page;fontSize=16;" value="0..1" vertex="1">
+          <mxGeometry relative="1" x="-0.0877" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-190" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#E5CCFF;strokeColor=#000000;" value="Auto" vertex="1">
+          <mxGeometry height="190" width="240" x="1545" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-191" parent="YRAnUoF8bt_mvkdkwp-y-190" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- id : Long&lt;/div&gt;&lt;div&gt;- dueno : Residente&lt;/div&gt;&lt;div&gt;- placa: Long&lt;br&gt;&lt;div&gt;- parqueadero: Parqueadero&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="74" width="240" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-192" parent="YRAnUoF8bt_mvkdkwp-y-190" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;labelPerimeter=1;" value="" vertex="1">
+          <mxGeometry height="8" width="240" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-193" parent="YRAnUoF8bt_mvkdkwp-y-190" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Auto(id: Long, dueno: Residente, placa: Long, parqueadero: Parqueadero)&lt;br&gt;+ consultarDuenos(inmueble : Inmueble, id : Long) : List&amp;lt;Residente&amp;gt;" vertex="1">
+          <mxGeometry height="82" width="240" y="108" as="geometry" />
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-197" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-190" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.889;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;defaultLabelBackgroundColor=page;exitX=0.5;exitY=1;exitDx=0;exitDy=0;endArrow=diamondThin;endFill=0;endSize=15;" target="QGA8RCapW5C3ISAy7pz5-2">
+          <mxGeometry relative="1" x="0.0206" as="geometry">
+            <Array as="points">
+              <mxPoint x="1665" y="1060" />
+              <mxPoint x="1489.5" y="1060" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-214" connectable="0" parent="YRAnUoF8bt_mvkdkwp-y-197" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=fontFamily,fontColor,fontStyle,textOpacity,labelBorderColor,labelBorderWidth,labelBackgroundColor,defaultLabelBackgroundColor,labelPadding;defaultLabelBackgroundColor=page;fontSize=16;" value="0..1" vertex="1">
+          <mxGeometry relative="1" x="-0.0069" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-202" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-102" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.999;entryY=0.226;entryDx=0;entryDy=0;entryPerimeter=0;defaultLabelBackgroundColor=page;endSize=15;endArrow=diamondThin;endFill=1;" target="YRAnUoF8bt_mvkdkwp-y-93">
+          <mxGeometry relative="1" x="-0.0875" as="geometry">
+            <Array as="points">
+              <mxPoint x="1730" y="1080" />
+              <mxPoint x="1730" y="1030.3" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YRAnUoF8bt_mvkdkwp-y-203" connectable="0" parent="YRAnUoF8bt_mvkdkwp-y-202" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=fontFamily,fontColor,fontStyle,textOpacity,labelBorderColor,labelBorderWidth,labelBackgroundColor,defaultLabelBackgroundColor,labelPadding;defaultLabelBackgroundColor=page;fontSize=16;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.5435" y="-3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NVK63HuYL8YzUsEOBCHr-1" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-91" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.316;entryY=0.002;entryDx=0;entryDy=0;entryPerimeter=0;defaultLabelBackgroundColor=page;endSize=10;" target="YRAnUoF8bt_mvkdkwp-y-110">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1013" y="970" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NVK63HuYL8YzUsEOBCHr-2" connectable="0" parent="NVK63HuYL8YzUsEOBCHr-1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=fontFamily,fontColor,fontStyle,textOpacity,labelBorderColor,labelBorderWidth,labelBackgroundColor,defaultLabelBackgroundColor,labelPadding;defaultLabelBackgroundColor=page;fontSize=16;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="-0.3736" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NVK63HuYL8YzUsEOBCHr-3" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-91" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.885;entryY=-0.007;entryDx=0;entryDy=0;entryPerimeter=0;defaultLabelBackgroundColor=page;endSize=10;" target="YRAnUoF8bt_mvkdkwp-y-106">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="815.9" y="890" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="PAS-1" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;" value="PasarelaPago" vertex="1">
+          <mxGeometry height="270" width="400" x="1345" y="1379" as="geometry" />
+        </mxCell>
+        <mxCell id="PAS-2" parent="PAS-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br&gt;- nombrePasarela : String&lt;br&gt;- urlApi : String&lt;br&gt;- apiKey : String&lt;br&gt;- estado : String" vertex="1">
+          <mxGeometry height="100" width="400" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="PAS-3" parent="PAS-1" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="400" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="PAS-4" parent="PAS-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ PasarelaPago(id: Long, nombrePasarela: String, urlApi: String, apiKey: String)&lt;br&gt;+ iniciarTransaccion(pago: Pago) : String&lt;br&gt;+ confirmarTransaccion(referencia: String) : Boolean&lt;br&gt;+ consultarEstado(referencia: String) : String&lt;br&gt;+ reembolsar(pago: Pago) : Boolean&lt;br&gt;+ notificarResultado(pago: Pago)" vertex="1">
+          <mxGeometry height="136" width="400" y="134" as="geometry" />
+        </mxCell>
+        <mxCell id="PAS-5" edge="1" parent="1" source="YRAnUoF8bt_mvkdkwp-y-110" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;endSize=10;endArrow=open;dashed=1;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" target="PAS-1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="PAS-6" connectable="0" parent="PAS-5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];defaultLabelBackgroundColor=page;fontSize=16;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="-0.6" as="geometry">
+            <mxPoint x="73" y="-5" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

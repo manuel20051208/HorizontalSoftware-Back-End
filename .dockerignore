@@ -1,0 +1,25 @@
+# Reducimos el contexto de build: solo necesitamos el .jar ya empaquetado.
+
+# Ignora todo el contenido de target...
+target/*
+# ...excepto el fat-jar ejecutable
+!target/*.jar
+# (descartamos el .jar.original que deja Spring Boot)
+target/*.jar.original
+
+# Codigo y metadatos que no viajan al contenedor
+src/
+.git/
+.idea/
+.mvn/
+.vscode/
+mvnw
+mvnw.cmd
+
+# Secretos y documentacion
+.env
+*.md
+*.xml
+Dockerfile
+.dockerignore
+compose.yaml
