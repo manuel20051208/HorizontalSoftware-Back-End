@@ -1,7 +1,10 @@
 package unisimon.demo.service.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import unisimon.demo.cache.NombresCache;
 import unisimon.demo.dto.request.InmuebleRequests;
 import unisimon.demo.dto.response.InmuebleResponses;
 import unisimon.demo.exception.ConflictoException;
@@ -51,6 +54,7 @@ public class InmuebleServiceImpl implements InmuebleService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = NombresCache.INMUEBLES, allEntries = true)
     public InmuebleResponses.Detalle crear(InmuebleRequests.CrearInmueble solicitud) {
         String direccion = solicitud.direccionInmueble().trim().toUpperCase(Locale.ROOT);
         if (inmuebles.existePorDireccion(direccion)) {
@@ -66,6 +70,7 @@ public class InmuebleServiceImpl implements InmuebleService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(NombresCache.INMUEBLES)
     public List<InmuebleResponses.Resumen> listar() {
         return inmuebles.listarResumen().stream().map(this::resumen).toList();
     }

@@ -1,7 +1,9 @@
 package unisimon.demo.service.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import unisimon.demo.cache.NombresCache;
 import unisimon.demo.dto.request.ReservaRequests;
 import unisimon.demo.dto.response.ReservaResponses;
 import unisimon.demo.exception.ConflictoException;
@@ -50,6 +52,7 @@ public class ReservaZonaComunServiceImpl implements ReservaZonaComunService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {NombresCache.ZONAS_COMUNES, NombresCache.ZONAS_POR_INMUEBLE}, allEntries = true)
     public ReservaResponses.Reserva reservarZonaComun(Long residenteId, ReservaRequests.Reservar s) {
         ContextoResidenteView contexto = contexto(residenteId);
         ZonaView vistaZona = zona(s.zonaComunId());
@@ -84,6 +87,7 @@ public class ReservaZonaComunServiceImpl implements ReservaZonaComunService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {NombresCache.ZONAS_COMUNES, NombresCache.ZONAS_POR_INMUEBLE}, allEntries = true)
     public void cancelarReservaZonaComun(Long residenteId, Long reservaId) {
         ReservaView reserva = reservas.buscarPorId(reservaId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("La reserva " + reservaId + " no existe"));

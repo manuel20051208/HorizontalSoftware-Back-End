@@ -1,7 +1,10 @@
 package unisimon.demo.service.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import unisimon.demo.cache.NombresCache;
 import unisimon.demo.dto.request.ZonaRequests;
 import unisimon.demo.dto.response.ZonaResponses;
 import unisimon.demo.exception.ConflictoException;
@@ -30,6 +33,7 @@ public class ZonaComunServiceImpl implements ZonaComunService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {NombresCache.ZONAS_COMUNES, NombresCache.ZONAS_POR_INMUEBLE}, allEntries = true)
     public ZonaResponses.Zona crearZona(ZonaRequests.CrearZona s) {
         String nombre = s.nombreZonaComun().trim();
         if (s.horaInicio().equals(s.horaFin())) {
@@ -47,18 +51,21 @@ public class ZonaComunServiceImpl implements ZonaComunService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(NombresCache.ZONAS_COMUNES)
     public List<ZonaResponses.Zona> listar() {
         return zonas.listar().stream().map(ZonaMapper::zona).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(NombresCache.ZONAS_POR_INMUEBLE)
     public List<ZonaResponses.Zona> mostrarZonasComunes(Long inmuebleId) {
         return zonas.listarActivasDeInmueble(inmuebleId).stream().map(ZonaMapper::zona).toList();
     }
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {NombresCache.ZONAS_COMUNES, NombresCache.ZONAS_POR_INMUEBLE}, allEntries = true)
     public ZonaResponses.Zona cambiarEstado(Long zonaId) {
         ZonaComun zona = zonas.buscarPorId(zonaId).map(Hidratador::zona)
                 .orElseThrow(() -> new RecursoNoEncontradoException("La zona comun " + zonaId + " no existe"));
@@ -69,6 +76,7 @@ public class ZonaComunServiceImpl implements ZonaComunService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {NombresCache.ZONAS_COMUNES, NombresCache.ZONAS_POR_INMUEBLE}, allEntries = true)
     public List<ZonaResponses.Zona> configurarZonasComunes(Long inmuebleId, List<Long> zonaComunIds) {
         if (!inmuebles.existePorId(inmuebleId)) {
             throw new RecursoNoEncontradoException("El inmueble " + inmuebleId + " no existe");

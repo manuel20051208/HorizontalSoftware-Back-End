@@ -1,7 +1,10 @@
 package unisimon.demo.service.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import unisimon.demo.cache.NombresCache;
 import unisimon.demo.dto.request.ReglaRequests;
 import unisimon.demo.dto.response.ReglaResponses;
 import unisimon.demo.exception.RecursoNoEncontradoException;
@@ -37,6 +40,7 @@ public class ReglaReservaServiceImpl implements ReglaReservaService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = NombresCache.REGLAS_RESERVA, allEntries = true)
     public ReglaResponses.Regla configurarNuevaReglaReserva(Long adminId, ReglaRequests.CrearRegla s) {
         List<Long> zonaIds = s.zonaComunIds().stream().distinct().toList();
         if (zonas.contarPorIds(zonaIds) != zonaIds.size()) {
@@ -59,6 +63,7 @@ public class ReglaReservaServiceImpl implements ReglaReservaService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = NombresCache.REGLAS_RESERVA, allEntries = true)
     public ReglaResponses.Regla actualizarReglas(Long reglaId, ReglaRequests.ActualizarReglas s) {
         ReglaReserva regla = reglas.buscarPorId(reglaId).map(Hidratador::regla)
                 .orElseThrow(() -> new RecursoNoEncontradoException("La regla " + reglaId + " no existe"));
@@ -69,6 +74,7 @@ public class ReglaReservaServiceImpl implements ReglaReservaService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(NombresCache.REGLAS_RESERVA)
     public List<ReglaResponses.Regla> listar() {
         return reglas.listar().stream()
                 .map(r -> ZonaMapper.regla(r, rompimientos.listarPorRegla(r.getId()))).toList();
@@ -76,6 +82,7 @@ public class ReglaReservaServiceImpl implements ReglaReservaService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = NombresCache.REGLAS_RESERVA, allEntries = true)
     public ReglaResponses.Rompimiento aplicarRegla(Long rompimientoId) {
         Rompimiento rompimiento = cargar(rompimientoId);
         rompimiento.aplicarRegla();
@@ -85,6 +92,7 @@ public class ReglaReservaServiceImpl implements ReglaReservaService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = NombresCache.REGLAS_RESERVA, allEntries = true)
     public ReglaResponses.Rompimiento inactivarRegla(Long rompimientoId) {
         Rompimiento rompimiento = cargar(rompimientoId);
         rompimiento.inactivarRegla();

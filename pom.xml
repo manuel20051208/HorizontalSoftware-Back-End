@@ -58,6 +58,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+        <!-- Cache de Spring (@Cacheable/@CacheEvict). Hoy en memoria; despues Redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
         <!-- OAuth2: servidor de recursos con JWT (Bearer) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

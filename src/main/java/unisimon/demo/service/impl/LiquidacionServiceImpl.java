@@ -1,7 +1,9 @@
 package unisimon.demo.service.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import unisimon.demo.cache.NombresCache;
 import unisimon.demo.dto.request.InmuebleRequests;
 import unisimon.demo.dto.request.LiquidacionRequests;
 import unisimon.demo.dto.response.LiquidacionResponses;
@@ -48,6 +50,7 @@ public class LiquidacionServiceImpl implements LiquidacionService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = NombresCache.INMUEBLES, allEntries = true)
     public LiquidacionResponses.Liquidacion generarLiquidacion(LiquidacionRequests.Generar s) {
         InmuebleBasicoView inmueble = inmuebles.buscarBasico(s.inmuebleId())
                 .orElseThrow(() -> new RecursoNoEncontradoException("El inmueble " + s.inmuebleId() + " no existe"));
@@ -70,6 +73,7 @@ public class LiquidacionServiceImpl implements LiquidacionService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = NombresCache.INMUEBLES, allEntries = true)
     public LiquidacionResponses.ResultadoMasiva generarMasiva(LiquidacionRequests.GenerarMasiva s) {
         LocalDate periodo = s.periodo().withDayOfMonth(1);
         int generadas = 0;
@@ -94,6 +98,7 @@ public class LiquidacionServiceImpl implements LiquidacionService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = NombresCache.INMUEBLES, allEntries = true)
     public LiquidacionResponses.Liquidacion configurarTarifas(Long inmuebleId, InmuebleRequests.Tarifas tarifas) {
         Liquidacion liquidacion = vigentePendiente(inmuebleId);
         liquidacion.setCuotaAdministracion(tarifas.cuotaAdministracion());
@@ -112,6 +117,7 @@ public class LiquidacionServiceImpl implements LiquidacionService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = NombresCache.INMUEBLES, allEntries = true)
     public LiquidacionResponses.Liquidacion configurarMultas(Long inmuebleId, InmuebleRequests.Multas multas) {
         Liquidacion liquidacion = vigentePendiente(inmuebleId);
         liquidacion.setValorMultas(multas.valorMultas());
@@ -122,6 +128,7 @@ public class LiquidacionServiceImpl implements LiquidacionService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = NombresCache.INMUEBLES, allEntries = true)
     public LiquidacionResponses.Liquidacion marcarEnMora(Long liquidacionId) {
         Liquidacion liquidacion = cargar(liquidacionId);
         liquidacion.marcarEnMora();
@@ -131,6 +138,7 @@ public class LiquidacionServiceImpl implements LiquidacionService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = NombresCache.INMUEBLES, allEntries = true)
     public LiquidacionResponses.Liquidacion marcarAlDia(Long liquidacionId) {
         Liquidacion liquidacion = cargar(liquidacionId);
         liquidacion.marcarAlDia();
@@ -155,6 +163,7 @@ public class LiquidacionServiceImpl implements LiquidacionService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = NombresCache.INMUEBLES, allEntries = true)
     public int marcarVencidas() {
         List<Long> vencidas = liquidaciones.listarPorEstado(Liquidacion.PENDIENTE).stream()
                 .filter(v -> Hidratador.liquidacion(v).estaVencida())
@@ -168,12 +177,14 @@ public class LiquidacionServiceImpl implements LiquidacionService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = NombresCache.INMUEBLES, allEntries = true)
     public void marcarInmueblePagado(Long inmuebleId) {
         liquidaciones.marcarPagadasDeInmueble(inmuebleId);
     }
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = NombresCache.INMUEBLES, allEntries = true)
     public void reabrirVigente(Long inmuebleId) {
         liquidaciones.buscarVigenteDeInmueble(inmuebleId)
                 .map(Hidratador::liquidacion)

@@ -1,7 +1,10 @@
 package unisimon.demo.service.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import unisimon.demo.cache.NombresCache;
 import unisimon.demo.dto.request.PagoRequests;
 import unisimon.demo.dto.response.PagoResponses;
 import unisimon.demo.exception.ConflictoException;
@@ -54,12 +57,14 @@ public class PasarelaPagoServiceImpl implements PasarelaPagoService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(NombresCache.PASARELA_PAGO)
     public PagoResponses.Pasarela obtener() {
         return PagoMapper.pasarela(principal());
     }
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = NombresCache.PASARELA_PAGO, allEntries = true)
     public PagoResponses.Pasarela configurar(PagoRequests.ConfigurarPasarela s) {
         String estado = s.estado().trim().toUpperCase(Locale.ROOT);
         if (!ESTADOS_PASARELA.contains(estado)) {
