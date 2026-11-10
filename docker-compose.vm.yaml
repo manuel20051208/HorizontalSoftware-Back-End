@@ -1,0 +1,36 @@
+# =============================================================================
+# Despliegue en la VM AWS (1 GB RAM).
+# SOLO corre la API: la base de datos es Neon (Postgres gestionado), así que NO
+# hay contenedor de Postgres aquí -> menos RAM y sin riesgo del bug de PG18.
+#
+# Uso en la VM:
+#   docker compose -f docker-compose.vm.yaml up -d --build
+# =============================================================================
+services:
+  app:
+    build: .
+    container_name: horizontal-api
+    # Lee Neon (DB_URL jdbc, DB_USER, DB_PASSWORD), JWT_SECRET, CORS, seed, Wompi...
+    env_file:
+      - .env
+    environment:
+      # Dentro del contenedor no hay Docker: nada de integracion docker-compose
+      DOCKER_COMPOSE_ENABLED: "false"
+      # Pool chico para no saturar ni la JVM ni Neon
+      DB_POOL_MIN: "1"
+      DB_POOL_MAX: "5"
+      # JVM afinada para 1 GB (heap = 50% del mem_limit; GC serial = menos RAM)
+      JAVA_OPTS: "-XX:InitialRAMPercentage=20 -XX:MaxRAMPercentage=50 -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC -XX:+ExitOnOutOfMemoryError"
+    # Solo accesible desde la propia VM (localhost) -> unicamente nginx lo alcanza.
+    # Asi el 8080 NO queda expuesto a internet; el acceso publico es solo por HTTPS (nginx).
+    ports:
+      - "127.0.0.1:8080:8080"
+    # --- Limite duro de RAM: la API nunca pasa de aqui (evita tumbar la VM) ---
+    mem_limit: 576m
+    memswap_limit: 576m
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

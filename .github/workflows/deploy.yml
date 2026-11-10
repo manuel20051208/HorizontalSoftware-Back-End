@@ -1,0 +1,167 @@
+# =============================================================================
+# CI/CD: pruebas + despliegue automatico a la VM de AWS.
+#
+#   push a main / RamaManuel  ->  mvnw verify  ->  (si pasa) deploy a la VM
+#   pull request              ->  solo pruebas (no despliega)
+#   Actions > "CI/CD" > Run workflow  ->  despliegue manual
+#
+# En la VM NO se hace git pull: el runner compila el .jar, lo copia por SCP a
+# ~/HorizontalSoftware junto con Dockerfile y docker-compose.vm.yaml y levanta
+# el contenedor. El .env de la VM (Neon, JWT, CORS...) NUNCA se toca.
+# Si el contenedor nuevo no responde, se restaura el .jar anterior.
+#
+# Secret requerido (Settings > Secrets and variables > Actions):
+#   SSH_PRIVATE_KEY -> llave privada SSH autorizada para ubuntu@VM
+# =============================================================================
+name: CI/CD
+
+on:
+  push:
+    branches: [main, RamaManuel]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'compose.yaml'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  VM_HOST: 3.138.110.33
+  VM_USER: ubuntu
+  APP_DIR: /home/ubuntu/HorizontalSoftware
+  # Llave publica del host (no es secreta). Fijarla evita ataques MITM;
+  # si recreas la VM, actualizala con: ssh-keyscan -t ed25519 <ip>
+  VM_HOST_KEY: "3.138.110.33 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFQhqFA0XjeubtVt6mJjIF5XUL091Ri27bHiIFMDyekk"
+
+jobs:
+  build:
+    name: Pruebas y empaquetado
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: mvnw verify (compila + pruebas)
+        run: |
+          chmod +x mvnw
+          ./mvnw -B -ntp verify
+        env:
+          # Las pruebas no deben intentar levantar Docker Compose en el runner
+          DOCKER_COMPOSE_ENABLED: "false"
+
+      - name: Preparar artefacto
+        run: |
+          mkdir -p dist
+          JAR=$(ls target/*.jar | grep -v '\.original$' | head -n1)
+          echo "Jar: $JAR"
+          cp "$JAR" dist/app.jar
+          cp Dockerfile docker-compose.vm.yaml .dockerignore dist/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deploy-bundle
+          path: dist/
+          retention-days: 7
+
+  deploy:
+    name: Desplegar en la VM
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    # Nunca dos despliegues a la vez sobre la misma VM
+    concurrency:
+      group: deploy-vm
+      cancel-in-progress: false
+    environment:
+      name: production
+      url: https://horizontal-proyect.duckdns.org
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: deploy-bundle
+          path: dist
+
+      - name: Configurar SSH
+        env:
+          VM_SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          if [ -z "$VM_SSH_KEY" ]; then echo "::error::Falta el secret SSH_PRIVATE_KEY"; exit 1; fi
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$VM_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          echo "$VM_HOST_KEY" > ~/.ssh/known_hosts
+          cat > ~/.ssh/config <<EOF
+          Host vm
+            HostName $VM_HOST
+            User $VM_USER
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+            StrictHostKeyChecking yes
+            ServerAliveInterval 15
+          EOF
+
+      - name: Copiar archivos a la VM
+        run: |
+          ssh vm "rm -rf ~/deploy-staging && mkdir -p ~/deploy-staging"
+          scp dist/app.jar dist/Dockerfile dist/docker-compose.vm.yaml dist/.dockerignore vm:~/deploy-staging/
+
+      - name: Levantar contenedor (con rollback)
+        run: |
+          ssh vm "APP_DIR=$APP_DIR bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$APP_DIR"
+          COMPOSE="docker compose -f docker-compose.vm.yaml"
+          JAR=target/demo-0.0.1-SNAPSHOT.jar
+
+          healthy() {
+            # Cualquier respuesta HTTP (200, 401, 403...) = la app esta arriba
+            for i in $(seq 1 30); do
+              code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8080/ || true)
+              if [ "$code" != "000" ]; then echo "App responde (HTTP $code) tras $((i*3))s"; return 0; fi
+              sleep 3
+            done
+            return 1
+          }
+
+          # Respaldo del jar actual (fuera de target/ para no romper el COPY target/*.jar)
+          mkdir -p backup target
+          if ls target/*.jar >/dev/null 2>&1; then cp target/*.jar backup/app.jar; fi
+
+          # Instalar los archivos nuevos (el .env no se toca)
+          rm -f target/*.jar
+          mv ~/deploy-staging/app.jar "$JAR"
+          mv ~/deploy-staging/Dockerfile ~/deploy-staging/docker-compose.vm.yaml ~/deploy-staging/.dockerignore .
+
+          $COMPOSE up -d --build --remove-orphans
+
+          if healthy; then
+            docker image prune -f >/dev/null
+            echo "Despliegue OK"
+          else
+            echo "::error::La app no respondio. Logs:"
+            $COMPOSE logs --tail=120 app || true
+            if [ -f backup/app.jar ]; then
+              echo "Restaurando version anterior..."
+              rm -f target/*.jar && cp backup/app.jar "$JAR"
+              $COMPOSE up -d --build
+              healthy && echo "Rollback OK" || echo "::error::El rollback tampoco responde"
+            fi
+            exit 1
+          fi
+          REMOTE
+
+      - name: Verificar endpoint publico (HTTPS)
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 https://horizontal-proyect.duckdns.org/ || true)
+          echo "HTTPS respondio: $code"
+          [ "$code" != "000" ] && [ "$code" != "502" ] && [ "$code" != "504" ]
+
+      - name: Limpiar llave
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
