@@ -22,10 +22,6 @@ public final class PagoRequests {
                             @Size(max = 100) String referencia) {
     }
 
-    /** Aviso de la pasarela. estado: APROBADO o RECHAZADO. */
-    public record Webhook(@NotBlank String referencia, @NotBlank String estado) {
-    }
-
     /** estado: ACTIVA o INACTIVA. */
     public record ConfigurarPasarela(@NotBlank @Size(max = 60) String nombrePasarela,
                                      @NotBlank @Size(max = 300) String urlApi,

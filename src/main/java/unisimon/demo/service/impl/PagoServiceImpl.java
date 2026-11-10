@@ -2,6 +2,7 @@ package unisimon.demo.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import unisimon.demo.bootstrap.PasarelaProperties;
 import unisimon.demo.dto.request.PagoRequests;
 import unisimon.demo.dto.response.PagoResponses;
 import unisimon.demo.exception.ConflictoException;
@@ -51,11 +52,13 @@ public class PagoServiceImpl implements PagoService {
     private final LiquidacionService liquidacionService;
     private final AccesoInmueblePolicy accesoInmueble;
     private final Clock reloj;
+    private final PasarelaProperties configPasarela;
 
     public PagoServiceImpl(PagoRepository pagos, LiquidacionRepository liquidaciones,
                            PasarelaPagoRepository pasarelas, ResidenteRepository residentes,
                            InmuebleRepository inmuebles, LiquidacionService liquidacionService,
-                           AccesoInmueblePolicy accesoInmueble, Clock reloj) {
+                           AccesoInmueblePolicy accesoInmueble, Clock reloj, PasarelaProperties configPasarela) {
+        this.configPasarela = configPasarela;
         this.pagos = pagos;
         this.liquidaciones = liquidaciones;
         this.pasarelas = pasarelas;
@@ -83,13 +86,20 @@ public class PagoServiceImpl implements PagoService {
         }
         PasarelaView vistaPasarela = pasarelas.buscarPrincipal()
                 .orElseThrow(() -> new ConflictoException("La pasarela de pagos aun no esta configurada"));
+        String secreto = configPasarela.integritySecret();
+        if (secreto == null || secreto.isBlank()) {
+            // Se valida antes de insertar el pago para no dejar pagos PENDIENTES huerfanos.
+            throw new ConflictoException("La pasarela de pagos no tiene configurado el secreto de integridad");
+        }
 
         // El valor lo fija el servidor (saldo pendiente), nunca el cliente.
         Pago pago = new Pago(null, Hidratador.referenciaInmueble(residente.getInmuebleId()), null, saldo, null,
                 "Administracion " + residente.getDireccionInmueble(), metodo, null);
         pago.setId(pagos.insertar(pago));
         PasarelaPago pasarela = Hidratador.pasarela(vistaPasarela);
-        String urlCheckout = pasarela.iniciarTransaccion(pago);   // dominio: asigna referencia y pasarela
+        // dominio: asigna referencia y pasarela, y firma el checkout con el secreto (solo del entorno)
+        String urlCheckout = pasarela.iniciarTransaccion(pago, configPasarela.integritySecret(),
+                configPasarela.redirectUrl());
         pagos.actualizarTransaccion(pago.getId(), pago.getReferencia(), pasarela.getId());
         return new PagoResponses.IniciarPago(respuesta(pago.getId()), urlCheckout);
     }

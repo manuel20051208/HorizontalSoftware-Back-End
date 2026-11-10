@@ -1,16 +1,21 @@
 package unisimon.demo.service.impl;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import unisimon.demo.bootstrap.PasarelaProperties;
 import unisimon.demo.dto.request.PagoRequests;
 import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.exception.NoAutenticadoException;
+import unisimon.demo.exception.PasarelaNoDisponibleException;
 import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.exception.SolicitudInvalidaException;
+import unisimon.demo.integration.wompi.ClienteWompi;
+import unisimon.demo.integration.wompi.FirmaEventosWompiTest;
+import unisimon.demo.integration.wompi.TransaccionWompi;
 import unisimon.demo.model.Pago;
 import unisimon.demo.model.PasarelaPago;
 import unisimon.demo.policy.AccesoInmueblePolicy;
@@ -25,6 +30,7 @@ import unisimon.demo.service.PagoService;
 import unisimon.demo.support.Proyecciones;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,6 +39,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,8 +57,24 @@ class PasarelaPagoServiceImplTest {
     private NotificacionService notificaciones;
     @Mock
     private AccesoInmueblePolicy accesoInmueble;
-    @InjectMocks
+    @Mock
+    private ClienteWompi clienteWompi;
+
+    private static final String TX_ID = "1234-1610641025-49201";
+
     private PasarelaPagoServiceImpl servicio;
+
+    @BeforeEach
+    void preparar() {
+        servicio = servicioCon(FirmaEventosWompiTest.SECRETO);
+    }
+
+    private PasarelaPagoServiceImpl servicioCon(String secretoEventos) {
+        PasarelaProperties config = new PasarelaProperties("Wompi", "https://checkout.wompi.co/p/", "pub_test_123",
+                "test_integrity_abc", secretoEventos, "prv_test_abc", "https://sandbox.wompi.co/v1", null);
+        return new PasarelaPagoServiceImpl(pasarelas, pagos, pagoService, liquidacionService, notificaciones,
+                accesoInmueble, config, clienteWompi);
+    }
 
     private PasarelaView pasarela() {
         return Proyecciones.de(PasarelaView.class, "id", 2L, "nombrePasarela", "Wompi",
@@ -63,65 +86,103 @@ class PasarelaPagoServiceImplTest {
                 "monto", new BigDecimal("505000"), "estado", estado, "referencia", "PAGO-10");
     }
 
+    private Map<String, Object> eventoFirmado() {
+        return FirmaEventosWompiTest.evento("APPROVED", 50500000, FirmaEventosWompiTest.CHECKSUM);
+    }
+
+    private TransaccionWompi tx(String estado, long centavos) {
+        return new TransaccionWompi(TX_ID, "PAGO-10", estado, centavos, "COP");
+    }
+
     @Test
-    @DisplayName("el aviso con la llave correcta aprueba el pago y notifica el resultado")
+    @DisplayName("evento firmado + Wompi confirma APPROVED con el monto correcto: aprueba y notifica")
     void webhookAprueba() {
-        when(pasarelas.buscarPrincipal()).thenReturn(Optional.of(pasarela()));
+        when(clienteWompi.consultarTransaccion(TX_ID)).thenReturn(tx("APPROVED", 50500000));
         when(pagos.buscarPorReferencia("PAGO-10")).thenReturn(Optional.of(pago(Pago.PENDIENTE)));
 
-        servicio.confirmarTransaccion("pub_test_123", new PagoRequests.Webhook("PAGO-10", "aprobado"));
+        servicio.confirmarTransaccion(eventoFirmado());
 
         verify(pagoService).aprobarPago(10L);
         verify(notificaciones).notificarActualizacionDePago(1L);
     }
 
     @Test
-    @DisplayName("el aviso RECHAZADO rechaza el pago")
-    void webhookRechaza() {
-        when(pasarelas.buscarPrincipal()).thenReturn(Optional.of(pasarela()));
+    @DisplayName("el estado lo decide la API de Wompi, no el evento: DECLINED rechaza aunque el evento diga APPROVED")
+    void webhookRechazaSegunApi() {
+        when(clienteWompi.consultarTransaccion(TX_ID)).thenReturn(tx("DECLINED", 50500000));
         when(pagos.buscarPorReferencia("PAGO-10")).thenReturn(Optional.of(pago(Pago.PENDIENTE)));
 
-        servicio.confirmarTransaccion("pub_test_123", new PagoRequests.Webhook("PAGO-10", "RECHAZADO"));
+        servicio.confirmarTransaccion(eventoFirmado());
 
         verify(pagoService).rechazarPago(10L);
+        verify(pagoService, never()).aprobarPago(any());
     }
 
     @Test
-    @DisplayName("un aviso repetido no vuelve a notificar")
-    void webhookRepetidoNoNotifica() {
-        when(pasarelas.buscarPrincipal()).thenReturn(Optional.of(pasarela()));
-        when(pagos.buscarPorReferencia("PAGO-10")).thenReturn(Optional.of(pago(Pago.APROBADO)));
+    @DisplayName("APPROVED con monto distinto al del pago no aprueba (queda PENDIENTE para revision)")
+    void webhookMontoDistinto() {
+        when(clienteWompi.consultarTransaccion(TX_ID)).thenReturn(tx("APPROVED", 100));
+        when(pagos.buscarPorReferencia("PAGO-10")).thenReturn(Optional.of(pago(Pago.PENDIENTE)));
 
-        servicio.confirmarTransaccion("pub_test_123", new PagoRequests.Webhook("PAGO-10", "APROBADO"));
+        servicio.confirmarTransaccion(eventoFirmado());
 
+        verify(pagoService, never()).aprobarPago(any());
         verify(notificaciones, never()).notificarActualizacionDePago(any());
     }
 
     @Test
-    @DisplayName("el aviso sin llave o con llave equivocada se rechaza antes de tocar el pago")
-    void webhookLlaveInvalida() {
-        when(pasarelas.buscarPrincipal()).thenReturn(Optional.of(pasarela()));
+    @DisplayName("PENDING no cambia nada; un evento repetido sobre un pago ya resuelto tampoco")
+    void webhookPendienteYRepetido() {
+        when(clienteWompi.consultarTransaccion(TX_ID)).thenReturn(tx("PENDING", 50500000));
+        when(pagos.buscarPorReferencia("PAGO-10")).thenReturn(Optional.of(pago(Pago.PENDIENTE)));
+        servicio.confirmarTransaccion(eventoFirmado());
 
-        assertThatThrownBy(() -> servicio.confirmarTransaccion(null, new PagoRequests.Webhook("PAGO-10", "APROBADO")))
-                .isInstanceOf(NoAutenticadoException.class);
-        assertThatThrownBy(() -> servicio.confirmarTransaccion("otra", new PagoRequests.Webhook("PAGO-10", "APROBADO")))
-                .isInstanceOf(NoAutenticadoException.class);
-        verify(pagos, never()).buscarPorReferencia(any());
+        when(clienteWompi.consultarTransaccion(TX_ID)).thenReturn(tx("APPROVED", 50500000));
+        when(pagos.buscarPorReferencia("PAGO-10")).thenReturn(Optional.of(pago(Pago.APROBADO)));
+        servicio.confirmarTransaccion(eventoFirmado());
+
+        verify(pagoService, never()).aprobarPago(any());
+        verify(pagoService, never()).rechazarPago(any());
+        verify(notificaciones, never()).notificarActualizacionDePago(any());
     }
 
     @Test
-    @DisplayName("el aviso con referencia desconocida o estado invalido falla")
-    void webhookDatosInvalidos() {
-        when(pasarelas.buscarPrincipal()).thenReturn(Optional.of(pasarela()));
-        when(pagos.buscarPorReferencia("NO-EXISTE")).thenReturn(Optional.empty());
-        when(pagos.buscarPorReferencia("PAGO-10")).thenReturn(Optional.of(pago(Pago.PENDIENTE)));
+    @DisplayName("evento sin firma valida: 401 sin consultar Wompi ni tocar pagos (el ataque con la llave publica ya no sirve)")
+    void webhookFirmaInvalida() {
+        Map<String, Object> falso = FirmaEventosWompiTest.evento("APPROVED", 50500000, "0".repeat(64));
 
-        assertThatThrownBy(() -> servicio.confirmarTransaccion("pub_test_123",
-                new PagoRequests.Webhook("NO-EXISTE", "APROBADO")))
+        assertThatThrownBy(() -> servicio.confirmarTransaccion(falso)).isInstanceOf(NoAutenticadoException.class);
+        assertThatThrownBy(() -> servicio.confirmarTransaccion(Map.of("referencia", "PAGO-10", "estado", "APROBADO")))
+                .isInstanceOf(NoAutenticadoException.class);
+        verifyNoInteractions(clienteWompi, pagos, pagoService);
+    }
+
+    @Test
+    @DisplayName("sin secreto de eventos configurado el webhook no procesa nada")
+    void webhookSinSecreto() {
+        PasarelaPagoServiceImpl sinSecreto = servicioCon("");
+
+        assertThatThrownBy(() -> sinSecreto.confirmarTransaccion(eventoFirmado()))
+                .isInstanceOf(ConflictoException.class).hasMessageContaining("eventos");
+        verifyNoInteractions(clienteWompi, pagos);
+    }
+
+    @Test
+    @DisplayName("otros tipos de evento se ignoran; referencia desconocida es 404; Wompi caido propaga 502")
+    void webhookCasosBorde() {
+        Map<String, Object> otro = eventoFirmado();
+        otro.put("event", "nequi_token.updated");
+        servicio.confirmarTransaccion(otro);
+        verifyNoInteractions(clienteWompi);
+
+        when(clienteWompi.consultarTransaccion(TX_ID)).thenReturn(tx("APPROVED", 50500000));
+        when(pagos.buscarPorReferencia("PAGO-10")).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> servicio.confirmarTransaccion(eventoFirmado()))
                 .isInstanceOf(RecursoNoEncontradoException.class);
-        assertThatThrownBy(() -> servicio.confirmarTransaccion("pub_test_123",
-                new PagoRequests.Webhook("PAGO-10", "TALVEZ")))
-                .isInstanceOf(SolicitudInvalidaException.class);
+
+        when(clienteWompi.consultarTransaccion(TX_ID)).thenThrow(new PasarelaNoDisponibleException("caido"));
+        assertThatThrownBy(() -> servicio.confirmarTransaccion(eventoFirmado()))
+                .isInstanceOf(PasarelaNoDisponibleException.class);
     }
 
     @Test

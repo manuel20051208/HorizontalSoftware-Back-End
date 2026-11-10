@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import unisimon.demo.bootstrap.PasarelaProperties;
 import unisimon.demo.dto.request.PagoRequests;
 import unisimon.demo.dto.response.PagoResponses;
 import unisimon.demo.exception.ConflictoException;
@@ -65,8 +66,14 @@ class PagoServiceImplTest {
     @BeforeEach
     void preparar() {
         Clock reloj = Clock.fixed(Instant.parse("2026-11-08T12:00:00Z"), ZoneOffset.UTC);
-        servicio = new PagoServiceImpl(pagos, liquidaciones, pasarelas, residentes, inmuebles, liquidacionService,
-                accesoInmueble, reloj);
+        servicio = servicioCon(reloj, "test_integrity_abc");
+    }
+
+    private PagoServiceImpl servicioCon(Clock reloj, String secreto) {
+        return new PagoServiceImpl(pagos, liquidaciones, pasarelas, residentes, inmuebles, liquidacionService,
+                accesoInmueble, reloj, new PasarelaProperties("Wompi", "https://checkout.wompi.co/p/",
+                "pub_test_123", secreto, "test_events_abc", "prv_test_abc", "https://sandbox.wompi.co/v1",
+                "https://front.test/pagos/resultado"));
     }
 
     private ContextoResidenteView residente(boolean activo) {
@@ -102,7 +109,36 @@ class PagoServiceImplTest {
         assertThat(insertado.getValue().getMetodoPago()).isEqualTo("PSE");
         assertThat(insertado.getValue().getEstado()).isEqualTo(Pago.PENDIENTE);
         verify(pagos).actualizarTransaccion(eq(10L), any(String.class), eq(2L));
-        assertThat(respuesta.urlCheckout()).contains("amount-in-cents=50500000", "currency=COP");
+        assertThat(respuesta.urlCheckout()).contains("amount-in-cents=50500000", "currency=COP",
+                "signature:integrity=", "&redirect-url=https%3A%2F%2Ffront.test%2Fpagos%2Fresultado")
+                .doesNotContain("test_integrity_abc", "prv_test_abc", "test_events_abc");
+    }
+
+    @Test
+    @DisplayName("registrarPago falla sin secreto de integridad y no deja un pago PENDIENTE huerfano")
+    void registrarPagoSinSecreto() {
+        PagoServiceImpl sinSecreto = servicioCon(Clock.systemUTC(), "");
+        when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(true)));
+        when(liquidaciones.saldoPendiente(1L)).thenReturn(new BigDecimal("1000"));
+        when(pasarelas.buscarPrincipal()).thenReturn(Optional.of(pasarela()));
+
+        assertThatThrownBy(() -> sinSecreto.registrarPago(5L, new PagoRequests.IniciarPago("PSE")))
+                .isInstanceOf(ConflictoException.class).hasMessageContaining("secreto");
+        verify(pagos, never()).insertar(any());
+    }
+
+    @Test
+    @DisplayName("PasarelaProperties no imprime ningun secreto en toString y reporta los que faltan")
+    void propertiesNoFiltranSecretos() {
+        PasarelaProperties completa = new PasarelaProperties("Wompi", "u", "pub_test_1", "test_integrity_abc",
+                "test_events_abc", "prv_test_abc", "https://sandbox.wompi.co/v1", null);
+        assertThat(completa.toString())
+                .doesNotContain("test_integrity_abc", "test_events_abc", "prv_test_abc").contains("****");
+        assertThat(completa.secretosFaltantes()).isEmpty();
+
+        PasarelaProperties vacia = new PasarelaProperties("Wompi", "u", "pub_test_1", "", null, " ", null, null);
+        assertThat(vacia.secretosFaltantes()).containsExactly("PASARELA_INTEGRITY_SECRET", "PASARELA_EVENTS_SECRET",
+                "PASARELA_PRIVATE_KEY", "PASARELA_URL_API_REST");
     }
 
     @Test

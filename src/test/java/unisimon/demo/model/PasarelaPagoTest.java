@@ -10,6 +10,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PasarelaPagoTest {
 
+    private static final String SECRETO = "test_integrity_abc";
+
     private PasarelaPago pasarela() {
         return new PasarelaPago(1L, "Wompi", "https://checkout.wompi.co/p/", "pub_test_123");
     }
@@ -24,7 +26,7 @@ class PasarelaPagoTest {
         PasarelaPago pasarela = pasarela();
         Pago pago = pago(7L, new BigDecimal("485000"));
 
-        String url = pasarela.iniciarTransaccion(pago);
+        String url = pasarela.iniciarTransaccion(pago, SECRETO);
 
         assertThat(pago.getReferencia()).startsWith("PAGO-7-");
         assertThat(pago.getPasarela()).isSameAs(pasarela);
@@ -41,7 +43,7 @@ class PasarelaPagoTest {
         Pago pago = pago(7L, BigDecimal.TEN);
         pago.setReferencia("MI-REF");
 
-        pasarela().iniciarTransaccion(pago);
+        pasarela().iniciarTransaccion(pago, SECRETO);
 
         assertThat(pago.getReferencia()).isEqualTo("MI-REF");
     }
@@ -51,16 +53,38 @@ class PasarelaPagoTest {
     void validaciones() {
         PasarelaPago inactiva = pasarela();
         inactiva.setEstado(PasarelaPago.INACTIVA);
-        assertThatThrownBy(() -> inactiva.iniciarTransaccion(pago(1L, BigDecimal.TEN)))
+        assertThatThrownBy(() -> inactiva.iniciarTransaccion(pago(1L, BigDecimal.TEN), SECRETO))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("inactiva");
 
-        assertThatThrownBy(() -> pasarela().iniciarTransaccion(pago(null, BigDecimal.TEN)))
+        assertThatThrownBy(() -> pasarela().iniciarTransaccion(pago(null, BigDecimal.TEN), SECRETO))
                 .isInstanceOf(IllegalArgumentException.class);
 
         Pago aprobado = pago(1L, BigDecimal.TEN);
         aprobado.setEstado(Pago.APROBADO);
-        assertThatThrownBy(() -> pasarela().iniciarTransaccion(aprobado))
+        assertThatThrownBy(() -> pasarela().iniciarTransaccion(aprobado, SECRETO))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("PENDIENTE");
+    }
+
+    @Test
+    @DisplayName("iniciarTransaccion firma el checkout con SHA-256(referencia + centavos + COP + secreto)")
+    void firmaIntegridad() {
+        Pago pago = pago(7L, new BigDecimal("485000"));
+        pago.setReferencia("PAGO-7-ABC12345");
+
+        String url = pasarela().iniciarTransaccion(pago, SECRETO);
+
+        // Valor calculado fuera de Java: printf '%s' PAGO-7-ABC12345 48500000 COP test_integrity_abc | sha256sum
+        String esperada = "db0ad3ba7dc25ded4c980346e1f65af35488872610ff0ae0832b1d8692f840a4";
+        assertThat(url).endsWith("&signature:integrity=" + esperada).doesNotContain(SECRETO);
+    }
+
+    @Test
+    @DisplayName("iniciarTransaccion no arma un checkout sin firmar si falta el secreto")
+    void sinSecreto() {
+        assertThatThrownBy(() -> pasarela().iniciarTransaccion(pago(1L, BigDecimal.TEN), null))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("secreto");
+        assertThatThrownBy(() -> pasarela().iniciarTransaccion(pago(1L, BigDecimal.TEN), "  "))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("secreto");
     }
 
     @Test

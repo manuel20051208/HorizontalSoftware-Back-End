@@ -1,19 +1,20 @@
 package unisimon.demo.controller;
 
-import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import unisimon.demo.dto.request.PagoRequests;
-import unisimon.demo.dto.response.PagoResponses;
 import unisimon.demo.security.annotation.Publico;
 import unisimon.demo.service.PasarelaPagoService;
 
+import java.util.Map;
+
 /**
- * Aviso que la pasarela envia al backend cuando un pago se aprueba o se rechaza.
- * Es publico (la pasarela no tiene sesion): se autentica con la llave de la pasarela en X-Api-Key.
+ * Eventos que Wompi envia al backend (URL de eventos configurada en el dashboard de Wompi).
+ * Es publico (Wompi no tiene sesion): la autenticidad se verifica con signature.checksum y el secreto de eventos,
+ * y el resultado se confirma consultando la transaccion en la API de Wompi.
+ * Responde 200 sin cuerpo; cualquier otro codigo hace que Wompi reintente.
  */
 @RestController
 @RequestMapping("/api/pasarela")
@@ -27,8 +28,8 @@ public class PasarelaWebhookController {
 
     @Publico
     @PostMapping("/webhook")
-    public PagoResponses.Pago webhook(@RequestHeader(value = "X-Api-Key", required = false) String apiKey,
-                                      @Valid @RequestBody PagoRequests.Webhook aviso) {
-        return pasarela.confirmarTransaccion(apiKey, aviso);
+    public ResponseEntity<Void> webhook(@RequestBody Map<String, Object> evento) {
+        pasarela.confirmarTransaccion(evento);
+        return ResponseEntity.ok().build();
     }
 }

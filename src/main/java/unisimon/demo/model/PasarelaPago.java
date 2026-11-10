@@ -13,6 +13,9 @@ import lombok.Setter;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 import java.util.UUID;
 
 /**
@@ -59,9 +62,20 @@ public class PasarelaPago {
     /**
      * iniciarTransaccion(pago : Pago) : String.
      * Asigna la referencia al pago (si no la tiene), lo deja asociado a esta pasarela y devuelve la URL
-     * del checkout a la que debe ir el residente.
+     * del checkout firmada (signature:integrity) a la que debe ir el residente.
+     * <p>
+     * {@code secretoIntegridad} llega por parametro y no se guarda en la entidad: nunca toca la base de datos
+     * ni las respuestas. Solo sale de aqui su hash, que no permite recuperarlo.
      */
-    public String iniciarTransaccion(Pago pago) {
+    public String iniciarTransaccion(Pago pago, String secretoIntegridad) {
+        return iniciarTransaccion(pago, secretoIntegridad, null);
+    }
+
+    /** Igual que {@link #iniciarTransaccion(Pago, String)}; {@code redirectUrl} (opcional) es a donde vuelve el residente. */
+    public String iniciarTransaccion(Pago pago, String secretoIntegridad, String redirectUrl) {
+        if (secretoIntegridad == null || secretoIntegridad.isBlank()) {
+            throw new IllegalStateException("El secreto de integridad de la pasarela no esta configurado");
+        }
         if (!ACTIVA.equals(estado)) {
             throw new IllegalStateException("La pasarela " + nombrePasarela + " esta inactiva");
         }
@@ -80,9 +94,24 @@ public class PasarelaPago {
         String separador = urlApi.contains("?") ? "&" : "?";
         return urlApi + separador
                 + "public-key=" + enc(apiKey)
-                + "&currency=COP"
+                + "&currency=" + MONEDA
                 + "&amount-in-cents=" + centavos
-                + "&reference=" + enc(pago.getReferencia());
+                + "&reference=" + enc(pago.getReferencia())
+                + "&signature:integrity=" + firmaIntegridad(pago.getReferencia(), centavos, secretoIntegridad)
+                + (redirectUrl == null || redirectUrl.isBlank() ? "" : "&redirect-url=" + enc(redirectUrl.trim()));
+    }
+
+    private static final String MONEDA = "COP";
+
+    /** Firma de integridad de Wompi: SHA-256 (hex) de referencia + centavos + moneda + secreto. */
+    static String firmaIntegridad(String referencia, long centavos, String secretoIntegridad) {
+        try {
+            byte[] hash = MessageDigest.getInstance("SHA-256").digest(
+                    (referencia + centavos + MONEDA + secretoIntegridad).getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 no disponible", e);
+        }
     }
 
     /** reembolsar(pago : Pago) : Boolean -> solo se reembolsa un pago aprobado. */

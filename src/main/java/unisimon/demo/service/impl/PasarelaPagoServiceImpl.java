@@ -1,16 +1,23 @@
 package unisimon.demo.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import unisimon.demo.bootstrap.PasarelaProperties;
 import unisimon.demo.cache.NombresCache;
 import unisimon.demo.dto.request.PagoRequests;
 import unisimon.demo.dto.response.PagoResponses;
 import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.exception.NoAutenticadoException;
+import unisimon.demo.exception.PasarelaNoDisponibleException;
 import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.exception.SolicitudInvalidaException;
+import unisimon.demo.integration.wompi.ClienteWompi;
+import unisimon.demo.integration.wompi.FirmaEventosWompi;
+import unisimon.demo.integration.wompi.TransaccionWompi;
 import unisimon.demo.mapper.Hidratador;
 import unisimon.demo.mapper.PagoMapper;
 import unisimon.demo.model.Pago;
@@ -26,16 +33,18 @@ import unisimon.demo.service.NotificacionService;
 import unisimon.demo.service.PagoService;
 import unisimon.demo.service.PasarelaPagoService;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /** Configuracion de la pasarela y procesamiento de sus avisos (webhook). */
 @Service
 public class PasarelaPagoServiceImpl implements PasarelaPagoService {
 
+    private static final Logger log = LoggerFactory.getLogger(PasarelaPagoServiceImpl.class);
     private static final Set<String> ESTADOS_PASARELA = Set.of(PasarelaPago.ACTIVA, PasarelaPago.INACTIVA);
+    static final String EVENTO_TRANSACCION = "transaction.updated";
+    private static final String MONEDA = "COP";
 
     private final PasarelaPagoRepository pasarelas;
     private final PagoRepository pagos;
@@ -43,10 +52,15 @@ public class PasarelaPagoServiceImpl implements PasarelaPagoService {
     private final LiquidacionService liquidacionService;
     private final NotificacionService notificaciones;
     private final AccesoInmueblePolicy accesoInmueble;
+    private final PasarelaProperties config;
+    private final ClienteWompi clienteWompi;
 
     public PasarelaPagoServiceImpl(PasarelaPagoRepository pasarelas, PagoRepository pagos, PagoService pagoService,
                                    LiquidacionService liquidacionService, NotificacionService notificaciones,
-                                   AccesoInmueblePolicy accesoInmueble) {
+                                   AccesoInmueblePolicy accesoInmueble, PasarelaProperties config,
+                                   ClienteWompi clienteWompi) {
+        this.config = config;
+        this.clienteWompi = clienteWompi;
         this.pasarelas = pasarelas;
         this.pagos = pagos;
         this.pagoService = pagoService;
@@ -79,29 +93,53 @@ public class PasarelaPagoServiceImpl implements PasarelaPagoService {
         return PagoMapper.pasarela(principal());
     }
 
+    /**
+     * 1) Verifica la firma del evento con el secreto de eventos (nadie sin el secreto puede fabricarlo).
+     * 2) No confia en el contenido del aviso: consulta la transaccion en la API de Wompi con la llave privada.
+     * 3) Aprueba solo si Wompi dice APPROVED y el monto y la moneda coinciden con el pago del servidor.
+     */
     @Override
     @Transactional
-    public PagoResponses.Pago confirmarTransaccion(String apiKey, PagoRequests.Webhook aviso) {
-        PasarelaView pasarela = principal();
-        // Comparacion en tiempo constante para no filtrar la llave por tiempos de respuesta.
-        boolean llaveValida = apiKey != null && MessageDigest.isEqual(
-                apiKey.getBytes(StandardCharsets.UTF_8), pasarela.getApiKey().getBytes(StandardCharsets.UTF_8));
-        if (!llaveValida) {
-            throw new NoAutenticadoException("Llave de la pasarela invalida");
+    public void confirmarTransaccion(Map<String, Object> evento) {
+        if (PasarelaProperties.vacio(config.eventsSecret())) {
+            throw new ConflictoException("La pasarela de pagos no tiene configurado el secreto de eventos");
         }
-        PagoView pago = pagos.buscarPorReferencia(aviso.referencia().trim())
-                .orElseThrow(() -> new RecursoNoEncontradoException("No existe un pago con esa referencia"));
-        boolean estabaPendiente = Pago.PENDIENTE.equals(pago.getEstado());
+        if (!FirmaEventosWompi.esValida(evento, config.eventsSecret())) {
+            throw new NoAutenticadoException("Firma del evento de la pasarela invalida");
+        }
+        if (!EVENTO_TRANSACCION.equals(evento.get("event"))) {
+            return;   // otros eventos (p. ej. nequi_token.updated) no afectan pagos
+        }
+        Object id = FirmaEventosWompi.valor(evento, "data.transaction.id");
+        if (id == null || id.toString().isBlank()) {
+            throw new SolicitudInvalidaException("El evento no trae el id de la transaccion");
+        }
 
-        PagoResponses.Pago resultado = switch (aviso.estado().trim().toUpperCase(Locale.ROOT)) {
-            case Pago.APROBADO -> pagoService.aprobarPago(pago.getId());
-            case Pago.RECHAZADO -> pagoService.rechazarPago(pago.getId());
-            default -> throw new SolicitudInvalidaException("estado debe ser APROBADO o RECHAZADO");
-        };
-        if (estabaPendiente) {
-            notificaciones.notificarActualizacionDePago(pago.getInmuebleId());   // notificarResultado(pago)
+        TransaccionWompi tx = clienteWompi.consultarTransaccion(id.toString());   // fuente de verdad
+        if (tx.referencia() == null) {
+            throw new PasarelaNoDisponibleException("La pasarela respondio una transaccion sin referencia");
         }
-        return resultado;
+        PagoView pago = pagos.buscarPorReferencia(tx.referencia())
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe un pago con esa referencia"));
+        if (!Pago.PENDIENTE.equals(pago.getEstado())) {
+            return;   // idempotente: Wompi puede reenviar el mismo evento
+        }
+
+        if (tx.aprobada()) {
+            long esperado = pago.getMonto().movePointRight(2).longValueExact();
+            if (tx.montoEnCentavos() != esperado || !MONEDA.equals(tx.moneda())) {
+                log.warn("Transaccion {} aprobada con monto/moneda ({} {}) distintos al pago {} ({} {}); "
+                                + "el pago queda PENDIENTE para revision manual",
+                        tx.id(), tx.montoEnCentavos(), tx.moneda(), pago.getId(), esperado, MONEDA);
+                return;
+            }
+            pagoService.aprobarPago(pago.getId());
+        } else if (tx.fallida()) {
+            pagoService.rechazarPago(pago.getId());
+        } else {
+            return;   // PENDING: llegara otro evento cuando termine
+        }
+        notificaciones.notificarActualizacionDePago(pago.getInmuebleId());   // notificarResultado(pago)
     }
 
     @Override
