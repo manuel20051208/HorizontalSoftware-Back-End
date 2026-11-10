@@ -10,11 +10,13 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -63,6 +65,17 @@ public class GlobalExceptionHandler {
         return anonimo
                 ? responder(HttpStatus.UNAUTHORIZED, "Debe iniciar sesion")
                 : responder(HttpStatus.FORBIDDEN, "No tiene permiso para esta operacion");
+    }
+
+    /** Ruta inexistente (GET /, bots que escanean, health checks): 404 sin stack trace en el log. */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> rutaNoEncontrada(NoResourceFoundException e) {
+        return responder(HttpStatus.NOT_FOUND, "La ruta solicitada no existe");
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> metodoNoPermitido(HttpRequestMethodNotSupportedException e) {
+        return responder(HttpStatus.METHOD_NOT_ALLOWED, "Metodo " + e.getMethod() + " no permitido en esta ruta");
     }
 
     @ExceptionHandler(Exception.class)
