@@ -34,3 +34,5 @@ build/
 
 ### Secretos locales ###
 .env
+.neon
+node_modules/

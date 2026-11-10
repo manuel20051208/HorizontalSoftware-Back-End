@@ -1,6 +1,9 @@
 services:
   postgres:
-    image: 'postgres:latest'
+    # NO usar 'postgres:latest': ya es v18 y cambio la ruta de PGDATA
+    # (/var/lib/postgresql/18/docker), lo que rompe el montaje clasico y deja
+    # el contenedor en bucle de reinicio. Fijamos una version estable.
+    image: 'postgres:16-alpine'
     environment:
       - 'POSTGRES_DB=${DB_NAME:-horizontal}'
       - 'POSTGRES_PASSWORD=${DB_PASSWORD:-secret}'
