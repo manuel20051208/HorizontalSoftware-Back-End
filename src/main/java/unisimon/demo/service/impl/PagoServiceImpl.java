@@ -86,10 +86,11 @@ public class PagoServiceImpl implements PagoService {
         }
         PasarelaView vistaPasarela = pasarelas.buscarPrincipal()
                 .orElseThrow(() -> new ConflictoException("La pasarela de pagos aun no esta configurada"));
-        String secreto = configPasarela.integritySecret();
-        if (secreto == null || secreto.isBlank()) {
-            // Se valida antes de insertar el pago para no dejar pagos PENDIENTES huerfanos.
-            throw new ConflictoException("La pasarela de pagos no tiene configurado el secreto de integridad");
+        if (!configPasarela.listaParaCobrar()) {
+            // Antes de insertar el pago: no se cobra con llaves faltantes, invalidas o de ambientes mezclados
+            // (se cobraria pero el webhook nunca podria confirmarlo) y no quedan pagos PENDIENTES huerfanos.
+            throw new ConflictoException("La pasarela de pagos no esta bien configurada en el servidor "
+                    + "(secretos, llaves o URLs). Contacte al administrador");
         }
 
         // El valor lo fija el servidor (saldo pendiente), nunca el cliente.
@@ -97,6 +98,9 @@ public class PagoServiceImpl implements PagoService {
                 "Administracion " + residente.getDireccionInmueble(), metodo, null);
         pago.setId(pagos.insertar(pago));
         PasarelaPago pasarela = Hidratador.pasarela(vistaPasarela);
+        // El .env es la fuente de verdad del checkout (la tabla solo aporta id y estado ACTIVA/INACTIVA).
+        pasarela.setUrlApi(configPasarela.urlApi().trim());
+        pasarela.setApiKey(configPasarela.apiKey().trim());
         // dominio: asigna referencia y pasarela, y firma el checkout con el secreto (solo del entorno)
         String urlCheckout = pasarela.iniciarTransaccion(pago, configPasarela.integritySecret(),
                 configPasarela.redirectUrl());

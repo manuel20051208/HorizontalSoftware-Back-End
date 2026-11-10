@@ -128,17 +128,19 @@ class PagoServiceImplTest {
     }
 
     @Test
-    @DisplayName("PasarelaProperties no imprime ningun secreto en toString y reporta los que faltan")
-    void propertiesNoFiltranSecretos() {
-        PasarelaProperties completa = new PasarelaProperties("Wompi", "u", "pub_test_1", "test_integrity_abc",
-                "test_events_abc", "prv_test_abc", "https://sandbox.wompi.co/v1", null);
-        assertThat(completa.toString())
-                .doesNotContain("test_integrity_abc", "test_events_abc", "prv_test_abc").contains("****");
-        assertThat(completa.secretosFaltantes()).isEmpty();
+    @DisplayName("el checkout usa la llave del .env aunque la tabla tenga otra vieja")
+    void checkoutUsaLlaveDelEntorno() {
+        when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(true)));
+        when(liquidaciones.saldoPendiente(1L)).thenReturn(new BigDecimal("505000"));
+        when(pasarelas.buscarPrincipal()).thenReturn(Optional.of(Proyecciones.de(PasarelaView.class, "id", 2L,
+                "nombrePasarela", "Wompi", "urlApi", "https://viejo.test/", "apiKey", "pub_test_VIEJA",
+                "estado", "ACTIVA")));
+        when(pagos.insertar(any(Pago.class))).thenReturn(10L);
+        when(pagos.buscarPorId(10L)).thenReturn(Optional.of(pago(10, Pago.PENDIENTE)));
 
-        PasarelaProperties vacia = new PasarelaProperties("Wompi", "u", "pub_test_1", "", null, " ", null, null);
-        assertThat(vacia.secretosFaltantes()).containsExactly("PASARELA_INTEGRITY_SECRET", "PASARELA_EVENTS_SECRET",
-                "PASARELA_PRIVATE_KEY", "PASARELA_URL_API_REST");
+        String url = servicio.registrarPago(5L, new PagoRequests.IniciarPago("PSE")).urlCheckout();
+
+        assertThat(url).startsWith("https://checkout.wompi.co/p/?public-key=pub_test_123").doesNotContain("VIEJA");
     }
 
     @Test

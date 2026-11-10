@@ -22,10 +22,7 @@ public final class PagoRequests {
                             @Size(max = 100) String referencia) {
     }
 
-    /** estado: ACTIVA o INACTIVA. */
-    public record ConfigurarPasarela(@NotBlank @Size(max = 60) String nombrePasarela,
-                                     @NotBlank @Size(max = 300) String urlApi,
-                                     @NotBlank @Size(max = 200) String apiKey,
-                                     @NotBlank String estado) {
+    /** estado: ACTIVA o INACTIVA. Nombre, URL y llaves se configuran en el .env, no por API. */
+    public record ConfigurarPasarela(@NotBlank String estado) {
     }
 }

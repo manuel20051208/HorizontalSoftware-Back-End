@@ -79,17 +79,17 @@ public class PasarelaPagoServiceImpl implements PasarelaPagoService {
     @Override
     @Transactional
     @CacheEvict(cacheNames = NombresCache.PASARELA_PAGO, allEntries = true)
+    /**
+     * Solo activa o desactiva la pasarela. Nombre, URL y llaves vienen del .env (se sincronizan al arrancar):
+     * si se escribieran aqui se perderian en el siguiente reinicio.
+     */
     public PagoResponses.Pasarela configurar(PagoRequests.ConfigurarPasarela s) {
         String estado = s.estado().trim().toUpperCase(Locale.ROOT);
         if (!ESTADOS_PASARELA.contains(estado)) {
             throw new SolicitudInvalidaException("estado debe ser ACTIVA o INACTIVA");
         }
-        PasarelaPago nueva = new PasarelaPago(null, s.nombrePasarela().trim(), s.urlApi().trim(), s.apiKey().trim());
-        nueva.setEstado(estado);
-        pasarelas.buscarPrincipal().ifPresentOrElse(
-                actual -> pasarelas.actualizar(actual.getId(), nueva.getNombrePasarela(), nueva.getUrlApi(),
-                        nueva.getApiKey(), nueva.getEstado()),
-                () -> pasarelas.insertar(nueva));
+        PasarelaView actual = principal();
+        pasarelas.actualizar(actual.getId(), actual.getNombrePasarela(), actual.getUrlApi(), actual.getApiKey(), estado);
         return PagoMapper.pasarela(principal());
     }
 

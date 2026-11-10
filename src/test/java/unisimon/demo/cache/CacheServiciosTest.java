@@ -257,8 +257,7 @@ class CacheServiciosTest {
         pasarelaService.obtener();
         verify(pasarelas, times(1)).buscarPrincipal();
 
-        pasarelaService.configurar(new PagoRequests.ConfigurarPasarela("Wompi", "https://pasarela.test/",
-                "pub_test_5678", "ACTIVA"));
+        pasarelaService.configurar(new PagoRequests.ConfigurarPasarela("INACTIVA"));
         clearInvocations(pasarelas);
         pasarelaService.obtener();
         verify(pasarelas, times(1)).buscarPrincipal();

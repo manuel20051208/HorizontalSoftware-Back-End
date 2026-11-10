@@ -219,15 +219,24 @@ class PasarelaPagoServiceImplTest {
     }
 
     @Test
-    @DisplayName("configurar valida el estado y crea la pasarela si no existe")
+    @DisplayName("configurar solo cambia el estado y conserva nombre, URL y llave (vienen del .env)")
     void configurar() {
-        assertThatThrownBy(() -> servicio.configurar(
-                new PagoRequests.ConfigurarPasarela("Wompi", "http://x", "k", "MAL")))
+        assertThatThrownBy(() -> servicio.configurar(new PagoRequests.ConfigurarPasarela("MAL")))
                 .isInstanceOf(SolicitudInvalidaException.class);
 
-        when(pasarelas.buscarPrincipal()).thenReturn(Optional.empty(), Optional.of(pasarela()));
-        servicio.configurar(new PagoRequests.ConfigurarPasarela("Wompi", "http://x", "k", "activa"));
+        when(pasarelas.buscarPrincipal()).thenReturn(Optional.of(pasarela()));
+        servicio.configurar(new PagoRequests.ConfigurarPasarela("inactiva"));
 
-        verify(pasarelas).insertar(any(PasarelaPago.class));
+        verify(pasarelas).actualizar(2L, "Wompi", "https://checkout.wompi.co/p/", "pub_test_123", "INACTIVA");
+        verify(pasarelas, never()).insertar(any(PasarelaPago.class));
+    }
+
+    @Test
+    @DisplayName("configurar sin pasarela registrada es un conflicto (se registra al arrancar desde el .env)")
+    void configurarSinPasarela() {
+        when(pasarelas.buscarPrincipal()).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> servicio.configurar(new PagoRequests.ConfigurarPasarela("ACTIVA")))
+                .isInstanceOf(ConflictoException.class);
     }
 }
