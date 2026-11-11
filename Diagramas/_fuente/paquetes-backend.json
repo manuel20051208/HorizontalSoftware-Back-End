@@ -1,0 +1,342 @@
+{
+ "schema_version": 1,
+ "diagram_type": "architecture",
+ "meta": {
+  "title": "Diagrama de paquetes del backend",
+  "output": "Diagramas/Paquetes/paquetes-backend.html",
+  "quality_profile": "showcase",
+  "locale": "es",
+  "repository": {
+   "url": "https://github.com/manuel20051208/HorizontalSoftware-Back-End.git",
+   "revision": "34417f2446e6061461965d63d256a162e4f34753",
+   "provider": "github"
+  }
+ },
+ "components": [
+  {
+   "id": "scheduler",
+   "type": "backend",
+   "label": "scheduler",
+   "sublabel": "tarea nocturna",
+   "pos": [
+    40,
+    40
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/scheduler/LiquidacionScheduler.java",
+     "line": 1,
+     "end_line": 26
+    }
+   ]
+  },
+  {
+   "id": "controller",
+   "type": "backend",
+   "label": "controller",
+   "sublabel": "16 controladores REST",
+   "pos": [
+    260,
+    40
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/controller/PagoController.java",
+     "line": 1,
+     "end_line": 37
+    }
+   ]
+  },
+  {
+   "id": "security",
+   "type": "security",
+   "label": "security",
+   "sublabel": "JWT y roles",
+   "pos": [
+    480,
+    40
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/security/JwtTokenService.java",
+     "line": 1,
+     "end_line": 91
+    }
+   ]
+  },
+  {
+   "id": "config",
+   "type": "backend",
+   "label": "config",
+   "sublabel": "seguridad, cache, CORS",
+   "pos": [
+    700,
+    40
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/config/SecurityConfig.java",
+     "line": 1,
+     "end_line": 44
+    }
+   ]
+  },
+  {
+   "id": "bootstrap",
+   "type": "backend",
+   "label": "bootstrap",
+   "sublabel": "datos iniciales y pasarela",
+   "pos": [
+    40,
+    200
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/bootstrap/DatosIniciales.java",
+     "line": 1,
+     "end_line": 65
+    }
+   ]
+  },
+  {
+   "id": "service",
+   "type": "backend",
+   "label": "service",
+   "sublabel": "logica de negocio",
+   "pos": [
+    260,
+    200
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/PagoServiceImpl.java",
+     "line": 1,
+     "end_line": 241
+    }
+   ],
+   "tag": "impl"
+  },
+  {
+   "id": "integration",
+   "type": "external",
+   "label": "integration",
+   "sublabel": "cliente Wompi",
+   "pos": [
+    480,
+    200
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/integration/wompi/ClienteWompiRest.java",
+     "line": 1,
+     "end_line": 67
+    }
+   ]
+  },
+  {
+   "id": "policy",
+   "type": "backend",
+   "label": "policy",
+   "sublabel": "reglas de estado",
+   "pos": [
+    40,
+    360
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/policy/EstadoPagoPolicy.java",
+     "line": 1,
+     "end_line": 43
+    }
+   ]
+  },
+  {
+   "id": "repository",
+   "type": "backend",
+   "label": "repository",
+   "sublabel": "SQL nativo",
+   "pos": [
+    260,
+    360
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/repository/PagoRepository.java",
+     "line": 1,
+     "end_line": 101
+    }
+   ]
+  },
+  {
+   "id": "mapper",
+   "type": "backend",
+   "label": "mapper",
+   "sublabel": "vista a respuesta",
+   "pos": [
+    480,
+    360
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/mapper/PagoMapper.java",
+     "line": 1,
+     "end_line": 32
+    }
+   ]
+  },
+  {
+   "id": "model",
+   "type": "backend",
+   "label": "model",
+   "sublabel": "dominio",
+   "pos": [
+    260,
+    520
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/model/Pago.java",
+     "line": 1,
+     "end_line": 138
+    }
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "id": "e0",
+   "from": "controller",
+   "to": "service",
+   "label": "usa"
+  },
+  {
+   "id": "e1",
+   "from": "scheduler",
+   "to": "service",
+   "label": "invoca"
+  },
+  {
+   "id": "e2",
+   "from": "bootstrap",
+   "to": "service",
+   "label": "usa"
+  },
+  {
+   "id": "e3",
+   "from": "service",
+   "to": "integration",
+   "label": "llama"
+  },
+  {
+   "id": "e4",
+   "from": "service",
+   "to": "repository",
+   "label": "consulta"
+  },
+  {
+   "id": "e5",
+   "from": "service",
+   "to": "policy",
+   "label": "aplica"
+  },
+  {
+   "id": "e6",
+   "from": "service",
+   "to": "mapper",
+   "label": "mapea"
+  },
+  {
+   "id": "e7",
+   "from": "mapper",
+   "to": "repository",
+   "label": "vistas"
+  },
+  {
+   "id": "e8",
+   "from": "policy",
+   "to": "repository",
+   "label": "lee"
+  },
+  {
+   "id": "e9",
+   "from": "repository",
+   "to": "model",
+   "label": "hidrata"
+  },
+  {
+   "id": "e10",
+   "from": "controller",
+   "to": "security",
+   "label": "roles"
+  },
+  {
+   "id": "e11",
+   "from": "config",
+   "to": "security",
+   "label": "filtro"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "emerald",
+   "title": "Capas",
+   "items": [
+    "controller depende de service; service de repository y model",
+    "Nada depende hacia arriba, salvo configuracion"
+   ]
+  },
+  {
+   "dot": "orange",
+   "title": "Omitido",
+   "items": [
+    "dto y exception los usa casi todo (service: 99 y 42 imports)",
+    "service tambien usa cache, mail y factory",
+    "integration lee propiedades de bootstrap"
+   ]
+  }
+ ]
+}

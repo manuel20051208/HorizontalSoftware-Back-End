@@ -1,0 +1,216 @@
+{
+ "schema_version": 1,
+ "diagram_type": "sequence",
+ "meta": {
+  "title": "Secuencia: liquidaciones de administracion",
+  "output": "Diagramas/Secuencia/liquidaciones.html",
+  "quality_profile": "showcase",
+  "locale": "es",
+  "repository": {
+   "url": "https://github.com/manuel20051208/HorizontalSoftware-Back-End.git",
+   "revision": "34417f2446e6061461965d63d256a162e4f34753",
+   "provider": "github"
+  }
+ },
+ "participants": [
+  {
+   "id": "adm",
+   "type": "external",
+   "label": "Administrador",
+   "sublabel": "app cliente"
+  },
+  {
+   "id": "ctl",
+   "type": "backend",
+   "label": "AdminLiquidacion",
+   "sublabel": "/api/admin/liquidaciones",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/controller/AdminLiquidacionController.java",
+     "line": 47,
+     "end_line": 80
+    }
+   ]
+  },
+  {
+   "id": "srv",
+   "type": "backend",
+   "label": "LiquidacionService",
+   "sublabel": "generar y estados",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/LiquidacionServiceImpl.java",
+     "line": 53,
+     "end_line": 99
+    },
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/LiquidacionServiceImpl.java",
+     "line": 133,
+     "end_line": 141
+    }
+   ]
+  },
+  {
+   "id": "db",
+   "type": "database",
+   "label": "PostgreSQL",
+   "sublabel": "liquidacion, inmueble",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/repository/LiquidacionRepository.java",
+     "line": 1,
+     "end_line": 138
+    }
+   ]
+  },
+  {
+   "id": "job",
+   "type": "messagebus",
+   "label": "Tarea nocturna",
+   "sublabel": "cron 00:05 Bogota",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/scheduler/LiquidacionScheduler.java",
+     "line": 10,
+     "end_line": 26
+    }
+   ]
+  }
+ ],
+ "messages": [
+  {
+   "id": "m1",
+   "from": "adm",
+   "to": "ctl",
+   "y": 170,
+   "label": "POST /liquidaciones",
+   "variant": "emphasis"
+  },
+  {
+   "id": "m2",
+   "from": "ctl",
+   "to": "srv",
+   "y": 206,
+   "label": "generarLiquidacion",
+   "variant": "default"
+  },
+  {
+   "id": "m3",
+   "from": "srv",
+   "to": "db",
+   "y": 242,
+   "label": "inmueble y periodo",
+   "variant": "default",
+   "note": "Inmueble inactivo o periodo repetido responde 409."
+  },
+  {
+   "id": "m4",
+   "from": "db",
+   "to": "srv",
+   "y": 312,
+   "label": "liquidacion previa",
+   "variant": "return"
+  },
+  {
+   "id": "m5",
+   "from": "srv",
+   "to": "db",
+   "y": 348,
+   "label": "insertar liquidacion",
+   "variant": "emphasis",
+   "note": "Sin cuota indicada copia la de la previa; sin previa responde 400."
+  },
+  {
+   "id": "m6",
+   "from": "srv",
+   "to": "ctl",
+   "y": 418,
+   "label": "liquidacion",
+   "variant": "return"
+  },
+  {
+   "id": "m7",
+   "from": "adm",
+   "to": "ctl",
+   "y": 454,
+   "label": "PATCH /{id}/mora",
+   "variant": "default"
+  },
+  {
+   "id": "m8",
+   "from": "ctl",
+   "to": "srv",
+   "y": 490,
+   "label": "marcarEnMora",
+   "variant": "default"
+  },
+  {
+   "id": "m9",
+   "from": "srv",
+   "to": "db",
+   "y": 526,
+   "label": "estado EN_MORA",
+   "variant": "default"
+  },
+  {
+   "id": "m10",
+   "from": "job",
+   "to": "srv",
+   "y": 562,
+   "label": "marcarVencidas",
+   "variant": "dashed"
+  },
+  {
+   "id": "m11",
+   "from": "srv",
+   "to": "db",
+   "y": 598,
+   "label": "PENDIENTE vencidas a EN_MORA",
+   "variant": "dashed"
+  }
+ ],
+ "activations": [
+  {
+   "participant": "ctl",
+   "from": 164,
+   "to": 498,
+   "type": "backend"
+  },
+  {
+   "participant": "srv",
+   "from": 200,
+   "to": 606,
+   "type": "backend"
+  },
+  {
+   "participant": "db",
+   "from": 236,
+   "to": 606,
+   "type": "database"
+  },
+  {
+   "participant": "job",
+   "from": 556,
+   "to": 570,
+   "type": "messagebus"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "emerald",
+   "title": "Generacion",
+   "items": [
+    "Individual o masiva: la masiva omite inmuebles con periodo repetido o sin previa",
+    "El periodo se normaliza al dia 1"
+   ]
+  },
+  {
+   "dot": "orange",
+   "title": "Efectos",
+   "items": [
+    "Cada cambio limpia la cache de inmuebles",
+    "Pagos aprobados dejan la liquidacion al dia"
+   ]
+  }
+ ]
+}

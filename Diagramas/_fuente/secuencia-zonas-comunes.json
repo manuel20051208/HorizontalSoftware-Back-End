@@ -1,0 +1,242 @@
+{
+ "schema_version": 1,
+ "diagram_type": "sequence",
+ "meta": {
+  "title": "Secuencia: administrar zonas comunes",
+  "output": "Diagramas/Secuencia/zonas-comunes.html",
+  "quality_profile": "showcase",
+  "locale": "es",
+  "repository": {
+   "url": "https://github.com/manuel20051208/HorizontalSoftware-Back-End.git",
+   "revision": "34417f2446e6061461965d63d256a162e4f34753",
+   "provider": "github"
+  }
+ },
+ "participants": [
+  {
+   "id": "adm",
+   "type": "external",
+   "label": "Administrador",
+   "sublabel": "app cliente"
+  },
+  {
+   "id": "ctl",
+   "type": "backend",
+   "label": "AdminZonaComun",
+   "sublabel": "/api/admin/zonas-comunes",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/controller/AdminZonaComunController.java",
+     "line": 22,
+     "end_line": 48
+    }
+   ]
+  },
+  {
+   "id": "srv",
+   "type": "backend",
+   "label": "ZonaComunService",
+   "sublabel": "crear, listar, estado",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/ZonaComunServiceImpl.java",
+     "line": 37,
+     "end_line": 82
+    }
+   ]
+  },
+  {
+   "id": "cac",
+   "type": "database",
+   "label": "Cache",
+   "sublabel": "zonas en memoria",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/config/CacheConfig.java",
+     "line": 20,
+     "end_line": 28
+    }
+   ]
+  },
+  {
+   "id": "db",
+   "type": "database",
+   "label": "PostgreSQL",
+   "sublabel": "zona e inmueble",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/repository/ZonaComunRepository.java",
+     "line": 1,
+     "end_line": 89
+    }
+   ]
+  }
+ ],
+ "messages": [
+  {
+   "id": "m1",
+   "from": "adm",
+   "to": "ctl",
+   "y": 170,
+   "label": "POST /zonas-comunes",
+   "variant": "emphasis"
+  },
+  {
+   "id": "m2",
+   "from": "ctl",
+   "to": "srv",
+   "y": 206,
+   "label": "crearZona",
+   "variant": "default",
+   "note": "Horas iguales responde 400; nombre repetido responde 409."
+  },
+  {
+   "id": "m3",
+   "from": "srv",
+   "to": "db",
+   "y": 276,
+   "label": "insertar zona",
+   "variant": "emphasis"
+  },
+  {
+   "id": "m4",
+   "from": "srv",
+   "to": "db",
+   "y": 312,
+   "label": "asignar a inmuebles",
+   "variant": "default",
+   "note": "Solo si aplicarATodosLosInmuebles no es false."
+  },
+  {
+   "id": "m5",
+   "from": "srv",
+   "to": "cac",
+   "y": 382,
+   "label": "limpiar caches",
+   "variant": "dashed"
+  },
+  {
+   "id": "m6",
+   "from": "srv",
+   "to": "ctl",
+   "y": 418,
+   "label": "zona",
+   "variant": "return"
+  },
+  {
+   "id": "m7",
+   "from": "adm",
+   "to": "ctl",
+   "y": 454,
+   "label": "GET /zonas-comunes",
+   "variant": "default"
+  },
+  {
+   "id": "m8",
+   "from": "ctl",
+   "to": "srv",
+   "y": 490,
+   "label": "listar",
+   "variant": "default"
+  },
+  {
+   "id": "m9",
+   "from": "srv",
+   "to": "cac",
+   "y": 526,
+   "label": "buscar en cache",
+   "variant": "dashed"
+  },
+  {
+   "id": "m10",
+   "from": "cac",
+   "to": "srv",
+   "y": 562,
+   "label": "acierto o fallo",
+   "variant": "return"
+  },
+  {
+   "id": "m11",
+   "from": "srv",
+   "to": "db",
+   "y": 598,
+   "label": "consultar si falla",
+   "variant": "default"
+  },
+  {
+   "id": "m12",
+   "from": "adm",
+   "to": "ctl",
+   "y": 634,
+   "label": "PATCH /{id}/estado",
+   "variant": "default"
+  },
+  {
+   "id": "m13",
+   "from": "ctl",
+   "to": "srv",
+   "y": 670,
+   "label": "cambiarEstado",
+   "variant": "default"
+  },
+  {
+   "id": "m14",
+   "from": "srv",
+   "to": "db",
+   "y": 706,
+   "label": "activa o inactiva",
+   "variant": "default"
+  },
+  {
+   "id": "m15",
+   "from": "srv",
+   "to": "cac",
+   "y": 742,
+   "label": "limpiar caches",
+   "variant": "dashed"
+  }
+ ],
+ "activations": [
+  {
+   "participant": "ctl",
+   "from": 164,
+   "to": 678,
+   "type": "backend"
+  },
+  {
+   "participant": "srv",
+   "from": 200,
+   "to": 750,
+   "type": "backend"
+  },
+  {
+   "participant": "db",
+   "from": 270,
+   "to": 714,
+   "type": "database"
+  },
+  {
+   "participant": "cac",
+   "from": 376,
+   "to": 750,
+   "type": "database"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "emerald",
+   "title": "Cache",
+   "items": [
+    "Listados de zonas se cachean",
+    "Crear, cambiar estado o configurar limpia ambas caches"
+   ]
+  },
+  {
+   "dot": "orange",
+   "title": "Efecto en reservas",
+   "items": [
+    "Una zona inactiva deja de ser reservable"
+   ]
+  }
+ ]
+}

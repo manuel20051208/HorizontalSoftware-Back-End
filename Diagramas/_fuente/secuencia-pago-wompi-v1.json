@@ -1,0 +1,357 @@
+{
+ "schema_version": 1,
+ "diagram_type": "sequence",
+ "meta": {
+  "title": "Pago de administracion con Wompi",
+  "output": "Diagramas/Secuencia/pago-wompi-v1.html",
+  "quality_profile": "showcase",
+  "locale": "es",
+  "repository": {
+   "url": "https://github.com/manuel20051208/HorizontalSoftware-Back-End.git",
+   "provider": "github",
+   "link_mode": "web",
+   "revision": "577bcdc23699ae6f5953980d5454b60884ae4b23"
+  }
+ },
+ "participants": [
+  {
+   "id": "residente",
+   "type": "external",
+   "label": "Residente",
+   "sublabel": "navegador"
+  },
+  {
+   "id": "front",
+   "type": "frontend",
+   "label": "Front",
+   "sublabel": "Next.js",
+   "sources": [
+    {
+     "path": "src/main/resources/application.properties",
+     "line": 40,
+     "end_line": 41
+    }
+   ]
+  },
+  {
+   "id": "seguridad",
+   "type": "security",
+   "label": "Spring Security",
+   "sublabel": "JWT + roles",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/config/SecurityConfig.java",
+     "line": 22,
+     "end_line": 43
+    },
+    {
+     "path": "src/main/java/unisimon/demo/controller/ResidenteCuentaController.java",
+     "line": 47,
+     "end_line": 50
+    }
+   ]
+  },
+  {
+   "id": "api",
+   "type": "backend",
+   "label": "API de pagos",
+   "sublabel": "Pago + Pasarela",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/PagoServiceImpl.java",
+     "line": 74,
+     "end_line": 108
+    },
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/PasarelaPagoServiceImpl.java",
+     "line": 102,
+     "end_line": 152
+    },
+    {
+     "path": "src/main/java/unisimon/demo/model/PasarelaPago.java",
+     "line": 93,
+     "end_line": 111
+    }
+   ]
+  },
+  {
+   "id": "neon",
+   "type": "database",
+   "label": "Neon Postgres",
+   "sublabel": "pagos",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/repository/PagoRepository.java",
+     "line": 48,
+     "end_line": 56
+    }
+   ]
+  },
+  {
+   "id": "wompi",
+   "type": "external",
+   "label": "Wompi",
+   "sublabel": "checkout + API",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/integration/wompi/ClienteWompiRest.java",
+     "line": 34,
+     "end_line": 62
+    },
+    {
+     "path": "src/main/java/unisimon/demo/integration/wompi/FirmaEventosWompi.java",
+     "line": 15,
+     "end_line": 48
+    }
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "from": 150,
+   "to": 416,
+   "label": "Iniciar pago"
+  },
+  {
+   "from": 444,
+   "to": 504,
+   "label": "Checkout en Wompi"
+  },
+  {
+   "from": 530,
+   "to": 788,
+   "label": "Webhook verificado"
+  },
+  {
+   "from": 814,
+   "to": 932,
+   "label": "Resultado"
+  }
+ ],
+ "messages": [
+  {
+   "id": "pide-pagar",
+   "from": "residente",
+   "to": "front",
+   "y": 178,
+   "label": "pagar saldo"
+  },
+  {
+   "id": "post-pagos",
+   "from": "front",
+   "to": "seguridad",
+   "y": 206,
+   "label": "POST /pagos",
+   "variant": "emphasis"
+  },
+  {
+   "id": "jwt-ok",
+   "from": "seguridad",
+   "to": "api",
+   "y": 234,
+   "label": "@SoloResidente",
+   "variant": "security"
+  },
+  {
+   "id": "inserta-pago",
+   "from": "api",
+   "to": "neon",
+   "y": 262,
+   "label": "INSERT pago",
+   "note": "El monto lo fija el servidor; antes valida que el .env este listo para cobrar"
+  },
+  {
+   "id": "pago-pendiente",
+   "from": "neon",
+   "to": "api",
+   "y": 340,
+   "label": "pago PENDIENTE",
+   "variant": "return"
+  },
+  {
+   "id": "url-firmada",
+   "from": "api",
+   "to": "front",
+   "y": 368,
+   "label": "urlCheckout firmada",
+   "variant": "return",
+   "note": "signature:integrity = SHA-256(ref + centavos + COP + secreto)"
+  },
+  {
+   "id": "redirige",
+   "from": "front",
+   "to": "wompi",
+   "y": 468,
+   "label": "abre checkout",
+   "variant": "emphasis"
+  },
+  {
+   "id": "paga",
+   "from": "residente",
+   "to": "wompi",
+   "y": 496,
+   "label": "paga"
+  },
+  {
+   "id": "webhook",
+   "from": "wompi",
+   "to": "api",
+   "y": 554,
+   "label": "POST /api/pasarela/webhook",
+   "variant": "security",
+   "note": "@Publico; verifica signature.checksum con el secreto de eventos"
+  },
+  {
+   "id": "consulta-tx",
+   "from": "api",
+   "to": "wompi",
+   "y": 620,
+   "label": "GET /transactions/{id}",
+   "variant": "security",
+   "note": "Bearer con la llave privada: la fuente de verdad"
+  },
+  {
+   "id": "datos-tx",
+   "from": "wompi",
+   "to": "api",
+   "y": 686,
+   "label": "status, monto, moneda",
+   "variant": "return"
+  },
+  {
+   "id": "actualiza",
+   "from": "api",
+   "to": "neon",
+   "y": 714,
+   "label": "UPDATE estado",
+   "variant": "emphasis",
+   "note": "APROBADO o RECHAZADO, solo si sigue PENDIENTE y monto y moneda coinciden"
+  },
+  {
+   "id": "ok-200",
+   "from": "api",
+   "to": "wompi",
+   "y": 780,
+   "label": "200 OK",
+   "variant": "return"
+  },
+  {
+   "id": "vuelve",
+   "from": "wompi",
+   "to": "front",
+   "y": 838,
+   "label": "redirect-url",
+   "variant": "dashed"
+  },
+  {
+   "id": "consulta-estado",
+   "from": "front",
+   "to": "api",
+   "y": 866,
+   "label": "GET /api/pagos/estado/{ref}"
+  },
+  {
+   "id": "estado",
+   "from": "api",
+   "to": "front",
+   "y": 894,
+   "label": "estado del pago",
+   "variant": "return"
+  },
+  {
+   "id": "muestra",
+   "from": "front",
+   "to": "residente",
+   "y": 920,
+   "label": "muestra resultado",
+   "variant": "return"
+  }
+ ],
+ "activations": [
+  {
+   "participant": "front",
+   "from": 174,
+   "to": 473,
+   "type": "frontend"
+  },
+  {
+   "participant": "seguridad",
+   "from": 203,
+   "to": 238,
+   "type": "security"
+  },
+  {
+   "participant": "api",
+   "from": 231,
+   "to": 373,
+   "type": "backend"
+  },
+  {
+   "participant": "neon",
+   "from": 258,
+   "to": 344,
+   "type": "database"
+  },
+  {
+   "participant": "api",
+   "from": 550,
+   "to": 784,
+   "type": "backend"
+  },
+  {
+   "participant": "neon",
+   "from": 710,
+   "to": 744,
+   "type": "database"
+  },
+  {
+   "participant": "front",
+   "from": 834,
+   "to": 924,
+   "type": "frontend"
+  },
+  {
+   "participant": "api",
+   "from": 862,
+   "to": 898,
+   "type": "backend"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "rose",
+   "title": "Por que es seguro",
+   "items": [
+    "El monto sale del saldo pendiente, nunca del cliente",
+    "El checkout va firmado con el secreto de integridad",
+    "El webhook no se cree: se verifica el checksum y se consulta la transaccion"
+   ]
+  },
+  {
+   "dot": "emerald",
+   "title": "Idempotencia",
+   "items": [
+    "Wompi puede reenviar el evento; si el pago ya no esta PENDIENTE no cambia nada",
+    "PENDING no hace nada: llegara otro evento",
+    "Si el monto o la moneda no coinciden, el pago queda PENDIENTE para revision manual"
+   ]
+  },
+  {
+   "dot": "orange",
+   "title": "Respuestas al webhook",
+   "items": [
+    "200 sin cuerpo confirma el evento",
+    "Cualquier otro codigo hace que Wompi reintente"
+   ]
+  },
+  {
+   "dot": "cyan",
+   "title": "Rutas",
+   "items": [
+    "Inicio: POST /api/residente/pagos (@SoloResidente)",
+    "Webhook: POST /api/pasarela/webhook (@Publico)",
+    "Estado: GET /api/pagos/estado/{ref}"
+   ]
+  }
+ ]
+}

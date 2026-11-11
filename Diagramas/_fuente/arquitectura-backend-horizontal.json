@@ -1,0 +1,381 @@
+{
+ "schema_version": 1,
+ "diagram_type": "architecture",
+ "meta": {
+  "title": "Arquitectura del backend Horizontal",
+  "output": "Diagramas/Arquitectura/backend-horizontal.html",
+  "quality_profile": "showcase",
+  "locale": "es",
+  "repository": {
+   "url": "https://github.com/manuel20051208/HorizontalSoftware-Back-End.git",
+   "revision": "34417f2446e6061461965d63d256a162e4f34753",
+   "provider": "github"
+  }
+ },
+ "components": [
+  {
+   "id": "cliente",
+   "type": "external",
+   "label": "Clientes",
+   "sublabel": "Admin, residente, vigilante",
+   "pos": [
+    40,
+    150
+   ],
+   "size": [
+    130,
+    60
+   ]
+  },
+  {
+   "id": "wompi",
+   "type": "external",
+   "label": "Wompi",
+   "sublabel": "checkout y API de pagos",
+   "pos": [
+    40,
+    405
+   ],
+   "size": [
+    130,
+    60
+   ]
+  },
+  {
+   "id": "seguridad",
+   "type": "security",
+   "label": "Seguridad JWT",
+   "sublabel": "OAuth2 resource server",
+   "tag": "stateless",
+   "pos": [
+    260,
+    150
+   ],
+   "size": [
+    150,
+    64
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/config/SecurityConfig.java",
+     "line": 22,
+     "end_line": 44
+    }
+   ]
+  },
+  {
+   "id": "controllers",
+   "type": "backend",
+   "label": "Controladores REST",
+   "sublabel": "@PreAuthorize por metodo",
+   "pos": [
+    500,
+    150
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/controller/PagoController.java",
+     "line": 14,
+     "end_line": 16
+    },
+    {
+     "path": "src/main/java/unisimon/demo/security/annotation/Autenticado.java",
+     "line": 18
+    }
+   ]
+  },
+  {
+   "id": "webhook",
+   "type": "backend",
+   "label": "Webhook pasarela",
+   "sublabel": "POST /api/pasarela/webhook",
+   "tag": "publico",
+   "pos": [
+    260,
+    330
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/controller/PasarelaWebhookController.java",
+     "line": 19,
+     "end_line": 35
+    }
+   ]
+  },
+  {
+   "id": "servicios",
+   "type": "backend",
+   "label": "Servicios de negocio",
+   "sublabel": "pagos, liquidaciones, reservas",
+   "pos": [
+    500,
+    330
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/PagoServiceImpl.java",
+     "line": 1,
+     "end_line": 241
+    },
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/PasarelaPagoServiceImpl.java",
+     "line": 98,
+     "end_line": 125
+    }
+   ]
+  },
+  {
+   "id": "cache",
+   "type": "database",
+   "label": "Cache en memoria",
+   "sublabel": "ConcurrentMap",
+   "pos": [
+    500,
+    480
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/config/CacheConfig.java",
+     "line": 20,
+     "end_line": 28
+    }
+   ]
+  },
+  {
+   "id": "repos",
+   "type": "backend",
+   "label": "Repositorios",
+   "sublabel": "Spring Data, SQL nativo",
+   "pos": [
+    740,
+    330
+   ],
+   "size": [
+    140,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/repository/PagoRepository.java",
+     "line": 3,
+     "end_line": 12
+    }
+   ]
+  },
+  {
+   "id": "db",
+   "type": "database",
+   "label": "PostgreSQL",
+   "sublabel": "Flyway V1, V2",
+   "pos": [
+    980,
+    330
+   ],
+   "size": [
+    140,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/resources/application.properties",
+     "line": 10,
+     "end_line": 30
+    }
+   ]
+  },
+  {
+   "id": "clientewompi",
+   "type": "backend",
+   "label": "Cliente Wompi",
+   "sublabel": "RestClient, timeouts 5s/10s",
+   "pos": [
+    260,
+    480
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/integration/wompi/ClienteWompiRest.java",
+     "line": 17,
+     "end_line": 50
+    }
+   ]
+  },
+  {
+   "id": "scheduler",
+   "type": "backend",
+   "label": "Tarea nocturna",
+   "sublabel": "cron 00:05 Bogota",
+   "pos": [
+    740,
+    150
+   ],
+   "size": [
+    140,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/scheduler/LiquidacionScheduler.java",
+     "line": 10,
+     "end_line": 26
+    }
+   ]
+  },
+  {
+   "id": "correo",
+   "type": "messagebus",
+   "label": "CorreoSender",
+   "sublabel": "implementacion: log",
+   "pos": [
+    740,
+    480
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/mail/CorreoLogSender.java",
+     "line": 11,
+     "end_line": 20
+    }
+   ]
+  }
+ ],
+ "boundaries": [
+  {
+   "kind": "region",
+   "label": "Spring Boot (unisimon.demo)",
+   "wraps": [
+    "seguridad",
+    "controllers",
+    "webhook",
+    "servicios",
+    "cache",
+    "repos",
+    "clientewompi",
+    "scheduler",
+    "correo"
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "id": "c1",
+   "from": "cliente",
+   "to": "seguridad",
+   "label": "HTTPS + Bearer JWT",
+   "variant": "emphasis"
+  },
+  {
+   "id": "c2",
+   "from": "seguridad",
+   "to": "controllers",
+   "label": "rol validado",
+   "variant": "security"
+  },
+  {
+   "id": "c3",
+   "from": "controllers",
+   "to": "servicios"
+  },
+  {
+   "id": "c4",
+   "from": "servicios",
+   "to": "repos",
+   "label": "SQL"
+  },
+  {
+   "id": "c5",
+   "from": "repos",
+   "to": "db",
+   "label": "JDBC"
+  },
+  {
+   "id": "c6",
+   "from": "servicios",
+   "to": "cache",
+   "label": "cache/evict",
+   "variant": "dashed"
+  },
+  {
+   "id": "c7",
+   "from": "wompi",
+   "to": "webhook",
+   "label": "evento firmado",
+   "variant": "security"
+  },
+  {
+   "id": "c8",
+   "from": "webhook",
+   "to": "servicios",
+   "label": "valida checksum"
+  },
+  {
+   "id": "c9",
+   "from": "servicios",
+   "to": "clientewompi",
+   "label": "confirma tx"
+  },
+  {
+   "id": "c10",
+   "from": "clientewompi",
+   "to": "wompi",
+   "label": "GET /transactions",
+   "variant": "security"
+  },
+  {
+   "id": "c11",
+   "from": "scheduler",
+   "to": "servicios",
+   "label": "marcarVencidas",
+   "variant": "dashed"
+  },
+  {
+   "id": "c12",
+   "from": "servicios",
+   "to": "correo",
+   "label": "envio de claves",
+   "variant": "dashed"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "emerald",
+   "title": "Flujo de pago",
+   "items": [
+    "El webhook es publico: se verifica la firma y se re-consulta la transaccion en Wompi",
+    "Solo aprueba si el monto y la moneda coinciden; es idempotente"
+   ]
+  },
+  {
+   "dot": "rose",
+   "title": "Alcance",
+   "items": [
+    "Cache y correo son implementaciones locales (memoria y log)",
+    "Servicios y repositorios se muestran agrupados"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,219 @@
+{
+ "schema_version": 1,
+ "diagram_type": "sequence",
+ "meta": {
+  "title": "Secuencia: sesion con refresh token rotativo",
+  "output": "Diagramas/Secuencia/sesion-jwt.html",
+  "quality_profile": "showcase",
+  "locale": "es",
+  "repository": {
+   "url": "https://github.com/manuel20051208/HorizontalSoftware-Back-End.git",
+   "revision": "34417f2446e6061461965d63d256a162e4f34753",
+   "provider": "github"
+  }
+ },
+ "participants": [
+  {
+   "id": "cli",
+   "type": "external",
+   "label": "Cliente",
+   "sublabel": "app cliente"
+  },
+  {
+   "id": "ctl",
+   "type": "backend",
+   "label": "AuthController",
+   "sublabel": "/api/auth",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/controller/AuthController.java",
+     "line": 37,
+     "end_line": 53
+    }
+   ]
+  },
+  {
+   "id": "aut",
+   "type": "security",
+   "label": "Autenticacion",
+   "sublabel": "login y refresh",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/AutenticacionServiceImpl.java",
+     "line": 38,
+     "end_line": 87
+    }
+   ]
+  },
+  {
+   "id": "tok",
+   "type": "security",
+   "label": "JwtTokenService",
+   "sublabel": "emitir y leer",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/security/JwtTokenService.java",
+     "line": 46,
+     "end_line": 70
+    }
+   ]
+  },
+  {
+   "id": "db",
+   "type": "database",
+   "label": "PostgreSQL",
+   "sublabel": "usuario.token",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/repository/UsuarioRepository.java",
+     "line": 1,
+     "end_line": 198
+    }
+   ]
+  }
+ ],
+ "messages": [
+  {
+   "id": "m1",
+   "from": "cli",
+   "to": "ctl",
+   "y": 170,
+   "label": "POST /login",
+   "variant": "emphasis"
+  },
+  {
+   "id": "m2",
+   "from": "ctl",
+   "to": "aut",
+   "y": 206,
+   "label": "iniciarSesion",
+   "variant": "default"
+  },
+  {
+   "id": "m3",
+   "from": "aut",
+   "to": "db",
+   "y": 242,
+   "label": "credenciales",
+   "variant": "default"
+  },
+  {
+   "id": "m4",
+   "from": "aut",
+   "to": "tok",
+   "y": 278,
+   "label": "emitir tokens",
+   "variant": "security",
+   "note": "Rechaza credenciales invalidas (401), invitados y cuentas inactivas (403)."
+  },
+  {
+   "id": "m5",
+   "from": "aut",
+   "to": "db",
+   "y": 348,
+   "label": "guardar huella",
+   "variant": "default"
+  },
+  {
+   "id": "m6",
+   "from": "ctl",
+   "to": "cli",
+   "y": 384,
+   "label": "access + refresh",
+   "variant": "return"
+  },
+  {
+   "id": "m7",
+   "from": "cli",
+   "to": "ctl",
+   "y": 420,
+   "label": "POST /refresh",
+   "variant": "emphasis"
+  },
+  {
+   "id": "m8",
+   "from": "ctl",
+   "to": "aut",
+   "y": 456,
+   "label": "renovarSesion",
+   "variant": "default"
+  },
+  {
+   "id": "m9",
+   "from": "aut",
+   "to": "tok",
+   "y": 492,
+   "label": "leer refresh",
+   "variant": "security"
+  },
+  {
+   "id": "m10",
+   "from": "aut",
+   "to": "db",
+   "y": 528,
+   "label": "comparar huella",
+   "variant": "default",
+   "note": "Si la huella no coincide se anula la sesion y responde 401."
+  },
+  {
+   "id": "m11",
+   "from": "aut",
+   "to": "tok",
+   "y": 598,
+   "label": "emitir nuevo par",
+   "variant": "security"
+  },
+  {
+   "id": "m12",
+   "from": "ctl",
+   "to": "cli",
+   "y": 634,
+   "label": "tokens rotados",
+   "variant": "return"
+  }
+ ],
+ "activations": [
+  {
+   "participant": "ctl",
+   "from": 164,
+   "to": 642,
+   "type": "backend"
+  },
+  {
+   "participant": "aut",
+   "from": 200,
+   "to": 606,
+   "type": "security"
+  },
+  {
+   "participant": "db",
+   "from": 236,
+   "to": 536,
+   "type": "database"
+  },
+  {
+   "participant": "tok",
+   "from": 272,
+   "to": 606,
+   "type": "security"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "rose",
+   "title": "Rotacion",
+   "items": [
+    "Cada refresh sustituye la huella guardada",
+    "Reutilizar un refresh cierra la sesion"
+   ]
+  },
+  {
+   "dot": "emerald",
+   "title": "Estado",
+   "items": [
+    "Solo la huella del refresh queda en la base",
+    "Logout deja el token en nulo"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,352 @@
+{
+ "schema_version": 1,
+ "diagram_type": "architecture",
+ "meta": {
+  "title": "Arquitectura del backend HorizontalSoftware",
+  "output": "Diagramas/Arquitectura/backend-v1.html",
+  "quality_profile": "showcase",
+  "locale": "es",
+  "repository": {
+   "url": "https://github.com/manuel20051208/HorizontalSoftware-Back-End.git",
+   "provider": "github",
+   "link_mode": "web",
+   "revision": "577bcdc23699ae6f5953980d5454b60884ae4b23"
+  }
+ },
+ "components": [
+  {
+   "id": "usuarios",
+   "type": "external",
+   "label": "Usuarios",
+   "sublabel": "front Next.js",
+   "pos": [
+    40,
+    200
+   ],
+   "size": [
+    130,
+    64
+   ],
+   "sources": [
+    {
+     "path": "src/main/resources/application.properties",
+     "line": 40,
+     "end_line": 41
+    }
+   ]
+  },
+  {
+   "id": "wompi",
+   "type": "external",
+   "label": "Wompi",
+   "sublabel": "checkout + API REST",
+   "pos": [
+    220,
+    40
+   ],
+   "size": [
+    150,
+    64
+   ],
+   "sources": [
+    {
+     "path": "src/main/resources/application.properties",
+     "line": 50,
+     "end_line": 66
+    },
+    {
+     "path": "src/main/java/unisimon/demo/model/PasarelaPago.java",
+     "line": 100
+    }
+   ]
+  },
+  {
+   "id": "nginx",
+   "type": "cloud",
+   "label": "nginx",
+   "sublabel": "HTTPS :443",
+   "pos": [
+    230,
+    200
+   ],
+   "size": [
+    130,
+    64
+   ],
+   "tag": "fuera del repo",
+   "sources": [
+    {
+     "path": "docker-compose.vm.yaml",
+     "line": 24,
+     "end_line": 27
+    }
+   ]
+  },
+  {
+   "id": "seguridad",
+   "type": "security",
+   "label": "Spring Security",
+   "sublabel": "JWT + @PreAuthorize",
+   "pos": [
+    455,
+    200
+   ],
+   "size": [
+    130,
+    64
+   ],
+   "tag": "stateless",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/config/SecurityConfig.java",
+     "line": 22,
+     "end_line": 43
+    },
+    {
+     "path": "src/main/java/unisimon/demo/security/JwtTokenService.java",
+     "line": 23,
+     "end_line": 50
+    }
+   ]
+  },
+  {
+   "id": "controladores",
+   "type": "backend",
+   "label": "Controladores",
+   "sublabel": "/api/** por rol",
+   "pos": [
+    675,
+    200
+   ],
+   "size": [
+    130,
+    64
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/controller/AuthController.java",
+     "line": 23,
+     "end_line": 46
+    },
+    {
+     "path": "src/main/java/unisimon/demo/controller/PasarelaWebhookController.java",
+     "line": 19,
+     "end_line": 34
+    }
+   ]
+  },
+  {
+   "id": "servicios",
+   "type": "backend",
+   "label": "Servicios",
+   "sublabel": "@Transactional + cache",
+   "pos": [
+    855,
+    200
+   ],
+   "size": [
+    130,
+    64
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/PasarelaPagoServiceImpl.java",
+     "line": 102,
+     "end_line": 143
+    },
+    {
+     "path": "src/main/java/unisimon/demo/config/CacheConfig.java",
+     "line": 20,
+     "end_line": 28
+    }
+   ]
+  },
+  {
+   "id": "repos",
+   "type": "backend",
+   "label": "Repositorios",
+   "sublabel": "SQL nativo",
+   "pos": [
+    1035,
+    200
+   ],
+   "size": [
+    130,
+    64
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/repository/PagoRepository.java",
+     "line": 48,
+     "end_line": 56
+    }
+   ]
+  },
+  {
+   "id": "neon",
+   "type": "database",
+   "label": "Neon Postgres",
+   "sublabel": "esquema Flyway",
+   "pos": [
+    1275,
+    200
+   ],
+   "size": [
+    130,
+    64
+   ],
+   "sources": [
+    {
+     "path": "src/main/resources/application.properties",
+     "line": 10,
+     "end_line": 30
+    },
+    {
+     "path": "docker-compose.vm.yaml",
+     "line": 1,
+     "end_line": 15
+    }
+   ]
+  },
+  {
+   "id": "scheduler",
+   "type": "backend",
+   "label": "Scheduler",
+   "sublabel": "mora diaria 00:05",
+   "pos": [
+    855,
+    340
+   ],
+   "size": [
+    130,
+    64
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/scheduler/LiquidacionScheduler.java",
+     "line": 9,
+     "end_line": 25
+    }
+   ]
+  }
+ ],
+ "boundaries": [
+  {
+   "kind": "region",
+   "label": "AWS \u00b7 VM 3.138.110.33",
+   "wraps": [
+    "nginx",
+    "seguridad",
+    "controladores",
+    "servicios",
+    "repos",
+    "scheduler"
+   ]
+  },
+  {
+   "kind": "security-group",
+   "label": "contenedor horizontal-api \u00b7 127.0.0.1:8080",
+   "wraps": [
+    "seguridad",
+    "controladores",
+    "servicios",
+    "repos",
+    "scheduler"
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "id": "usuarios-nginx",
+   "from": "usuarios",
+   "to": "nginx",
+   "label": "HTTPS",
+   "variant": "emphasis"
+  },
+  {
+   "id": "nginx-seguridad",
+   "from": "nginx",
+   "to": "seguridad",
+   "label": "proxy :8080",
+   "variant": "emphasis"
+  },
+  {
+   "id": "seguridad-controladores",
+   "from": "seguridad",
+   "to": "controladores",
+   "label": "Bearer JWT",
+   "variant": "security"
+  },
+  {
+   "id": "controladores-servicios",
+   "from": "controladores",
+   "to": "servicios"
+  },
+  {
+   "id": "servicios-repos",
+   "from": "servicios",
+   "to": "repos"
+  },
+  {
+   "id": "repos-neon",
+   "from": "repos",
+   "to": "neon",
+   "label": "JDBC (Hikari)"
+  },
+  {
+   "id": "usuarios-wompi",
+   "from": "usuarios",
+   "to": "wompi",
+   "label": "paga en checkout firmado"
+  },
+  {
+   "id": "wompi-webhook",
+   "from": "wompi",
+   "to": "nginx",
+   "label": "webhook firmado",
+   "variant": "security"
+  },
+  {
+   "id": "servicios-wompi",
+   "from": "servicios",
+   "to": "wompi",
+   "label": "GET /transactions/{id}"
+  },
+  {
+   "id": "scheduler-servicios",
+   "from": "scheduler",
+   "to": "servicios",
+   "label": "cron",
+   "variant": "dashed"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "rose",
+   "title": "Seguridad",
+   "items": [
+    "Sin sesiones ni CSRF; access 15 min y refresh 7 dias (HS256)",
+    "Acceso por anotacion en cada endpoint (@Publico, @SoloAdministrador\u2026)",
+    "Webhook: checksum con el secreto de eventos y consulta de la transaccion con la llave privada antes de aprobar"
+   ]
+  },
+  {
+   "dot": "emerald",
+   "title": "Aplicacion",
+   "items": [
+    "Cache en memoria que solo se aplica al confirmar la transaccion",
+    "El scheduler pasa a EN_MORA las liquidaciones vencidas",
+    "Correo simulado: CorreoLogSender lo escribe en el log"
+   ]
+  },
+  {
+   "dot": "cyan",
+   "title": "Despliegue",
+   "items": [
+    "GitHub Actions: mvnw verify \u2192 SCP del jar \u2192 docker compose en la VM",
+    "Contenedor limitado a 576 MB; la BD es Neon gestionado",
+    "La configuracion de nginx no esta en este repositorio"
+   ]
+  }
+ ]
+}

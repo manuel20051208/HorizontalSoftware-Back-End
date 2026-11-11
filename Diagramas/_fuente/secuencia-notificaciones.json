@@ -1,0 +1,217 @@
+{
+ "schema_version": 1,
+ "diagram_type": "sequence",
+ "meta": {
+  "title": "Secuencia: enviar y leer notificaciones",
+  "output": "Diagramas/Secuencia/notificaciones.html",
+  "quality_profile": "showcase",
+  "locale": "es",
+  "repository": {
+   "url": "https://github.com/manuel20051208/HorizontalSoftware-Back-End.git",
+   "revision": "34417f2446e6061461965d63d256a162e4f34753",
+   "provider": "github"
+  }
+ },
+ "participants": [
+  {
+   "id": "adm",
+   "type": "external",
+   "label": "Administrador",
+   "sublabel": "app cliente"
+  },
+  {
+   "id": "ctl",
+   "type": "backend",
+   "label": "Controladores",
+   "sublabel": "admin y residente",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/controller/AdminNotificacionController.java",
+     "line": 19,
+     "end_line": 33
+    },
+    {
+     "path": "src/main/java/unisimon/demo/controller/NotificacionController.java",
+     "line": 18,
+     "end_line": 37
+    }
+   ]
+  },
+  {
+   "id": "srv",
+   "type": "backend",
+   "label": "NotificacionService",
+   "sublabel": "destinatarios y envio",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/NotificacionServiceImpl.java",
+     "line": 57,
+     "end_line": 74
+    }
+   ]
+  },
+  {
+   "id": "db",
+   "type": "database",
+   "label": "PostgreSQL",
+   "sublabel": "notificacion, usuario",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/repository/NotificacionRepository.java",
+     "line": 1,
+     "end_line": 81
+    }
+   ]
+  },
+  {
+   "id": "res",
+   "type": "external",
+   "label": "Residente",
+   "sublabel": "app cliente"
+  }
+ ],
+ "messages": [
+  {
+   "id": "m1",
+   "from": "adm",
+   "to": "ctl",
+   "y": 170,
+   "label": "POST /admin/notificaciones",
+   "variant": "emphasis"
+  },
+  {
+   "id": "m2",
+   "from": "ctl",
+   "to": "srv",
+   "y": 206,
+   "label": "enviarNotificacion",
+   "variant": "default",
+   "note": "Destinatarios: usuarios indicados, residentes activos del inmueble o todos los residentes."
+  },
+  {
+   "id": "m3",
+   "from": "srv",
+   "to": "db",
+   "y": 276,
+   "label": "insertar + destinatarios",
+   "variant": "emphasis"
+  },
+  {
+   "id": "m4",
+   "from": "srv",
+   "to": "db",
+   "y": 312,
+   "label": "marcar no leida",
+   "variant": "default"
+  },
+  {
+   "id": "m5",
+   "from": "srv",
+   "to": "ctl",
+   "y": 348,
+   "label": "notificacion",
+   "variant": "return"
+  },
+  {
+   "id": "m6",
+   "from": "ctl",
+   "to": "adm",
+   "y": 384,
+   "label": "200",
+   "variant": "return"
+  },
+  {
+   "id": "m7",
+   "from": "res",
+   "to": "ctl",
+   "y": 420,
+   "label": "GET /notificaciones",
+   "variant": "default"
+  },
+  {
+   "id": "m8",
+   "from": "ctl",
+   "to": "srv",
+   "y": 456,
+   "label": "consultarNotificacion",
+   "variant": "default"
+  },
+  {
+   "id": "m9",
+   "from": "srv",
+   "to": "db",
+   "y": 492,
+   "label": "listarDeUsuario",
+   "variant": "default"
+  },
+  {
+   "id": "m10",
+   "from": "db",
+   "to": "srv",
+   "y": 528,
+   "label": "pagina",
+   "variant": "return"
+  },
+  {
+   "id": "m11",
+   "from": "res",
+   "to": "ctl",
+   "y": 564,
+   "label": "PUT /leida",
+   "variant": "default"
+  },
+  {
+   "id": "m12",
+   "from": "ctl",
+   "to": "srv",
+   "y": 600,
+   "label": "marcarLeida",
+   "variant": "default"
+  },
+  {
+   "id": "m13",
+   "from": "srv",
+   "to": "db",
+   "y": 636,
+   "label": "leida = true",
+   "variant": "default"
+  }
+ ],
+ "activations": [
+  {
+   "participant": "ctl",
+   "from": 164,
+   "to": 608,
+   "type": "backend"
+  },
+  {
+   "participant": "srv",
+   "from": 200,
+   "to": 644,
+   "type": "backend"
+  },
+  {
+   "participant": "db",
+   "from": 270,
+   "to": 644,
+   "type": "database"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "emerald",
+   "title": "Envio",
+   "items": [
+    "Sin destinatarios activos responde 409",
+    "Opcionalmente se vincula al inmueble"
+   ]
+  },
+  {
+   "dot": "orange",
+   "title": "Origen",
+   "items": [
+    "Reservas, pagos y visitas disparan avisos desde otros servicios"
+   ]
+  }
+ ]
+}

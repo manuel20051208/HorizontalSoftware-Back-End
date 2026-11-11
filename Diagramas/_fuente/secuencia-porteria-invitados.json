@@ -1,0 +1,201 @@
+{
+ "schema_version": 1,
+ "diagram_type": "sequence",
+ "meta": {
+  "title": "Secuencia: ingreso de un invitado",
+  "output": "Diagramas/Secuencia/porteria-invitados.html",
+  "quality_profile": "showcase",
+  "locale": "es",
+  "repository": {
+   "url": "https://github.com/manuel20051208/HorizontalSoftware-Back-End.git",
+   "revision": "34417f2446e6061461965d63d256a162e4f34753",
+   "provider": "github"
+  }
+ },
+ "participants": [
+  {
+   "id": "vig",
+   "type": "external",
+   "label": "Vigilante",
+   "sublabel": "porteria"
+  },
+  {
+   "id": "ctl",
+   "type": "backend",
+   "label": "VigilanteController",
+   "sublabel": "/api/vigilante",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/controller/VigilanteController.java",
+     "line": 41,
+     "end_line": 50
+    }
+   ]
+  },
+  {
+   "id": "srv",
+   "type": "backend",
+   "label": "VigilanteService",
+   "sublabel": "verifica ingreso",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/VigilanteServiceImpl.java",
+     "line": 99,
+     "end_line": 122
+    }
+   ]
+  },
+  {
+   "id": "db",
+   "type": "database",
+   "label": "PostgreSQL",
+   "sublabel": "invitado, anfitrion",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/repository/InvitadoRepository.java",
+     "line": 1,
+     "end_line": 108
+    }
+   ]
+  },
+  {
+   "id": "not",
+   "type": "messagebus",
+   "label": "Notificaciones",
+   "sublabel": "aviso de visita",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/NotificacionServiceImpl.java",
+     "line": 109,
+     "end_line": 120
+    }
+   ]
+  }
+ ],
+ "messages": [
+  {
+   "id": "m1",
+   "from": "vig",
+   "to": "ctl",
+   "y": 170,
+   "label": "GET /invitados/{id}",
+   "variant": "default"
+  },
+  {
+   "id": "m2",
+   "from": "ctl",
+   "to": "srv",
+   "y": 206,
+   "label": "existeInvitado",
+   "variant": "default"
+  },
+  {
+   "id": "m3",
+   "from": "srv",
+   "to": "db",
+   "y": 242,
+   "label": "buscar invitado",
+   "variant": "default"
+  },
+  {
+   "id": "m4",
+   "from": "srv",
+   "to": "vig",
+   "y": 278,
+   "label": "existe y vigente",
+   "variant": "return"
+  },
+  {
+   "id": "m5",
+   "from": "vig",
+   "to": "ctl",
+   "y": 314,
+   "label": "POST /ingreso",
+   "variant": "emphasis"
+  },
+  {
+   "id": "m6",
+   "from": "ctl",
+   "to": "srv",
+   "y": 350,
+   "label": "registrarIngreso",
+   "variant": "default"
+  },
+  {
+   "id": "m7",
+   "from": "srv",
+   "to": "db",
+   "y": 386,
+   "label": "invitado y anfitriones",
+   "variant": "default",
+   "note": "Si esta inactivo o vencido, deniega el ingreso sin avisar."
+  },
+  {
+   "id": "m8",
+   "from": "srv",
+   "to": "not",
+   "y": 456,
+   "label": "notificarVisita",
+   "variant": "dashed"
+  },
+  {
+   "id": "m9",
+   "from": "not",
+   "to": "db",
+   "y": 492,
+   "label": "aviso a residentes",
+   "variant": "dashed"
+  },
+  {
+   "id": "m10",
+   "from": "srv",
+   "to": "vig",
+   "y": 528,
+   "label": "ingreso permitido",
+   "variant": "return"
+  }
+ ],
+ "activations": [
+  {
+   "participant": "ctl",
+   "from": 164,
+   "to": 358,
+   "type": "backend"
+  },
+  {
+   "participant": "srv",
+   "from": 200,
+   "to": 536,
+   "type": "backend"
+  },
+  {
+   "participant": "db",
+   "from": 236,
+   "to": 500,
+   "type": "database"
+  },
+  {
+   "participant": "not",
+   "from": 450,
+   "to": 500,
+   "type": "messagebus"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "emerald",
+   "title": "Reglas",
+   "items": [
+    "Invitado activo y con autorizacion vigente",
+    "Un aviso por inmueble anfitrion"
+   ]
+  },
+  {
+   "dot": "orange",
+   "title": "Acceso a zonas",
+   "items": [
+    "/zonas-comunes/acceso exige reserva en curso de zona activa"
+   ]
+  }
+ ]
+}

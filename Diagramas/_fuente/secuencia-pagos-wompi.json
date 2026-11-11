@@ -1,0 +1,204 @@
+{
+ "schema_version": 1,
+ "diagram_type": "sequence",
+ "meta": {
+  "title": "Secuencia: pago con Wompi",
+  "output": "Diagramas/Secuencia/pagos-wompi.html",
+  "quality_profile": "showcase",
+  "locale": "es",
+  "repository": {
+   "url": "https://github.com/manuel20051208/HorizontalSoftware-Back-End.git",
+   "revision": "34417f2446e6061461965d63d256a162e4f34753",
+   "provider": "github"
+  }
+ },
+ "participants": [
+  {
+   "id": "res",
+   "type": "external",
+   "label": "Residente",
+   "sublabel": "app cliente"
+  },
+  {
+   "id": "srv",
+   "type": "backend",
+   "label": "PagoService",
+   "sublabel": "registrar y aprobar",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/PagoServiceImpl.java",
+     "line": 74,
+     "end_line": 110
+    },
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/PagoServiceImpl.java",
+     "line": 138,
+     "end_line": 157
+    }
+   ]
+  },
+  {
+   "id": "db",
+   "type": "database",
+   "label": "PostgreSQL",
+   "sublabel": "pago, liquidacion",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/repository/PagoRepository.java",
+     "line": 1,
+     "end_line": 101
+    }
+   ]
+  },
+  {
+   "id": "wom",
+   "type": "external",
+   "label": "Wompi",
+   "sublabel": "checkout y API",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/integration/wompi/ClienteWompiRest.java",
+     "line": 17,
+     "end_line": 50
+    }
+   ]
+  },
+  {
+   "id": "pas",
+   "type": "security",
+   "label": "PasarelaService",
+   "sublabel": "webhook verificado",
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/PasarelaPagoServiceImpl.java",
+     "line": 101,
+     "end_line": 143
+    }
+   ]
+  }
+ ],
+ "messages": [
+  {
+   "id": "m1",
+   "from": "res",
+   "to": "srv",
+   "y": 170,
+   "label": "iniciar pago",
+   "variant": "emphasis",
+   "note": "Valor = saldo pendiente del servidor; la pasarela debe estar bien configurada."
+  },
+  {
+   "id": "m2",
+   "from": "srv",
+   "to": "db",
+   "y": 240,
+   "label": "insertar PENDIENTE",
+   "variant": "default"
+  },
+  {
+   "id": "m3",
+   "from": "srv",
+   "to": "res",
+   "y": 276,
+   "label": "URL checkout firmada",
+   "variant": "return"
+  },
+  {
+   "id": "m4",
+   "from": "res",
+   "to": "wom",
+   "y": 312,
+   "label": "paga en checkout",
+   "variant": "emphasis"
+  },
+  {
+   "id": "m5",
+   "from": "wom",
+   "to": "pas",
+   "y": 348,
+   "label": "webhook firmado",
+   "variant": "security",
+   "note": "Verifica el checksum con el secreto de eventos; firma invalida responde 401."
+  },
+  {
+   "id": "m6",
+   "from": "pas",
+   "to": "wom",
+   "y": 418,
+   "label": "consultar transaccion",
+   "variant": "security"
+  },
+  {
+   "id": "m7",
+   "from": "wom",
+   "to": "pas",
+   "y": 454,
+   "label": "estado y monto",
+   "variant": "return"
+  },
+  {
+   "id": "m8",
+   "from": "pas",
+   "to": "srv",
+   "y": 490,
+   "label": "aprobarPago",
+   "variant": "default",
+   "note": "Solo si es APPROVED y monto y moneda coinciden; es idempotente."
+  },
+  {
+   "id": "m9",
+   "from": "srv",
+   "to": "db",
+   "y": 560,
+   "label": "APROBADO, al dia",
+   "variant": "emphasis"
+  },
+  {
+   "id": "m10",
+   "from": "pas",
+   "to": "wom",
+   "y": 596,
+   "label": "200 sin cuerpo",
+   "variant": "return"
+  }
+ ],
+ "activations": [
+  {
+   "participant": "srv",
+   "from": 164,
+   "to": 568,
+   "type": "backend"
+  },
+  {
+   "participant": "db",
+   "from": 234,
+   "to": 568,
+   "type": "database"
+  },
+  {
+   "participant": "pas",
+   "from": 342,
+   "to": 604,
+   "type": "security"
+  }
+ ],
+ "cards": [
+  {
+   "dot": "rose",
+   "title": "Seguridad",
+   "items": [
+    "No se confia en el contenido del aviso",
+    "La verdad es la API de Wompi con llave privada"
+   ]
+  },
+  {
+   "dot": "emerald",
+   "title": "Resultados",
+   "items": [
+    "Fallida: rechazarPago",
+    "Pendiente: espera otro evento",
+    "Tras decidir se notifica al inmueble"
+   ]
+  }
+ ]
+}
