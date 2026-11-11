@@ -8,6 +8,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.request.UsuarioRequests.CrearUsuario;
 import unisimon.demo.dto.response.UsuarioResponses;
 import unisimon.demo.exception.ConflictoException;
@@ -171,9 +172,12 @@ class UsuarioGestionServiceImplTest {
     @Test
     @DisplayName("listar valida el tipo de usuario")
     void listar() {
-        assertThatThrownBy(() -> servicio.listar("PRESIDENTE", null)).isInstanceOf(SolicitudInvalidaException.class);
+        SolicitudPagina pagina = SolicitudPagina.primera();
+        assertThatThrownBy(() -> servicio.listar("PRESIDENTE", null, pagina))
+                .isInstanceOf(SolicitudInvalidaException.class);
 
-        when(usuarios.listar("RESIDENTE", true)).thenReturn(java.util.List.of());
-        assertThat(servicio.listar(" residente ", true)).isEmpty();
+        when(usuarios.listar("RESIDENTE", true, 20, 0L)).thenReturn(java.util.List.of());
+        assertThat(servicio.listar(" residente ", true, pagina).contenido()).isEmpty();
+        verify(usuarios).contar("RESIDENTE", true);
     }
 }

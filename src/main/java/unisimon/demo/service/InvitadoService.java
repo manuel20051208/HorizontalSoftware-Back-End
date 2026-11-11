@@ -1,7 +1,9 @@
 package unisimon.demo.service;
 
 import unisimon.demo.dto.request.InvitadoRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.InvitadoResponses;
+import unisimon.demo.dto.response.Pagina;
 
 import java.util.List;
 
@@ -10,7 +12,7 @@ public interface InvitadoService {
 
     InvitadoResponses.Invitado crearInvitado(Long residenteId, InvitadoRequests.CrearInvitado solicitud);
 
-    List<InvitadoResponses.Invitado> listarInvitados(Long residenteId);
+    Pagina<InvitadoResponses.Invitado> listarInvitados(Long residenteId, SolicitudPagina pagina);
 
     /** Residente.cambiarEstadoInvitado(invitado, id): invierte el estado de un invitado propio. */
     InvitadoResponses.CambioEstado cambiarEstadoInvitado(Long residenteId, Long invitadoId);
@@ -19,5 +21,5 @@ public interface InvitadoService {
     InvitadoResponses.CambioEstadoMasivo cambiarEstadoInvitados(Long residenteId, List<Long> invitadoIds);
 
     /** UsuarioAutorizado.buscarRelacionResidente(): residentes que autorizaron a este invitado. */
-    List<InvitadoResponses.Anfitrion> buscarRelacionResidente(Long invitadoId);
+    Pagina<InvitadoResponses.Anfitrion> buscarRelacionResidente(Long invitadoId, SolicitudPagina pagina);
 }

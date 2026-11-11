@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,11 +59,84 @@ class ReservaZonaComunTest {
         assertThat(reserva().estaHabilitado(residente(true, true, Liquidacion.PENDIENTE, LocalDate.now().minusDays(1)))).isFalse();
     }
 
+    private static final LocalDate DIA = LocalDate.of(2026, 11, 20);
+
+    private ReservaZonaComun reserva(LocalTime horaInicioZona, LocalTime horaFinZona,
+                                     LocalDateTime inicio, LocalDateTime fin) {
+        ZonaComun zona = new ZonaComun(1L, "Salon", 5, horaInicioZona, horaFinZona);
+        return new ReservaZonaComun(null, null, zona, inicio, fin);
+    }
+
+    private ReservaZonaComun deDiezADoce() {
+        return reserva(LocalTime.of(8, 0), LocalTime.of(20, 0), DIA.atTime(10, 0), DIA.atTime(12, 0));
+    }
+
     @Test
-    @DisplayName("validarHorario consulta el horario de la zona")
-    void validarHorario() {
-        assertThat(reserva().validarHorario(LocalTime.of(10, 0))).isTrue();
-        assertThat(reserva().validarHorario(LocalTime.of(21, 0))).isFalse();
-        assertThat(new ReservaZonaComun().validarHorario(LocalTime.NOON)).isFalse();
+    @DisplayName("el estado es PROGRAMADA antes del inicio, EN_CURSO durante y FINALIZADA desde el fin")
+    void estado() {
+        ReservaZonaComun r = deDiezADoce();
+
+        assertThat(r.estado(DIA.atTime(9, 59))).isEqualTo(ReservaZonaComun.PROGRAMADA);
+        assertThat(r.estado(DIA.atTime(10, 0))).isEqualTo(ReservaZonaComun.EN_CURSO);
+        assertThat(r.estado(DIA.atTime(11, 59))).isEqualTo(ReservaZonaComun.EN_CURSO);
+        assertThat(r.estado(DIA.atTime(12, 0))).isEqualTo(ReservaZonaComun.FINALIZADA);
+    }
+
+    @Test
+    @DisplayName("solo se cancela una reserva PROGRAMADA")
+    void cancelable() {
+        ReservaZonaComun r = deDiezADoce();
+
+        assertThat(r.sePuedeCancelar(DIA.atTime(9, 0))).isTrue();
+        assertThat(r.sePuedeCancelar(DIA.atTime(10, 30))).isFalse();
+        assertThat(r.sePuedeCancelar(DIA.atTime(13, 0))).isFalse();
+    }
+
+    @Test
+    @DisplayName("el intervalo es valido solo si el fin es posterior al inicio")
+    void intervalo() {
+        assertThat(deDiezADoce().intervaloValido()).isTrue();
+        assertThat(reserva(LocalTime.of(8, 0), LocalTime.of(20, 0), DIA.atTime(10, 0), DIA.atTime(10, 0))
+                .intervaloValido()).isFalse();
+        assertThat(new ReservaZonaComun().intervaloValido()).isFalse();
+    }
+
+    @Test
+    @DisplayName("validarHorario exige que todo el intervalo caiga en una apertura de la zona")
+    void validarHorarioDiurno() {
+        LocalTime abre = LocalTime.of(8, 0);
+        LocalTime cierra = LocalTime.of(20, 0);
+
+        assertThat(deDiezADoce().validarHorario()).isTrue();
+        assertThat(reserva(abre, cierra, DIA.atTime(8, 0), DIA.atTime(20, 0)).validarHorario()).isTrue();
+        assertThat(reserva(abre, cierra, DIA.atTime(7, 30), DIA.atTime(9, 0)).validarHorario()).isFalse();
+        assertThat(reserva(abre, cierra, DIA.atTime(19, 0), DIA.atTime(20, 30)).validarHorario()).isFalse();
+        assertThat(reserva(abre, cierra, DIA.atTime(19, 0), DIA.plusDays(1).atTime(9, 0)).validarHorario()).isFalse();
+        assertThat(new ReservaZonaComun().validarHorario()).isFalse();
+    }
+
+    @Test
+    @DisplayName("con horario que cruza la medianoche la reserva puede terminar al dia siguiente")
+    void validarHorarioNocturno() {
+        LocalTime abre = LocalTime.of(20, 0);
+        LocalTime cierra = LocalTime.of(2, 0);
+
+        assertThat(reserva(abre, cierra, DIA.atTime(22, 0), DIA.plusDays(1).atTime(1, 0)).validarHorario()).isTrue();
+        assertThat(reserva(abre, cierra, DIA.atTime(0, 30), DIA.atTime(1, 30)).validarHorario()).isTrue();
+        assertThat(reserva(abre, cierra, DIA.atTime(23, 0), DIA.plusDays(1).atTime(3, 0)).validarHorario()).isFalse();
+        assertThat(reserva(abre, cierra, DIA.atTime(12, 0), DIA.atTime(13, 0)).validarHorario()).isFalse();
+    }
+
+    @Test
+    @DisplayName("las reglas de la zona limitan la anticipacion minima y la duracion maxima")
+    void reglas() {
+        ReservaZonaComun r = deDiezADoce();
+
+        assertThat(r.cumpleAnticipacion(DIA.atTime(7, 0), 3)).isTrue();
+        assertThat(r.cumpleAnticipacion(DIA.atTime(7, 1), 3)).isFalse();
+        assertThat(r.cumpleAnticipacion(DIA.atTime(9, 59), null)).isTrue();
+        assertThat(r.cumpleDuracionMaxima(2)).isTrue();
+        assertThat(r.cumpleDuracionMaxima(1)).isFalse();
+        assertThat(r.cumpleDuracionMaxima(null)).isTrue();
     }
 }

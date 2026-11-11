@@ -9,7 +9,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import unisimon.demo.bootstrap.PasarelaProperties;
 import unisimon.demo.dto.request.PagoRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.PagoResponses;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.exception.ProhibidoException;
 import unisimon.demo.exception.SolicitudInvalidaException;
@@ -278,9 +280,24 @@ class PagoServiceImplTest {
     @Test
     @DisplayName("listar rechaza estados desconocidos y normaliza los validos")
     void listarEstados() {
-        assertThatThrownBy(() -> servicio.listar(null, "XYZ")).isInstanceOf(SolicitudInvalidaException.class);
+        assertThatThrownBy(() -> servicio.listar(null, "XYZ", SolicitudPagina.primera()))
+                .isInstanceOf(SolicitudInvalidaException.class);
 
-        servicio.listar(1L, " aprobado ");
-        verify(pagos).listar(1L, Pago.APROBADO, PagoServiceImpl.LIMITE_LISTADO);
+        servicio.listar(1L, " aprobado ", SolicitudPagina.primera());
+        verify(pagos).listar(1L, Pago.APROBADO, 20, 0L);
+    }
+
+    @Test
+    @DisplayName("listar pide la pagina con LIMIT/OFFSET y calcula el total de paginas con el COUNT")
+    void listarPaginado() {
+        when(pagos.contar(null, null)).thenReturn(45L);
+
+        Pagina<PagoResponses.Pago> resultado = servicio.listar(null, null, new SolicitudPagina(2, 20));
+
+        verify(pagos).listar(null, null, 20, 40L);
+        assertThat(resultado.pagina()).isEqualTo(2);
+        assertThat(resultado.tamano()).isEqualTo(20);
+        assertThat(resultado.totalElementos()).isEqualTo(45L);
+        assertThat(resultado.totalPaginas()).isEqualTo(3);
     }
 }

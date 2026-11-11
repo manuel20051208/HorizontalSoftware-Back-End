@@ -13,13 +13,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalTime;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 /**
- * Reserva de una zona comun por un residente.
+ * Reserva de una zona comun por un residente durante el intervalo [fechaHoraInicio, fechaHoraFin).
  * <p>
- * mostrarZonasComunes() y verificarDisponibilidad(hora) estan en la capa de servicios
- * (necesitan contar las reservas existentes en la base de datos).
+ * El estado no se guarda: se calcula comparando el intervalo con la hora actual ({@link #estado}).
+ * Contar el cupo y los solapes necesita la base de datos, asi que eso vive en la capa de servicios.
  */
 @Entity
 @DynamicUpdate
@@ -28,6 +29,13 @@ import java.time.LocalTime;
 @Setter
 @NoArgsConstructor
 public class ReservaZonaComun {
+
+    /** Aun no empieza: se puede cancelar. */
+    public static final String PROGRAMADA = "PROGRAMADA";
+    /** Empezo y no ha terminado. */
+    public static final String EN_CURSO = "EN_CURSO";
+    /** Ya termino. */
+    public static final String FINALIZADA = "FINALIZADA";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,15 +49,54 @@ public class ReservaZonaComun {
     @JoinColumn(name = "zona_comun_id")
     private ZonaComun zonaComun;
 
+    private LocalDateTime fechaHoraInicio;
+
+    private LocalDateTime fechaHoraFin;
+
     public ReservaZonaComun(Long id, Residente duenoReserva, ZonaComun zonaComun) {
         this.id = id;
         this.duenoReserva = duenoReserva;
         this.zonaComun = zonaComun;
     }
 
-    /** validarHorario(hora : LocalTime) : Boolean -> la hora esta dentro del horario de la zona. */
-    public Boolean validarHorario(LocalTime hora) {
-        return zonaComun != null && zonaComun.horarioIncluye(hora);
+    public ReservaZonaComun(Long id, Residente duenoReserva, ZonaComun zonaComun,
+                            LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin) {
+        this(id, duenoReserva, zonaComun);
+        this.fechaHoraInicio = fechaHoraInicio;
+        this.fechaHoraFin = fechaHoraFin;
+    }
+
+    /** estado(ahora): PROGRAMADA antes del inicio, EN_CURSO entre inicio y fin, FINALIZADA desde el fin. */
+    public String estado(LocalDateTime ahora) {
+        if (ahora.isBefore(fechaHoraInicio)) {
+            return PROGRAMADA;
+        }
+        return ahora.isBefore(fechaHoraFin) ? EN_CURSO : FINALIZADA;
+    }
+
+    /** El fin es posterior al inicio. */
+    public boolean intervaloValido() {
+        return fechaHoraInicio != null && fechaHoraFin != null && fechaHoraFin.isAfter(fechaHoraInicio);
+    }
+
+    /** validarHorario(): el intervalo completo cabe en una apertura de la zona. */
+    public Boolean validarHorario() {
+        return zonaComun != null && zonaComun.horarioCubre(fechaHoraInicio, fechaHoraFin);
+    }
+
+    /** Se pide con al menos {@code horas} de anticipacion (regla anticipacionMinimaHoras). Sin regla, siempre. */
+    public boolean cumpleAnticipacion(LocalDateTime ahora, Integer horas) {
+        return horas == null || !fechaHoraInicio.isBefore(ahora.plusHours(horas));
+    }
+
+    /** No dura mas de {@code horas} (regla duracionMaximaHoras). Sin regla, siempre. */
+    public boolean cumpleDuracionMaxima(Integer horas) {
+        return horas == null || Duration.between(fechaHoraInicio, fechaHoraFin).compareTo(Duration.ofHours(horas)) <= 0;
+    }
+
+    /** Solo una reserva que aun no empieza se puede cancelar. */
+    public boolean sePuedeCancelar(LocalDateTime ahora) {
+        return PROGRAMADA.equals(estado(ahora));
     }
 
     /**

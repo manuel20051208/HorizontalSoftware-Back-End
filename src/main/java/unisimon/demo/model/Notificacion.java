@@ -75,7 +75,8 @@ public class Notificacion {
     public void notificarReserva(ReservaZonaComun reserva) {
         this.tipoNotificacion = "RESERVA";
         this.usuarios = new ArrayList<>(List.of(reserva.getDuenoReserva()));
-        this.mensaje = "Su reserva de " + reserva.getZonaComun().getNombreZonaComun() + " quedo registrada.";
+        this.mensaje = "Su reserva de " + reserva.getZonaComun().getNombreZonaComun() + cuando(reserva)
+                + " quedo registrada.";
         enviarNotificacion();
     }
 
@@ -109,5 +110,18 @@ public class Notificacion {
 
     private static String pesos(BigDecimal valor) {
         return NumberFormat.getIntegerInstance(Locale.of("es", "CO")).format(valor);
+    }
+
+    /** " para el 2026-11-20 de 10:00 a 12:00" (o "hasta el <fecha> <hora>" si termina otro dia); vacio sin fechas. */
+    private static String cuando(ReservaZonaComun reserva) {
+        LocalDateTime inicio = reserva.getFechaHoraInicio();
+        LocalDateTime fin = reserva.getFechaHoraFin();
+        if (inicio == null || fin == null) {
+            return "";
+        }
+        String hasta = inicio.toLocalDate().equals(fin.toLocalDate())
+                ? " a " + fin.toLocalTime()
+                : " hasta el " + fin.toLocalDate() + " " + fin.toLocalTime();
+        return " para el " + inicio.toLocalDate() + " de " + inicio.toLocalTime() + hasta;
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.transaction.support.TransactionSynchronizationUtils;
 import unisimon.demo.config.CacheConfig;
 import unisimon.demo.dto.request.PagoRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.policy.AccesoInmueblePolicy;
 import unisimon.demo.policy.EstadoPagoPolicy;
 import unisimon.demo.repository.InmuebleRepository;
@@ -46,6 +47,7 @@ import unisimon.demo.service.impl.ZonaComunServiceImpl;
 import unisimon.demo.support.Proyecciones;
 
 import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,6 +64,8 @@ import static org.mockito.Mockito.when;
  */
 @SpringJUnitConfig(CacheServiciosTest.Contexto.class)
 class CacheServiciosTest {
+
+    private static final SolicitudPagina PRIMERA = SolicitudPagina.primera();
 
     @Configuration
     @Import(CacheConfig.class)
@@ -121,8 +125,9 @@ class CacheServiciosTest {
         }
 
         @Bean
-        ReservaZonaComunService reservaService(ReservaZonaComunRepository reservas, ZonaComunRepository zonas) {
-            return new ReservaZonaComunServiceImpl(reservas, zonas, mock(ResidenteRepository.class),
+        ReservaZonaComunService reservaService(ReservaZonaComunRepository reservas, ZonaComunRepository zonas,
+                                               RompimientoRepository rompimientos) {
+            return new ReservaZonaComunServiceImpl(reservas, zonas, mock(ResidenteRepository.class), rompimientos,
                     mock(NotificacionService.class), Clock.systemDefaultZone());
         }
 
@@ -184,67 +189,79 @@ class CacheServiciosTest {
     @Test
     @DisplayName("inmuebles: el listado se lee una vez y un cambio en las liquidaciones lo invalida")
     void inmuebles() {
-        inmuebleService.listar();
-        inmuebleService.listar();
-        verify(inmuebles, times(1)).listarResumen();
+        inmuebleService.listar(PRIMERA);
+        inmuebleService.listar(PRIMERA);
+        verify(inmuebles, times(1)).listarResumen(20, 0L);
 
         liquidacionService.marcarInmueblePagado(1L);
-        inmuebleService.listar();
-        verify(inmuebles, times(2)).listarResumen();
+        inmuebleService.listar(PRIMERA);
+        verify(inmuebles, times(2)).listarResumen(20, 0L);
+    }
+
+    @Test
+    @DisplayName("inmuebles: cada pagina tiene su propia entrada en el cache")
+    void inmueblesPorPagina() {
+        inmuebleService.listar(PRIMERA);
+        inmuebleService.listar(new SolicitudPagina(1, 20));
+        inmuebleService.listar(new SolicitudPagina(1, 20));
+        verify(inmuebles, times(1)).listarResumen(20, 0L);
+        verify(inmuebles, times(1)).listarResumen(20, 20L);
     }
 
     @Test
     @DisplayName("la invalidacion hecha dentro de una transaccion se aplica al confirmar, no antes")
     void invalidaAlConfirmar() {
-        inmuebleService.listar();
+        inmuebleService.listar(PRIMERA);
         TransactionSynchronizationManager.initSynchronization();
         try {
             liquidacionService.marcarInmueblePagado(1L);
-            inmuebleService.listar();
-            verify(inmuebles, times(1)).listarResumen();   // la transaccion sigue abierta: aun vale el cache
+            inmuebleService.listar(PRIMERA);
+            verify(inmuebles, times(1)).listarResumen(20, 0L);   // la transaccion sigue abierta: aun vale el cache
             TransactionSynchronizationUtils.triggerAfterCommit();
         } finally {
             TransactionSynchronizationManager.clearSynchronization();
         }
-        inmuebleService.listar();
-        verify(inmuebles, times(2)).listarResumen();
+        inmuebleService.listar(PRIMERA);
+        verify(inmuebles, times(2)).listarResumen(20, 0L);
     }
 
     @Test
     @DisplayName("zonas: se cachean por inmueble y cancelar una reserva las invalida (cambia reservasActuales)")
     void zonas() {
-        zonaService.listar();
-        zonaService.listar();
-        zonaService.mostrarZonasComunes(1L);
-        zonaService.mostrarZonasComunes(1L);
-        zonaService.mostrarZonasComunes(2L);
-        verify(zonas, times(1)).listar();
-        verify(zonas, times(1)).listarActivasDeInmueble(1L);
-        verify(zonas, times(1)).listarActivasDeInmueble(2L);
+        zonaService.listar(PRIMERA);
+        zonaService.listar(PRIMERA);
+        zonaService.mostrarZonasComunes(1L, PRIMERA);
+        zonaService.mostrarZonasComunes(1L, PRIMERA);
+        zonaService.mostrarZonasComunes(2L, PRIMERA);
+        verify(zonas, times(1)).listar(20, 0L);
+        verify(zonas, times(1)).listarActivasDeInmueble(1L, 20, 0L);
+        verify(zonas, times(1)).listarActivasDeInmueble(2L, 20, 0L);
 
         when(reservas.buscarPorId(9L)).thenReturn(Optional.of(
-                Proyecciones.de(ReservaView.class, "id", 9L, "duenoReservaId", 5L)));
+                Proyecciones.de(ReservaView.class, "id", 9L, "duenoReservaId", 5L,
+                        "fechaHoraInicio", LocalDateTime.now().plusDays(1),
+                        "fechaHoraFin", LocalDateTime.now().plusDays(1).plusHours(2))));
         reservaService.cancelarReservaZonaComun(5L, 9L);
 
-        zonaService.listar();
-        zonaService.mostrarZonasComunes(1L);
-        verify(zonas, times(2)).listar();
-        verify(zonas, times(2)).listarActivasDeInmueble(1L);
+        zonaService.listar(PRIMERA);
+        zonaService.mostrarZonasComunes(1L, PRIMERA);
+        verify(zonas, times(2)).listar(20, 0L);
+        verify(zonas, times(2)).listarActivasDeInmueble(1L, 20, 0L);
     }
 
     @Test
     @DisplayName("reglas de reserva: el listado se lee una vez e inactivar una regla en una zona lo invalida")
     void reglas() {
-        reglaService.listar();
-        reglaService.listar();
-        verify(reglas, times(1)).listar();
+        reglaService.listar(PRIMERA);
+        reglaService.listar(PRIMERA);
+        verify(reglas, times(1)).listar(20, 0L);
 
         when(rompimientos.buscarPorId(3L)).thenReturn(Optional.of(Proyecciones.de(RompimientoView.class,
                 "id", 3L, "zonaComunId", 1L, "reglaReservaId", 2L, "activa", true)));
         reglaService.inactivarRegla(3L);
 
-        reglaService.listar();
-        verify(reglas, times(2)).listar();
+        reglaService.listar(PRIMERA);
+        verify(reglas, times(2)).listar(20, 0L);
     }
 
     @Test

@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +61,7 @@ public class ZonaComun {
         this.isActive = !Boolean.TRUE.equals(this.isActive);
     }
 
-    /** Usada por ReservaZonaComun.validarHorario: la hora cae dentro del horario de la zona (admite cruce de medianoche). */
+    /** La hora cae dentro del horario de la zona (admite cruce de medianoche). */
     public boolean horarioIncluye(LocalTime hora) {
         if (hora == null || horaInicio == null || horaFin == null) {
             return false;
@@ -68,5 +70,31 @@ public class ZonaComun {
             return !hora.isBefore(horaInicio) && hora.isBefore(horaFin);
         }
         return !hora.isBefore(horaInicio) || hora.isBefore(horaFin);
+    }
+
+    /**
+     * Usada por ReservaZonaComun.validarHorario: el intervalo [inicio, fin] cabe completo en UNA apertura de la zona.
+     * Con horario diurno (08:00-22:00) inicio y fin caen el mismo dia; con horario que cruza la medianoche
+     * (20:00-02:00) la apertura empieza un dia y termina al siguiente.
+     */
+    public boolean horarioCubre(LocalDateTime inicio, LocalDateTime fin) {
+        if (inicio == null || fin == null || horaInicio == null || horaFin == null || !fin.isAfter(inicio)) {
+            return false;
+        }
+        LocalDate dia = inicio.toLocalDate();
+        LocalTime hora = inicio.toLocalTime();
+        LocalDateTime apertura;
+        LocalDateTime cierre;
+        if (horaInicio.isBefore(horaFin)) {
+            apertura = dia.atTime(horaInicio);
+            cierre = dia.atTime(horaFin);
+        } else if (!hora.isBefore(horaInicio)) {
+            apertura = dia.atTime(horaInicio);
+            cierre = dia.plusDays(1).atTime(horaFin);
+        } else {
+            apertura = dia.minusDays(1).atTime(horaInicio);
+            cierre = dia.atTime(horaFin);
+        }
+        return !inicio.isBefore(apertura) && !fin.isAfter(cierre);
     }
 }

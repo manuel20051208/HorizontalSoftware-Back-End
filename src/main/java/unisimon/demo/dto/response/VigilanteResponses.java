@@ -1,5 +1,6 @@
 package unisimon.demo.dto.response;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -9,10 +10,12 @@ public final class VigilanteResponses {
     private VigilanteResponses() {
     }
 
-    public record ZonaPermitida(Long zonaComunId, String nombreZonaComun, LocalTime horaInicio, LocalTime horaFin) {
+    /** horaInicio/horaFin: horario de la zona. reservaHasta: cuando termina la reserva que da el acceso. */
+    public record ZonaPermitida(Long zonaComunId, String nombreZonaComun, LocalTime horaInicio, LocalTime horaFin,
+                                LocalDateTime reservaHasta) {
     }
 
-    /** permitido: la persona puede entrar ahora a alguna zona comun (la reservo ella o su anfitrion). */
+    /** permitido: la persona tiene ahora una reserva EN CURSO de una zona activa (suya o de su anfitrion). */
     public record Acceso(Long identificacion, String nombreCompleto, Boolean permitido, String motivo,
                          List<ZonaPermitida> zonasPermitidas) {
     }

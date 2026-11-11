@@ -94,6 +94,20 @@ public interface InmuebleRepository extends Repository<Inmueble, Long> {
         return buscarResumen(id, Liquidacion.AL_DIA, Liquidacion.EN_MORA);
     }
 
+    @Query(value = SELECT_RESUMEN + GRUPO_RESUMEN + "ORDER BY i.direccion_inmueble, i.id"
+            + SqlPaginacion.LIMITE_DESPLAZAMIENTO, nativeQuery = true)
+    List<InmuebleResumenView> listarResumenPagina(@Param("alDia") String alDia, @Param("enMora") String enMora,
+                                                  @Param("limite") int limite,
+                                                  @Param("desplazamiento") long desplazamiento);
+
+    /** Una pagina del listado de inmuebles (mismo orden que {@link #listarResumen()}). */
+    default List<InmuebleResumenView> listarResumen(int limite, long desplazamiento) {
+        return listarResumenPagina(Liquidacion.AL_DIA, Liquidacion.EN_MORA, limite, desplazamiento);
+    }
+
+    @Query(value = "SELECT COUNT(*) FROM inmuebles", nativeQuery = true)
+    long contar();
+
     @Query(value = "SELECT id FROM inmuebles WHERE is_active ORDER BY id", nativeQuery = true)
     List<Long> listarIdsActivos();
 

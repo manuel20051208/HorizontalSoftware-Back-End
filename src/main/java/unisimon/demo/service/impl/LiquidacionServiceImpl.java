@@ -6,7 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import unisimon.demo.cache.NombresCache;
 import unisimon.demo.dto.request.InmuebleRequests;
 import unisimon.demo.dto.request.LiquidacionRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.LiquidacionResponses;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.exception.SolicitudInvalidaException;
@@ -148,7 +150,8 @@ public class LiquidacionServiceImpl implements LiquidacionService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<LiquidacionResponses.Liquidacion> listar(Long inmuebleId, String estado, LocalDate periodo) {
+    public Pagina<LiquidacionResponses.Liquidacion> listar(Long inmuebleId, String estado, LocalDate periodo,
+                                                         SolicitudPagina pagina) {
         String estadoNormalizado = null;
         if (estado != null && !estado.isBlank()) {
             estadoNormalizado = estado.trim().toUpperCase();
@@ -157,8 +160,10 @@ public class LiquidacionServiceImpl implements LiquidacionService {
             }
         }
         LocalDate primerDia = periodo == null ? null : periodo.withDayOfMonth(1);
-        return liquidaciones.listar(inmuebleId, estadoNormalizado, primerDia).stream()
-                .map(LiquidacionMapper::de).toList();
+        List<LiquidacionResponses.Liquidacion> filas = liquidaciones.listar(inmuebleId, estadoNormalizado, primerDia,
+                        pagina.limite(), pagina.desplazamiento())
+                .stream().map(LiquidacionMapper::de).toList();
+        return Pagina.de(filas, liquidaciones.contar(inmuebleId, estadoNormalizado, primerDia), pagina);
     }
 
     @Override

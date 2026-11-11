@@ -26,14 +26,19 @@ public interface ZonaComunRepository extends Repository<ZonaComun, Long> {
 
         Boolean getIsActive();
 
-        /** Reservas registradas para la zona. */
+        /** Reservas de la zona que aun no terminan (programadas o en curso). */
         Long getReservasActuales();
     }
+
+    /** "Ahora" en hora de Colombia, sin depender de la zona horaria de la sesion de la base de datos. */
+    String AHORA_BOGOTA = "(now() AT TIME ZONE 'America/Bogota')";
 
     String SELECT_ZONA = """
             SELECT z.id AS "id", z.nombre_zona_comun AS "nombreZonaComun", z.capacidad AS "capacidad",
                    z.hora_inicio AS "horaInicio", z.hora_fin AS "horaFin", z.is_active AS "isActive",
-                   (SELECT COUNT(*) FROM reservas_zona_comun r WHERE r.zona_comun_id = z.id) AS "reservasActuales"
+                   (SELECT COUNT(*) FROM reservas_zona_comun r
+                    WHERE r.zona_comun_id = z.id AND r.fecha_hora_fin > """ + AHORA_BOGOTA + """
+            ) AS "reservasActuales"
             FROM zonas_comunes z
             """;
 
@@ -47,16 +52,29 @@ public interface ZonaComunRepository extends Repository<ZonaComun, Long> {
     @Query(value = SELECT_ZONA + "WHERE z.id = :id", nativeQuery = true)
     Optional<ZonaView> buscarPorId(@Param("id") Long id);
 
-    @Query(value = SELECT_ZONA + "ORDER BY z.nombre_zona_comun", nativeQuery = true)
-    List<ZonaView> listar();
+    @Query(value = SELECT_ZONA + "ORDER BY z.nombre_zona_comun, z.id" + SqlPaginacion.LIMITE_DESPLAZAMIENTO,
+            nativeQuery = true)
+    List<ZonaView> listar(@Param("limite") int limite, @Param("desplazamiento") long desplazamiento);
 
-    /** mostrarZonasComunes: las zonas activas asignadas a un inmueble. */
-    @Query(value = SELECT_ZONA + """
+    @Query(value = "SELECT COUNT(*) FROM zonas_comunes", nativeQuery = true)
+    long contar();
+
+    String DE_INMUEBLE_ACTIVAS = """
             JOIN inmueble_zonas_comunes iz ON iz.zona_comun_id = z.id
             WHERE iz.inmueble_id = :inmuebleId AND z.is_active
-            ORDER BY z.nombre_zona_comun
-            """, nativeQuery = true)
+            """;
+
+    /** mostrarZonasComunes: las zonas activas asignadas a un inmueble. */
+    @Query(value = SELECT_ZONA + DE_INMUEBLE_ACTIVAS + "ORDER BY z.nombre_zona_comun", nativeQuery = true)
     List<ZonaView> listarActivasDeInmueble(@Param("inmuebleId") Long inmuebleId);
+
+    @Query(value = SELECT_ZONA + DE_INMUEBLE_ACTIVAS + "ORDER BY z.nombre_zona_comun, z.id"
+            + SqlPaginacion.LIMITE_DESPLAZAMIENTO, nativeQuery = true)
+    List<ZonaView> listarActivasDeInmueble(@Param("inmuebleId") Long inmuebleId,
+                                           @Param("limite") int limite, @Param("desplazamiento") long desplazamiento);
+
+    @Query(value = "SELECT COUNT(*) FROM zonas_comunes z " + DE_INMUEBLE_ACTIVAS, nativeQuery = true)
+    long contarActivasDeInmueble(@Param("inmuebleId") Long inmuebleId);
 
     @Query(value = "SELECT EXISTS (SELECT 1 FROM zonas_comunes WHERE LOWER(nombre_zona_comun) = LOWER(:nombre))",
             nativeQuery = true)

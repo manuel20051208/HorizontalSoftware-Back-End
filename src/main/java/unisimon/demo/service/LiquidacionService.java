@@ -2,10 +2,11 @@ package unisimon.demo.service;
 
 import unisimon.demo.dto.request.InmuebleRequests;
 import unisimon.demo.dto.request.LiquidacionRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.LiquidacionResponses;
+import unisimon.demo.dto.response.Pagina;
 
 import java.time.LocalDate;
-import java.util.List;
 
 /** Ciclo de vida de las liquidaciones mensuales. */
 public interface LiquidacionService {
@@ -28,7 +29,8 @@ public interface LiquidacionService {
     /** Liquidacion.marcarAlDia() */
     LiquidacionResponses.Liquidacion marcarAlDia(Long liquidacionId);
 
-    List<LiquidacionResponses.Liquidacion> listar(Long inmuebleId, String estado, LocalDate periodo);
+    Pagina<LiquidacionResponses.Liquidacion> listar(Long inmuebleId, String estado, LocalDate periodo,
+                                                  SolicitudPagina pagina);
 
     /** Pasa a EN_MORA las liquidaciones PENDIENTES cuya fecha limite ya paso. Devuelve cuantas cambio. */
     int marcarVencidas();

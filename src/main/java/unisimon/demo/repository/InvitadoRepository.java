@@ -69,9 +69,13 @@ public interface InvitadoRepository extends Repository<UsuarioAutorizado, Long> 
     @Query(value = SELECT_INVITADO + """
             JOIN residente_invitados ri ON ri.invitado_id = u.id
             WHERE ri.residente_id = :residenteId
-            ORDER BY u.nombre_completo
-            """, nativeQuery = true)
-    List<InvitadoView> listarDeResidente(@Param("residenteId") Long residenteId);
+            ORDER BY u.nombre_completo, u.id
+            """ + SqlPaginacion.LIMITE_DESPLAZAMIENTO, nativeQuery = true)
+    List<InvitadoView> listarDeResidente(@Param("residenteId") Long residenteId,
+                                         @Param("limite") int limite, @Param("desplazamiento") long desplazamiento);
+
+    @Query(value = "SELECT COUNT(*) FROM residente_invitados WHERE residente_id = :residenteId", nativeQuery = true)
+    long contarDeResidente(@Param("residenteId") Long residenteId);
 
     @Query(value = SELECT_INVITADO + "WHERE u.tipo_usuario = 'USUARIO_AUTORIZADO' AND u.identificacion = :identificacion",
             nativeQuery = true)
@@ -80,15 +84,25 @@ public interface InvitadoRepository extends Repository<UsuarioAutorizado, Long> 
     @Query(value = SELECT_INVITADO + "WHERE u.tipo_usuario = 'USUARIO_AUTORIZADO' AND u.id = :id", nativeQuery = true)
     Optional<InvitadoView> buscarPorId(@Param("id") Long id);
 
-    /** buscarRelacionResidente(): los residentes que autorizaron a este invitado. */
-    @Query(value = """
+    String SELECT_ANFITRION = """
             SELECT r.id AS "id", r.identificacion AS "identificacion", r.nombre_completo AS "nombreCompleto",
                    r.inmueble_id AS "inmuebleId", i.direccion_inmueble AS "direccionInmueble"
             FROM residente_invitados ri
             JOIN usuarios r ON r.id = ri.residente_id
             LEFT JOIN inmuebles i ON i.id = r.inmueble_id
             WHERE ri.invitado_id = :invitadoId
-            ORDER BY r.nombre_completo
-            """, nativeQuery = true)
+            """;
+
+    /** Los residentes que autorizaron a este invitado (todos: el vigilante avisa a cada inmueble). */
+    @Query(value = SELECT_ANFITRION + "ORDER BY r.nombre_completo", nativeQuery = true)
     List<AnfitrionView> listarAnfitriones(@Param("invitadoId") Long invitadoId);
+
+    /** buscarRelacionResidente(): una pagina de los residentes que autorizaron a este invitado. */
+    @Query(value = SELECT_ANFITRION + "ORDER BY r.nombre_completo, r.id" + SqlPaginacion.LIMITE_DESPLAZAMIENTO,
+            nativeQuery = true)
+    List<AnfitrionView> listarAnfitriones(@Param("invitadoId") Long invitadoId,
+                                          @Param("limite") int limite, @Param("desplazamiento") long desplazamiento);
+
+    @Query(value = "SELECT COUNT(*) FROM residente_invitados WHERE invitado_id = :invitadoId", nativeQuery = true)
+    long contarAnfitriones(@Param("invitadoId") Long invitadoId);
 }

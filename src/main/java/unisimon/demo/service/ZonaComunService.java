@@ -1,6 +1,8 @@
 package unisimon.demo.service;
 
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.request.ZonaRequests;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ZonaResponses;
 
 import java.util.List;
@@ -10,10 +12,10 @@ public interface ZonaComunService {
 
     ZonaResponses.Zona crearZona(ZonaRequests.CrearZona solicitud);
 
-    List<ZonaResponses.Zona> listar();
+    Pagina<ZonaResponses.Zona> listar(SolicitudPagina pagina);
 
     /** ReservaZonaComun.mostrarZonasComunes(): zonas activas asignadas al inmueble. */
-    List<ZonaResponses.Zona> mostrarZonasComunes(Long inmuebleId);
+    Pagina<ZonaResponses.Zona> mostrarZonasComunes(Long inmuebleId, SolicitudPagina pagina);
 
     /** ZonaComun.cambiarEstado(): activa o desactiva la zona. */
     ZonaResponses.Zona cambiarEstado(Long zonaId);

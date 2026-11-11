@@ -5,13 +5,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.AutoResponses;
 import unisimon.demo.dto.response.InvitadoResponses;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.security.annotation.AdministradorOVigilante;
 import unisimon.demo.service.AutoService;
 import unisimon.demo.service.InvitadoService;
-
-import java.util.List;
 
 /** Consultas cruzadas que usan el administrador y la porteria. */
 @RestController
@@ -28,8 +28,8 @@ public class ConsultaController {
 
     @AdministradorOVigilante
     @GetMapping("/invitados/{id}/residentes")
-    public List<InvitadoResponses.Anfitrion> residentesDelInvitado(@PathVariable Long id) {
-        return invitados.buscarRelacionResidente(id);
+    public Pagina<InvitadoResponses.Anfitrion> residentesDelInvitado(@PathVariable Long id, SolicitudPagina pagina) {
+        return invitados.buscarRelacionResidente(id, pagina);
     }
 
     @AdministradorOVigilante

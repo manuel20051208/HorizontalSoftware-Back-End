@@ -74,14 +74,21 @@ public interface LiquidacionRepository extends Repository<Liquidacion, Long> {
     @Query(value = SELECT_LIQUIDACION + "WHERE l.estado = :estado ORDER BY l.id", nativeQuery = true)
     List<LiquidacionView> listarPorEstado(@Param("estado") String estado);
 
-    @Query(value = SELECT_LIQUIDACION + """
+    String FILTRO_LISTADO = """
             WHERE (CAST(:inmuebleId AS BIGINT) IS NULL OR l.inmueble_id = CAST(:inmuebleId AS BIGINT))
               AND (CAST(:estado AS VARCHAR) IS NULL OR l.estado = CAST(:estado AS VARCHAR))
               AND (CAST(:periodo AS DATE) IS NULL OR l.periodo = CAST(:periodo AS DATE))
-            ORDER BY l.periodo DESC, i.direccion_inmueble
-            """, nativeQuery = true)
+            """;
+
+    @Query(value = SELECT_LIQUIDACION + FILTRO_LISTADO + "ORDER BY l.periodo DESC, i.direccion_inmueble, l.id"
+            + SqlPaginacion.LIMITE_DESPLAZAMIENTO, nativeQuery = true)
     List<LiquidacionView> listar(@Param("inmuebleId") Long inmuebleId, @Param("estado") String estado,
-                                 @Param("periodo") LocalDate periodo);
+                                 @Param("periodo") LocalDate periodo,
+                                 @Param("limite") int limite, @Param("desplazamiento") long desplazamiento);
+
+    @Query(value = "SELECT COUNT(*) FROM liquidaciones l " + FILTRO_LISTADO, nativeQuery = true)
+    long contar(@Param("inmuebleId") Long inmuebleId, @Param("estado") String estado,
+                @Param("periodo") LocalDate periodo);
 
     @Query(value = "SELECT EXISTS (SELECT 1 FROM liquidaciones WHERE inmueble_id = :inmuebleId AND periodo = :periodo)",
             nativeQuery = true)

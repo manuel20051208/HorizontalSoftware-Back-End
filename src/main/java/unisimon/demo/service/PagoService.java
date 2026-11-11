@@ -1,10 +1,10 @@
 package unisimon.demo.service;
 
 import unisimon.demo.dto.request.PagoRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.PagoResponses;
 import unisimon.demo.security.UsuarioAutenticado;
-
-import java.util.List;
 
 /** Registro y estados de los pagos de administracion. */
 public interface PagoService {
@@ -28,10 +28,10 @@ public interface PagoService {
     PagoResponses.Comprobante generarComprobante(Long pagoId, UsuarioAutenticado usuario);
 
     /** Residente.consultarHistorialPago(id): pagos del inmueble del residente. */
-    List<PagoResponses.Pago> consultarHistorialPago(Long residenteId);
+    Pagina<PagoResponses.Pago> consultarHistorialPago(Long residenteId, SolicitudPagina pagina);
 
     /** Un pago del inmueble del residente (para consultar si ya quedo aprobado). */
     PagoResponses.Pago consultarPagoDeResidente(Long residenteId, Long pagoId);
 
-    List<PagoResponses.Pago> listar(Long inmuebleId, String estado);
+    Pagina<PagoResponses.Pago> listar(Long inmuebleId, String estado, SolicitudPagina pagina);
 }

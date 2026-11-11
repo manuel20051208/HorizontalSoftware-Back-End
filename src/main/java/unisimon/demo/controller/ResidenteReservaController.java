@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import unisimon.demo.dto.request.ReservaRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReservaResponses;
 import unisimon.demo.dto.response.ZonaResponses;
 import unisimon.demo.exception.RecursoNoEncontradoException;
@@ -22,8 +24,7 @@ import unisimon.demo.security.annotation.SoloResidente;
 import unisimon.demo.service.ReservaZonaComunService;
 import unisimon.demo.service.ZonaComunService;
 
-import java.time.LocalTime;
-import java.util.List;
+import java.time.LocalDateTime;
 
 /** Zonas comunes disponibles para el residente y sus reservas. */
 @RestController
@@ -43,25 +44,28 @@ public class ResidenteReservaController {
 
     @SoloResidente
     @GetMapping("/zonas-comunes")
-    public List<ZonaResponses.Zona> zonasDisponibles(UsuarioAutenticado usuario) {
+    public Pagina<ZonaResponses.Zona> zonasDisponibles(UsuarioAutenticado usuario, SolicitudPagina pagina) {
         Long inmuebleId = residentes.buscarContexto(usuario.id())
                 .orElseThrow(() -> new RecursoNoEncontradoException("El residente no tiene un inmueble asignado"))
                 .getInmuebleId();
-        return zonas.mostrarZonasComunes(inmuebleId);
+        return zonas.mostrarZonasComunes(inmuebleId, pagina);
     }
 
     @SoloResidente
     @GetMapping("/zonas-comunes/{id}/disponibilidad")
     public ReservaResponses.Disponibilidad disponibilidad(
             UsuarioAutenticado usuario, @PathVariable Long id,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime hora) {
-        return reservas.verificarDisponibilidad(usuario.id(), id, hora);
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fin) {
+        return reservas.verificarDisponibilidad(usuario.id(), id, inicio, fin);
     }
 
     @SoloResidente
     @GetMapping("/reservas")
-    public List<ReservaResponses.Reserva> misReservas(UsuarioAutenticado usuario) {
-        return reservas.verReservas(usuario.id());
+    public Pagina<ReservaResponses.Reserva> misReservas(UsuarioAutenticado usuario,
+                                                       @RequestParam(required = false) String estado,
+                                                       SolicitudPagina pagina) {
+        return reservas.verReservas(usuario.id(), estado, pagina);
     }
 
     @SoloResidente

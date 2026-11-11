@@ -13,14 +13,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import unisimon.demo.dto.request.LiquidacionRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.InmuebleResponses;
 import unisimon.demo.dto.response.LiquidacionResponses;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.security.annotation.SoloAdministrador;
 import unisimon.demo.service.LiquidacionService;
 import unisimon.demo.service.PanelAdministradorService;
 
 import java.time.LocalDate;
-import java.util.List;
 
 /** Liquidaciones mensuales y resumen del panel del administrador. */
 @RestController
@@ -58,11 +59,12 @@ public class AdminLiquidacionController {
 
     @SoloAdministrador
     @GetMapping("/liquidaciones")
-    public List<LiquidacionResponses.Liquidacion> listar(
+    public Pagina<LiquidacionResponses.Liquidacion> listar(
             @RequestParam(required = false) Long inmuebleId,
             @RequestParam(required = false) String estado,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodo) {
-        return liquidaciones.listar(inmuebleId, estado, periodo);
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodo,
+            SolicitudPagina pagina) {
+        return liquidaciones.listar(inmuebleId, estado, periodo, pagina);
     }
 
     @SoloAdministrador

@@ -3,7 +3,9 @@ package unisimon.demo.service.impl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.request.UsuarioRequests;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.UsuarioResponses;
 import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.exception.ProhibidoException;
@@ -68,7 +70,7 @@ public class UsuarioGestionServiceImpl implements UsuarioGestionService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UsuarioResponses.Usuario> listar(String tipoUsuario, Boolean active) {
+    public Pagina<UsuarioResponses.Usuario> listar(String tipoUsuario, Boolean active, SolicitudPagina pagina) {
         String tipo = null;
         if (tipoUsuario != null && !tipoUsuario.isBlank()) {
             tipo = tipoUsuario.trim().toUpperCase(Locale.ROOT);
@@ -76,7 +78,9 @@ public class UsuarioGestionServiceImpl implements UsuarioGestionService {
                 throw new SolicitudInvalidaException("tipoUsuario no es valido: " + tipoUsuario);
             }
         }
-        return usuarios.listar(tipo, active).stream().map(UsuarioMapper::de).toList();
+        List<UsuarioResponses.Usuario> filas = usuarios.listar(tipo, active, pagina.limite(), pagina.desplazamiento())
+                .stream().map(UsuarioMapper::de).toList();
+        return Pagina.de(filas, usuarios.contar(tipo, active), pagina);
     }
 
     @Override

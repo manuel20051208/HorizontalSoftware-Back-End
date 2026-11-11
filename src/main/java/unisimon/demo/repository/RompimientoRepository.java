@@ -52,6 +52,25 @@ public interface RompimientoRepository extends Repository<Rompimiento, Long> {
             nativeQuery = true)
     List<RompimientoView> listarPorRegla(@Param("reglaId") Long reglaId);
 
+    /** Limites que imponen a una reserva las reglas ACTIVAS de una zona (los nulos significan "sin regla"). */
+    interface LimitesReservaView {
+        /** La mayor anticipacion minima exigida por las reglas activas. */
+        Integer getAnticipacionMinimaHoras();
+
+        /** La menor duracion maxima permitida por las reglas activas. */
+        Integer getDuracionMaximaHoras();
+    }
+
+    /** Si varias reglas activas aplican a la zona, gana la mas estricta de cada limite. */
+    @Query(value = """
+            SELECT MAX(rr.anticipacion_minima_horas) AS "anticipacionMinimaHoras",
+                   MIN(rr.duracion_maxima_horas) AS "duracionMaximaHoras"
+            FROM rompimientos r
+            JOIN reglas_reserva rr ON rr.id = r.regla_reserva_id
+            WHERE r.zona_comun_id = :zonaId AND r.activa
+            """, nativeQuery = true)
+    LimitesReservaView buscarLimitesDeZona(@Param("zonaId") Long zonaId);
+
     @Modifying
     @Query(value = "UPDATE rompimientos SET activa = :activa, fecha_aplicacion = :fechaAplicacion WHERE id = :id",
             nativeQuery = true)

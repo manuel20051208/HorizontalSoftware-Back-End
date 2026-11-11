@@ -9,7 +9,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import unisimon.demo.dto.request.InmuebleRequests;
 import unisimon.demo.dto.request.LiquidacionRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.LiquidacionResponses;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.exception.SolicitudInvalidaException;
@@ -284,9 +286,16 @@ class LiquidacionServiceImplTest {
     @Test
     @DisplayName("listar valida el estado pedido y normaliza el periodo al dia 1")
     void listar() {
-        assertThatThrownBy(() -> servicio.listar(null, "RARO", null)).isInstanceOf(SolicitudInvalidaException.class);
+        SolicitudPagina pagina = SolicitudPagina.primera();
+        assertThatThrownBy(() -> servicio.listar(null, "RARO", null, pagina))
+                .isInstanceOf(SolicitudInvalidaException.class);
 
-        when(liquidaciones.listar(1L, "PENDIENTE", LocalDate.of(2026, 11, 1))).thenReturn(List.of());
-        assertThat(servicio.listar(1L, " pendiente ", LocalDate.of(2026, 11, 20))).isEmpty();
+        LocalDate primerDia = LocalDate.of(2026, 11, 1);
+        when(liquidaciones.listar(1L, "PENDIENTE", primerDia, 20, 0L)).thenReturn(List.of());
+        when(liquidaciones.contar(1L, "PENDIENTE", primerDia)).thenReturn(0L);
+        Pagina<LiquidacionResponses.Liquidacion> resultado =
+                servicio.listar(1L, " pendiente ", LocalDate.of(2026, 11, 20), pagina);
+        assertThat(resultado.contenido()).isEmpty();
+        assertThat(resultado.totalPaginas()).isZero();
     }
 }

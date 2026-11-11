@@ -112,6 +112,19 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
             """, nativeQuery = true)
     List<UsuarioListaView> listar(@Param("tipo") String tipo, @Param("active") Boolean active);
 
+    String FILTRO_LISTA = """
+            WHERE (CAST(:tipo AS VARCHAR) IS NULL OR u.tipo_usuario = CAST(:tipo AS VARCHAR))
+              AND (CAST(:active AS BOOLEAN) IS NULL OR u.active = CAST(:active AS BOOLEAN))
+            """;
+
+    @Query(value = SELECT_LISTA + FILTRO_LISTA + "ORDER BY u.nombre_completo, u.id"
+            + SqlPaginacion.LIMITE_DESPLAZAMIENTO, nativeQuery = true)
+    List<UsuarioListaView> listar(@Param("tipo") String tipo, @Param("active") Boolean active,
+                                  @Param("limite") int limite, @Param("desplazamiento") long desplazamiento);
+
+    @Query(value = "SELECT COUNT(*) FROM usuarios u " + FILTRO_LISTA, nativeQuery = true)
+    long contar(@Param("tipo") String tipo, @Param("active") Boolean active);
+
     @Query(value = SELECT_LISTA + "WHERE u.inmueble_id = :inmuebleId ORDER BY u.nombre_completo", nativeQuery = true)
     List<UsuarioListaView> listarPorInmueble(@Param("inmuebleId") Long inmuebleId);
 

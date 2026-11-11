@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import unisimon.demo.dto.request.PagoRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.InmuebleResponses;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.PagoResponses;
 import unisimon.demo.security.UsuarioAutenticado;
 import unisimon.demo.security.annotation.SoloResidente;
 import unisimon.demo.service.EstadoCuentaService;
 import unisimon.demo.service.PagoService;
-
-import java.util.List;
 
 /** Estado de cuenta y pagos del residente. */
 @RestController
@@ -40,8 +40,8 @@ public class ResidenteCuentaController {
 
     @SoloResidente
     @GetMapping("/pagos")
-    public List<PagoResponses.Pago> historial(UsuarioAutenticado usuario) {
-        return pagos.consultarHistorialPago(usuario.id());
+    public Pagina<PagoResponses.Pago> historial(UsuarioAutenticado usuario, SolicitudPagina pagina) {
+        return pagos.consultarHistorialPago(usuario.id(), pagina);
     }
 
     @SoloResidente

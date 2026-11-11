@@ -3,7 +3,9 @@ package unisimon.demo.service.impl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unisimon.demo.dto.request.NotificacionRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.NotificacionResponses;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.mapper.Hidratador;
@@ -88,7 +90,8 @@ public class NotificacionServiceImpl implements NotificacionService {
         ZonaComun zona = Hidratador.referenciaZona(vista.getZonaComunId());
         zona.setNombreZonaComun(vista.getNombreZonaComun());
         ReservaZonaComun reserva = new ReservaZonaComun(vista.getId(),
-                Hidratador.referenciaResidente(vista.getDuenoReservaId()), zona);
+                Hidratador.referenciaResidente(vista.getDuenoReservaId()), zona, vista.getFechaHoraInicio(),
+                vista.getFechaHoraFin());
         Notificacion notificacion = new Notificacion();
         notificacion.notificarReserva(reserva);
         return enviar(notificacion, null);
@@ -118,8 +121,10 @@ public class NotificacionServiceImpl implements NotificacionService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<NotificacionResponses.Notificacion> consultarNotificacion(Long usuarioId) {
-        return notificaciones.listarDeUsuario(usuarioId).stream().map(NotificacionMapper::de).toList();
+    public Pagina<NotificacionResponses.Notificacion> consultarNotificacion(Long usuarioId, SolicitudPagina pagina) {
+        List<NotificacionResponses.Notificacion> filas = notificaciones.listarDeUsuario(usuarioId, pagina.limite(),
+                pagina.desplazamiento()).stream().map(NotificacionMapper::de).toList();
+        return Pagina.de(filas, notificaciones.contarDeUsuario(usuarioId), pagina);
     }
 
     @Override

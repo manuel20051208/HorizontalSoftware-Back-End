@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import unisimon.demo.dto.request.AutoRequests;
 import unisimon.demo.dto.request.InvitadoRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.AutoResponses;
 import unisimon.demo.dto.response.InvitadoResponses;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.security.UsuarioAutenticado;
 import unisimon.demo.security.annotation.SoloResidente;
 import unisimon.demo.service.AutoService;
 import unisimon.demo.service.InvitadoService;
-
-import java.util.List;
 
 /** Invitados y auto del residente. */
 @RestController
@@ -36,8 +36,8 @@ public class ResidenteInvitadoController {
 
     @SoloResidente
     @GetMapping("/invitados")
-    public List<InvitadoResponses.Invitado> listar(UsuarioAutenticado usuario) {
-        return invitados.listarInvitados(usuario.id());
+    public Pagina<InvitadoResponses.Invitado> listar(UsuarioAutenticado usuario, SolicitudPagina pagina) {
+        return invitados.listarInvitados(usuario.id(), pagina);
     }
 
     @SoloResidente

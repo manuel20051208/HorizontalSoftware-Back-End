@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unisimon.demo.cache.NombresCache;
 import unisimon.demo.dto.request.InmuebleRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.InmuebleResponses;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.mapper.Hidratador;
@@ -71,8 +73,10 @@ public class InmuebleServiceImpl implements InmuebleService {
     @Override
     @Transactional(readOnly = true)
     @Cacheable(NombresCache.INMUEBLES)
-    public List<InmuebleResponses.Resumen> listar() {
-        return inmuebles.listarResumen().stream().map(this::resumen).toList();
+    public Pagina<InmuebleResponses.Resumen> listar(SolicitudPagina pagina) {
+        List<InmuebleResponses.Resumen> filas = inmuebles.listarResumen(pagina.limite(), pagina.desplazamiento())
+                .stream().map(this::resumen).toList();
+        return Pagina.de(filas, inmuebles.contar(), pagina);
     }
 
     @Override

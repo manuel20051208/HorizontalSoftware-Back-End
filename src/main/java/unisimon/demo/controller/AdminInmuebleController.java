@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import unisimon.demo.dto.request.InmuebleRequests;
 import unisimon.demo.dto.request.PagoRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.InmuebleResponses;
 import unisimon.demo.dto.response.LiquidacionResponses;
 import unisimon.demo.dto.response.NotificacionResponses;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.PagoResponses;
 import unisimon.demo.dto.response.ZonaResponses;
 import unisimon.demo.security.annotation.SoloAdministrador;
@@ -55,8 +57,8 @@ public class AdminInmuebleController {
 
     @SoloAdministrador
     @GetMapping
-    public List<InmuebleResponses.Resumen> listar() {
-        return inmuebles.listar();
+    public Pagina<InmuebleResponses.Resumen> listar(SolicitudPagina pagina) {
+        return inmuebles.listar(pagina);
     }
 
     @SoloAdministrador

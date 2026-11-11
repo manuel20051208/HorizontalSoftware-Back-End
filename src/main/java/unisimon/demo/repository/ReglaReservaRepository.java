@@ -47,8 +47,11 @@ public interface ReglaReservaRepository extends Repository<ReglaReserva, Long> {
     @Query(value = SELECT_REGLA + "WHERE r.id = :id", nativeQuery = true)
     Optional<ReglaView> buscarPorId(@Param("id") Long id);
 
-    @Query(value = SELECT_REGLA + "ORDER BY r.id", nativeQuery = true)
-    List<ReglaView> listar();
+    @Query(value = SELECT_REGLA + "ORDER BY r.id" + SqlPaginacion.LIMITE_DESPLAZAMIENTO, nativeQuery = true)
+    List<ReglaView> listar(@Param("limite") int limite, @Param("desplazamiento") long desplazamiento);
+
+    @Query(value = "SELECT COUNT(*) FROM reglas_reserva", nativeQuery = true)
+    long contar();
 
     @Modifying
     @Query(value = """

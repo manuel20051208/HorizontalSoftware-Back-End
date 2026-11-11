@@ -1,9 +1,9 @@
 package unisimon.demo.service;
 
 import unisimon.demo.dto.request.ReglaRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReglaResponses;
-
-import java.util.List;
 
 /** Reglas de reserva y su aplicacion a las zonas comunes. */
 public interface ReglaReservaService {
@@ -14,7 +14,7 @@ public interface ReglaReservaService {
     /** ReglaReserva.actualizarReglas(nuevaAnticipacion, nuevaDuracion) */
     ReglaResponses.Regla actualizarReglas(Long reglaId, ReglaRequests.ActualizarReglas solicitud);
 
-    List<ReglaResponses.Regla> listar();
+    Pagina<ReglaResponses.Regla> listar(SolicitudPagina pagina);
 
     /** Rompimiento.aplicarRegla() */
     ReglaResponses.Rompimiento aplicarRegla(Long rompimientoId);

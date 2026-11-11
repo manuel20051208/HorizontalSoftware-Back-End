@@ -4,7 +4,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unisimon.demo.dto.request.InvitadoRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.InvitadoResponses;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.exception.ProhibidoException;
 import unisimon.demo.exception.RecursoNoEncontradoException;
@@ -81,8 +83,10 @@ public class InvitadoServiceImpl implements InvitadoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<InvitadoResponses.Invitado> listarInvitados(Long residenteId) {
-        return invitados.listarDeResidente(residenteId).stream().map(InvitadoMapper::invitado).toList();
+    public Pagina<InvitadoResponses.Invitado> listarInvitados(Long residenteId, SolicitudPagina pagina) {
+        List<InvitadoResponses.Invitado> filas = invitados.listarDeResidente(residenteId, pagina.limite(),
+                pagina.desplazamiento()).stream().map(InvitadoMapper::invitado).toList();
+        return Pagina.de(filas, invitados.contarDeResidente(residenteId), pagina);
     }
 
     @Override
@@ -109,10 +113,12 @@ public class InvitadoServiceImpl implements InvitadoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<InvitadoResponses.Anfitrion> buscarRelacionResidente(Long invitadoId) {
+    public Pagina<InvitadoResponses.Anfitrion> buscarRelacionResidente(Long invitadoId, SolicitudPagina pagina) {
         invitados.buscarPorId(invitadoId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("El invitado " + invitadoId + " no existe"));
-        return invitados.listarAnfitriones(invitadoId).stream().map(InvitadoMapper::anfitrion).toList();
+        List<InvitadoResponses.Anfitrion> filas = invitados.listarAnfitriones(invitadoId, pagina.limite(),
+                pagina.desplazamiento()).stream().map(InvitadoMapper::anfitrion).toList();
+        return Pagina.de(filas, invitados.contarAnfitriones(invitadoId), pagina);
     }
 
     private InvitadoView propio(Long residenteId, Long invitadoId) {

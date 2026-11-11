@@ -7,12 +7,13 @@ import unisimon.demo.security.UsuarioAutenticadoResolver;
 
 import java.util.List;
 
-/** Registra el resolvedor que entrega el usuario autenticado a los controladores. */
+/** Registra los resolvedores que entregan el usuario autenticado y la pagina pedida a los controladores. */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new UsuarioAutenticadoResolver());
+        resolvers.add(new SolicitudPaginaResolver());
     }
 }

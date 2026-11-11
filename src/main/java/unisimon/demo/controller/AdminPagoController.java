@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import unisimon.demo.dto.request.PagoRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.PagoResponses;
 import unisimon.demo.security.annotation.SoloAdministrador;
 import unisimon.demo.service.PagoService;
 import unisimon.demo.service.PasarelaPagoService;
-
-import java.util.List;
 
 /** Pagos recibidos y configuracion de la pasarela. */
 @RestController
@@ -32,9 +32,10 @@ public class AdminPagoController {
 
     @SoloAdministrador
     @GetMapping("/pagos")
-    public List<PagoResponses.Pago> listar(@RequestParam(required = false) Long inmuebleId,
-                                           @RequestParam(required = false) String estado) {
-        return pagos.listar(inmuebleId, estado);
+    public Pagina<PagoResponses.Pago> listar(@RequestParam(required = false) Long inmuebleId,
+                                             @RequestParam(required = false) String estado,
+                                             SolicitudPagina pagina) {
+        return pagos.listar(inmuebleId, estado, pagina);
     }
 
     @SoloAdministrador

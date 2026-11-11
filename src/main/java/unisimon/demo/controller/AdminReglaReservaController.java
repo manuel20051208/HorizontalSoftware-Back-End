@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import unisimon.demo.dto.request.ReglaRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReglaResponses;
 import unisimon.demo.security.UsuarioAutenticado;
 import unisimon.demo.security.annotation.SoloAdministrador;
 import unisimon.demo.service.ReglaReservaService;
-
-import java.util.List;
 
 /** Reglas de reserva y su aplicacion a zonas. */
 @RestController
@@ -39,8 +39,8 @@ public class AdminReglaReservaController {
 
     @SoloAdministrador
     @GetMapping("/reglas-reserva")
-    public List<ReglaResponses.Regla> listar() {
-        return reglas.listar();
+    public Pagina<ReglaResponses.Regla> listar(SolicitudPagina pagina) {
+        return reglas.listar(pagina);
     }
 
     @SoloAdministrador

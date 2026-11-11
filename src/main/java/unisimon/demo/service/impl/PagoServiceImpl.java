@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unisimon.demo.bootstrap.PasarelaProperties;
 import unisimon.demo.dto.request.PagoRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.PagoResponses;
 import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.exception.ProhibidoException;
@@ -42,7 +44,6 @@ public class PagoServiceImpl implements PagoService {
     static final Set<String> METODOS_PASARELA = Set.of("PSE", "TARJETA", "NEQUI");
     static final Set<String> ESTADOS = Set.of(Pago.PENDIENTE, Pago.APROBADO, Pago.RECHAZADO, Pago.ANULADO,
             Pago.REEMBOLSADO);
-    static final int LIMITE_LISTADO = 200;
 
     private final PagoRepository pagos;
     private final LiquidacionRepository liquidaciones;
@@ -190,8 +191,11 @@ public class PagoServiceImpl implements PagoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PagoResponses.Pago> consultarHistorialPago(Long residenteId) {
-        return pagos.listarPorInmueble(contexto(residenteId).getInmuebleId()).stream().map(PagoMapper::de).toList();
+    public Pagina<PagoResponses.Pago> consultarHistorialPago(Long residenteId, SolicitudPagina pagina) {
+        Long inmuebleId = contexto(residenteId).getInmuebleId();
+        List<PagoResponses.Pago> filas = pagos.listarPorInmueble(inmuebleId, pagina.limite(), pagina.desplazamiento())
+                .stream().map(PagoMapper::de).toList();
+        return Pagina.de(filas, pagos.contarPorInmueble(inmuebleId), pagina);
     }
 
     @Override
@@ -206,7 +210,7 @@ public class PagoServiceImpl implements PagoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PagoResponses.Pago> listar(Long inmuebleId, String estado) {
+    public Pagina<PagoResponses.Pago> listar(Long inmuebleId, String estado, SolicitudPagina pagina) {
         String estadoNormalizado = null;
         if (estado != null && !estado.isBlank()) {
             estadoNormalizado = estado.trim().toUpperCase(Locale.ROOT);
@@ -214,7 +218,9 @@ public class PagoServiceImpl implements PagoService {
                 throw new SolicitudInvalidaException("estado no es valido: " + estado);
             }
         }
-        return pagos.listar(inmuebleId, estadoNormalizado, LIMITE_LISTADO).stream().map(PagoMapper::de).toList();
+        List<PagoResponses.Pago> filas = pagos.listar(inmuebleId, estadoNormalizado, pagina.limite(),
+                pagina.desplazamiento()).stream().map(PagoMapper::de).toList();
+        return Pagina.de(filas, pagos.contar(inmuebleId, estadoNormalizado), pagina);
     }
 
     // ------------------------------------------------------------------ internos

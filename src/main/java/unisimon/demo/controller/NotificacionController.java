@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.NotificacionResponses;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.security.UsuarioAutenticado;
 import unisimon.demo.security.annotation.Autenticado;
 import unisimon.demo.service.NotificacionService;
-
-import java.util.List;
 
 /** Notificaciones del usuario con sesion iniciada (campana del front-end). */
 @RestController
@@ -26,8 +26,8 @@ public class NotificacionController {
 
     @Autenticado
     @GetMapping
-    public List<NotificacionResponses.Notificacion> mias(UsuarioAutenticado usuario) {
-        return notificaciones.consultarNotificacion(usuario.id());
+    public Pagina<NotificacionResponses.Notificacion> mias(UsuarioAutenticado usuario, SolicitudPagina pagina) {
+        return notificaciones.consultarNotificacion(usuario.id(), pagina);
     }
 
     @Autenticado

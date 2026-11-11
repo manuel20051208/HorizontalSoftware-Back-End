@@ -1,9 +1,10 @@
 package unisimon.demo.service;
 
 import unisimon.demo.dto.request.NotificacionRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.NotificacionResponses;
+import unisimon.demo.dto.response.Pagina;
 
-import java.util.List;
 import java.util.Optional;
 
 /** Envio, consulta y lectura de notificaciones. */
@@ -25,7 +26,7 @@ public interface NotificacionService {
     Optional<NotificacionResponses.Notificacion> notificarVisita(Long inmuebleId, String nombreVisitante);
 
     /** Residente.consultarNotificacion(inmueble, id): las notificaciones recibidas por el usuario. */
-    List<NotificacionResponses.Notificacion> consultarNotificacion(Long usuarioId);
+    Pagina<NotificacionResponses.Notificacion> consultarNotificacion(Long usuarioId, SolicitudPagina pagina);
 
     /** Usuario.marcarNotificacionLeida(inmueble, id) */
     void marcarNotificacionLeida(Long usuarioId);

@@ -59,17 +59,26 @@ public interface PagoRepository extends Repository<Pago, Long> {
     @Query(value = SELECT_PAGO + "WHERE p.referencia = :referencia", nativeQuery = true)
     Optional<PagoView> buscarPorReferencia(@Param("referencia") String referencia);
 
-    @Query(value = SELECT_PAGO + "WHERE p.inmueble_id = :inmuebleId ORDER BY p.id DESC", nativeQuery = true)
-    List<PagoView> listarPorInmueble(@Param("inmuebleId") Long inmuebleId);
+    @Query(value = SELECT_PAGO + "WHERE p.inmueble_id = :inmuebleId ORDER BY p.id DESC"
+            + SqlPaginacion.LIMITE_DESPLAZAMIENTO, nativeQuery = true)
+    List<PagoView> listarPorInmueble(@Param("inmuebleId") Long inmuebleId,
+                                     @Param("limite") int limite, @Param("desplazamiento") long desplazamiento);
 
-    @Query(value = SELECT_PAGO + """
+    @Query(value = "SELECT COUNT(*) FROM pagos WHERE inmueble_id = :inmuebleId", nativeQuery = true)
+    long contarPorInmueble(@Param("inmuebleId") Long inmuebleId);
+
+    String FILTRO_LISTADO = """
             WHERE (CAST(:inmuebleId AS BIGINT) IS NULL OR p.inmueble_id = CAST(:inmuebleId AS BIGINT))
               AND (CAST(:estado AS VARCHAR) IS NULL OR p.estado = CAST(:estado AS VARCHAR))
-            ORDER BY p.id DESC
-            LIMIT :limite
-            """, nativeQuery = true)
+            """;
+
+    @Query(value = SELECT_PAGO + FILTRO_LISTADO + "ORDER BY p.id DESC" + SqlPaginacion.LIMITE_DESPLAZAMIENTO,
+            nativeQuery = true)
     List<PagoView> listar(@Param("inmuebleId") Long inmuebleId, @Param("estado") String estado,
-                          @Param("limite") int limite);
+                          @Param("limite") int limite, @Param("desplazamiento") long desplazamiento);
+
+    @Query(value = "SELECT COUNT(*) FROM pagos p " + FILTRO_LISTADO, nativeQuery = true)
+    long contar(@Param("inmuebleId") Long inmuebleId, @Param("estado") String estado);
 
     @Query(value = """
             SELECT COALESCE(SUM(monto), 0) FROM pagos

@@ -5,7 +5,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unisimon.demo.cache.NombresCache;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.request.ZonaRequests;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ZonaResponses;
 import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.exception.RecursoNoEncontradoException;
@@ -52,15 +54,19 @@ public class ZonaComunServiceImpl implements ZonaComunService {
     @Override
     @Transactional(readOnly = true)
     @Cacheable(NombresCache.ZONAS_COMUNES)
-    public List<ZonaResponses.Zona> listar() {
-        return zonas.listar().stream().map(ZonaMapper::zona).toList();
+    public Pagina<ZonaResponses.Zona> listar(SolicitudPagina pagina) {
+        List<ZonaResponses.Zona> filas = zonas.listar(pagina.limite(), pagina.desplazamiento()).stream()
+                .map(ZonaMapper::zona).toList();
+        return Pagina.de(filas, zonas.contar(), pagina);
     }
 
     @Override
     @Transactional(readOnly = true)
     @Cacheable(NombresCache.ZONAS_POR_INMUEBLE)
-    public List<ZonaResponses.Zona> mostrarZonasComunes(Long inmuebleId) {
-        return zonas.listarActivasDeInmueble(inmuebleId).stream().map(ZonaMapper::zona).toList();
+    public Pagina<ZonaResponses.Zona> mostrarZonasComunes(Long inmuebleId, SolicitudPagina pagina) {
+        List<ZonaResponses.Zona> filas = zonas.listarActivasDeInmueble(inmuebleId, pagina.limite(),
+                pagina.desplazamiento()).stream().map(ZonaMapper::zona).toList();
+        return Pagina.de(filas, zonas.contarActivasDeInmueble(inmuebleId), pagina);
     }
 
     @Override
@@ -87,6 +93,6 @@ public class ZonaComunServiceImpl implements ZonaComunService {
         }
         inmuebles.limpiarZonas(inmuebleId);
         inmuebles.asignarZonas(inmuebleId, ids);
-        return mostrarZonasComunes(inmuebleId);
+        return zonas.listarActivasDeInmueble(inmuebleId).stream().map(ZonaMapper::zona).toList();
     }
 }

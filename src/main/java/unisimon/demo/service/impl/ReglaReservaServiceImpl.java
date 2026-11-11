@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unisimon.demo.cache.NombresCache;
 import unisimon.demo.dto.request.ReglaRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReglaResponses;
 import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.mapper.Hidratador;
@@ -75,9 +77,10 @@ public class ReglaReservaServiceImpl implements ReglaReservaService {
     @Override
     @Transactional(readOnly = true)
     @Cacheable(NombresCache.REGLAS_RESERVA)
-    public List<ReglaResponses.Regla> listar() {
-        return reglas.listar().stream()
+    public Pagina<ReglaResponses.Regla> listar(SolicitudPagina pagina) {
+        List<ReglaResponses.Regla> filas = reglas.listar(pagina.limite(), pagina.desplazamiento()).stream()
                 .map(r -> ZonaMapper.regla(r, rompimientos.listarPorRegla(r.getId()))).toList();
+        return Pagina.de(filas, reglas.contar(), pagina);
     }
 
     @Override

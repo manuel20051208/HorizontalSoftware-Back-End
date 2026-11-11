@@ -2,7 +2,9 @@ package unisimon.demo.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.InvitadoResponses;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReservaResponses;
 import unisimon.demo.dto.response.VigilanteResponses;
 import unisimon.demo.exception.RecursoNoEncontradoException;
@@ -10,19 +12,18 @@ import unisimon.demo.mapper.Hidratador;
 import unisimon.demo.mapper.InvitadoMapper;
 import unisimon.demo.mapper.ReservaMapper;
 import unisimon.demo.model.UsuarioAutorizado;
-import unisimon.demo.model.ZonaComun;
+import unisimon.demo.policy.EstadoReservaPolicy;
 import unisimon.demo.repository.InvitadoRepository;
 import unisimon.demo.repository.InvitadoRepository.AnfitrionView;
 import unisimon.demo.repository.InvitadoRepository.InvitadoView;
 import unisimon.demo.repository.ReservaZonaComunRepository;
-import unisimon.demo.repository.ReservaZonaComunRepository.AccesoView;
 import unisimon.demo.repository.UsuarioRepository;
 import unisimon.demo.repository.UsuarioRepository.CredencialesView;
 import unisimon.demo.service.NotificacionService;
 import unisimon.demo.service.VigilanteService;
 
 import java.time.Clock;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,14 +48,12 @@ public class VigilanteServiceImpl implements VigilanteService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ReservaResponses.Reserva> consultarReservas() {
-        LocalTime ahora = LocalTime.now(reloj);
-        return reservas.listarTodas().stream().map(r -> {
-            ZonaComun zona = Hidratador.referenciaZona(r.getZonaComunId());
-            zona.setHoraInicio(r.getHoraInicio());
-            zona.setHoraFin(r.getHoraFin());
-            return ReservaMapper.de(r, Boolean.TRUE.equals(r.getZonaActiva()) && zona.horarioIncluye(ahora));
-        }).toList();
+    public Pagina<ReservaResponses.Reserva> consultarReservas(String estado, SolicitudPagina pagina) {
+        String filtro = EstadoReservaPolicy.normalizarFiltro(estado);
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        List<ReservaResponses.Reserva> filas = reservas.listarTodas(filtro, ahora, pagina.limite(),
+                pagina.desplazamiento()).stream().map(r -> ReservaMapper.de(r, ahora)).toList();
+        return Pagina.de(filas, reservas.contarTodas(filtro, ahora), pagina);
     }
 
     @Override
@@ -71,14 +70,16 @@ public class VigilanteServiceImpl implements VigilanteService {
             return denegar(persona, "La autorizacion del invitado vencio el " + invitado.getVenceAutorizacion());
         }
 
-        LocalTime ahora = LocalTime.now(reloj);
-        List<VigilanteResponses.ZonaPermitida> permitidas = reservas.listarZonasConAcceso(identificacion).stream()
-                .filter(z -> abiertaAhora(z, ahora))
+        // Solo cuenta una reserva EN CURSO (empezo y no ha terminado) de una zona que siga activa.
+        LocalDateTime ahora = LocalDateTime.now(reloj);
+        List<VigilanteResponses.ZonaPermitida> permitidas = reservas.listarZonasConAcceso(identificacion, ahora)
+                .stream()
+                .filter(z -> Boolean.TRUE.equals(z.getZonaActiva()))
                 .map(z -> new VigilanteResponses.ZonaPermitida(z.getZonaComunId(), z.getNombreZonaComun(),
-                        z.getHoraInicio(), z.getHoraFin()))
+                        z.getHoraInicio(), z.getHoraFin(), z.getReservaHasta()))
                 .toList();
         if (permitidas.isEmpty()) {
-            return denegar(persona, "No tiene una reserva de una zona abierta en este momento");
+            return denegar(persona, "No tiene una reserva en curso de una zona activa en este momento");
         }
         return new VigilanteResponses.Acceso(identificacion, persona.getNombreCompleto(), true,
                 "Acceso permitido", permitidas);
@@ -118,13 +119,6 @@ public class VigilanteServiceImpl implements VigilanteService {
                 })
                 .toList();
         return new VigilanteResponses.Ingreso(true, "Ingreso permitido", vista.getNombreCompleto(), avisados);
-    }
-
-    private static boolean abiertaAhora(AccesoView zona, LocalTime ahora) {
-        ZonaComun dominio = Hidratador.referenciaZona(zona.getZonaComunId());
-        dominio.setHoraInicio(zona.getHoraInicio());
-        dominio.setHoraFin(zona.getHoraFin());
-        return Boolean.TRUE.equals(zona.getZonaActiva()) && dominio.horarioIncluye(ahora);
     }
 
     private static VigilanteResponses.Acceso denegar(CredencialesView persona, String motivo) {

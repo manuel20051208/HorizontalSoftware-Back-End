@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.request.ZonaRequests;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ZonaResponses;
 import unisimon.demo.security.annotation.SoloAdministrador;
 import unisimon.demo.service.ZonaComunService;
-
-import java.util.List;
 
 /** Zonas comunes (administracion). */
 @RestController
@@ -37,8 +37,8 @@ public class AdminZonaComunController {
 
     @SoloAdministrador
     @GetMapping
-    public List<ZonaResponses.Zona> listar() {
-        return zonas.listar();
+    public Pagina<ZonaResponses.Zona> listar(SolicitudPagina pagina) {
+        return zonas.listar(pagina);
     }
 
     @SoloAdministrador

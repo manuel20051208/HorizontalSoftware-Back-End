@@ -1,23 +1,28 @@
 package unisimon.demo.service;
 
 import unisimon.demo.dto.request.ReservaRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReservaResponses;
 
-import java.time.LocalTime;
-import java.util.List;
+import java.time.LocalDateTime;
 
 /** Reservas de zonas comunes hechas por residentes. */
 public interface ReservaZonaComunService {
 
-    /** Residente.reservarZonaComun(id): valida habilitacion, horario y disponibilidad y registra la reserva. */
+    /**
+     * Residente.reservarZonaComun(id): valida el intervalo, la habilitacion, el horario, las reglas de la zona,
+     * el cupo y que no se cruce con otra reserva suya de la misma zona; luego registra la reserva.
+     */
     ReservaResponses.Reserva reservarZonaComun(Long residenteId, ReservaRequests.Reservar solicitud);
 
-    /** Residente.cancelarReservaZonaComun(id): solo el dueno de la reserva puede cancelarla. */
+    /** Residente.cancelarReservaZonaComun(id): solo el dueno, y solo mientras la reserva no haya empezado. */
     void cancelarReservaZonaComun(Long residenteId, Long reservaId);
 
-    /** Residente.verReservas(id) */
-    List<ReservaResponses.Reserva> verReservas(Long residenteId);
+    /** Residente.verReservas(id): sus reservas, opcionalmente solo las de un estado (PROGRAMADA, EN_CURSO, FINALIZADA). */
+    Pagina<ReservaResponses.Reserva> verReservas(Long residenteId, String estado, SolicitudPagina pagina);
 
-    /** ReservaZonaComun.validarHorario + verificarDisponibilidad + estaHabilitado, sin reservar. */
-    ReservaResponses.Disponibilidad verificarDisponibilidad(Long residenteId, Long zonaComunId, LocalTime hora);
+    /** Las mismas validaciones de reservar, sin reservar: informa que condiciones se cumplen. */
+    ReservaResponses.Disponibilidad verificarDisponibilidad(Long residenteId, Long zonaComunId,
+                                                            LocalDateTime inicio, LocalDateTime fin);
 }

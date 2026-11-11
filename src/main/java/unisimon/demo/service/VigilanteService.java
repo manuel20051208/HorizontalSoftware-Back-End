@@ -1,17 +1,17 @@
 package unisimon.demo.service;
 
+import unisimon.demo.dto.request.SolicitudPagina;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReservaResponses;
 import unisimon.demo.dto.response.VigilanteResponses;
-
-import java.util.List;
 
 /** Operaciones de la porteria. */
 public interface VigilanteService {
 
-    /** Vigilante.consultarReservas(): todas las reservas, marcando cuales estan en curso ahora. */
-    List<ReservaResponses.Reserva> consultarReservas();
+    /** Vigilante.consultarReservas(): todas las reservas con su estado, opcionalmente solo las de un estado. */
+    Pagina<ReservaResponses.Reserva> consultarReservas(String estado, SolicitudPagina pagina);
 
-    /** Vigilante.verificarAccesoZonaComun(usuario): puede esta persona entrar ahora a una zona comun? */
+    /** Vigilante.verificarAccesoZonaComun(usuario): tiene esta persona una reserva en curso de una zona activa? */
     VigilanteResponses.Acceso verificarAccesoZonaComun(Long identificacion);
 
     /** Vigilante.existeInvitado(identificacion) */

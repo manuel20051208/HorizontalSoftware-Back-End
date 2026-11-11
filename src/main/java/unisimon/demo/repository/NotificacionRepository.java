@@ -60,8 +60,12 @@ public interface NotificacionRepository extends Repository<Notificacion, Long> {
             JOIN notificacion_usuarios nu ON nu.notificacion_id = n.id
             WHERE nu.usuario_id = :usuarioId
             ORDER BY n.fecha_envio DESC, n.id DESC
-            """, nativeQuery = true)
-    List<NotificacionView> listarDeUsuario(@Param("usuarioId") Long usuarioId);
+            """ + SqlPaginacion.LIMITE_DESPLAZAMIENTO, nativeQuery = true)
+    List<NotificacionView> listarDeUsuario(@Param("usuarioId") Long usuarioId,
+                                           @Param("limite") int limite, @Param("desplazamiento") long desplazamiento);
+
+    @Query(value = "SELECT COUNT(*) FROM notificacion_usuarios WHERE usuario_id = :usuarioId", nativeQuery = true)
+    long contarDeUsuario(@Param("usuarioId") Long usuarioId);
 
     @Query(value = """
             SELECT u.id AS "usuarioId", u.nombre_completo AS "nombreCompleto", u.notificacion_leida AS "leida"

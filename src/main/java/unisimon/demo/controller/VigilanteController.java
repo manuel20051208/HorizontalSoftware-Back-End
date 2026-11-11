@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import unisimon.demo.dto.request.SolicitudPagina;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReservaResponses;
 import unisimon.demo.dto.response.VigilanteResponses;
 import unisimon.demo.security.annotation.SoloVigilante;
 import unisimon.demo.service.VigilanteService;
-
-import java.util.List;
 
 /** Panel de porteria. */
 @RestController
@@ -26,8 +26,9 @@ public class VigilanteController {
 
     @SoloVigilante
     @GetMapping("/reservas")
-    public List<ReservaResponses.Reserva> reservas() {
-        return vigilante.consultarReservas();
+    public Pagina<ReservaResponses.Reserva> reservas(@RequestParam(required = false) String estado,
+                                                    SolicitudPagina pagina) {
+        return vigilante.consultarReservas(estado, pagina);
     }
 
     @SoloVigilante
