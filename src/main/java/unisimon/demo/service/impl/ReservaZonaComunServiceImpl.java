@@ -8,6 +8,7 @@ import unisimon.demo.dto.request.ReservaRequests;
 import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReservaResponses;
+import unisimon.demo.dto.response.ZonaResponses;
 import unisimon.demo.exception.ApiException;
 import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.exception.ProhibidoException;
@@ -27,6 +28,7 @@ import unisimon.demo.repository.ZonaComunRepository;
 import unisimon.demo.repository.ZonaComunRepository.ZonaView;
 import unisimon.demo.service.NotificacionService;
 import unisimon.demo.service.ReservaZonaComunService;
+import unisimon.demo.service.ZonaComunService;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -51,16 +53,19 @@ public class ReservaZonaComunServiceImpl implements ReservaZonaComunService {
     private final ResidenteRepository residentes;
     private final RompimientoRepository reglas;
     private final NotificacionService notificaciones;
+    private final ZonaComunService zonasComunes;
     private final Clock reloj;
 
     public ReservaZonaComunServiceImpl(ReservaZonaComunRepository reservas, ZonaComunRepository zonas,
                                        ResidenteRepository residentes, RompimientoRepository reglas,
-                                       NotificacionService notificaciones, Clock reloj) {
+                                       NotificacionService notificaciones, ZonaComunService zonasComunes,
+                                       Clock reloj) {
         this.reservas = reservas;
         this.zonas = zonas;
         this.residentes = residentes;
         this.reglas = reglas;
         this.notificaciones = notificaciones;
+        this.zonasComunes = zonasComunes;
         this.reloj = reloj;
     }
 
@@ -130,8 +135,8 @@ public class ReservaZonaComunServiceImpl implements ReservaZonaComunService {
 
     @Override
     @Transactional(readOnly = true)
-    public Long inmuebleDelResidente(Long residenteId) {
-        return contexto(residenteId).getInmuebleId();
+    public Pagina<ZonaResponses.Zona> zonasDisponibles(Long residenteId, SolicitudPagina pagina) {
+        return zonasComunes.mostrarZonasComunes(contexto(residenteId).getInmuebleId(), pagina);
     }
 
     // ------------------------------------------------------------------ validacion comun

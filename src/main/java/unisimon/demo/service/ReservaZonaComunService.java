@@ -4,6 +4,7 @@ import unisimon.demo.dto.request.ReservaRequests;
 import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReservaResponses;
+import unisimon.demo.dto.response.ZonaResponses;
 
 import java.time.LocalDateTime;
 
@@ -26,6 +27,6 @@ public interface ReservaZonaComunService {
     ReservaResponses.Disponibilidad verificarDisponibilidad(Long residenteId, Long zonaComunId,
                                                             LocalDateTime inicio, LocalDateTime fin);
 
-    /** Inmueble asignado al residente; sirve para listarle solo las zonas comunes de ese inmueble. */
-    Long inmuebleDelResidente(Long residenteId);
+    /** Residente.mostrarZonasComunes(): las zonas comunes activas del inmueble del residente, para reservar. */
+    Pagina<ZonaResponses.Zona> zonasDisponibles(Long residenteId, SolicitudPagina pagina);
 }

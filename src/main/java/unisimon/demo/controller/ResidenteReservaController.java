@@ -20,7 +20,6 @@ import unisimon.demo.dto.response.ZonaResponses;
 import unisimon.demo.security.UsuarioAutenticado;
 import unisimon.demo.security.annotation.SoloResidente;
 import unisimon.demo.service.ReservaZonaComunService;
-import unisimon.demo.service.ZonaComunService;
 
 import java.time.LocalDateTime;
 
@@ -29,18 +28,16 @@ import java.time.LocalDateTime;
 @RequestMapping("/api/residente")
 public class ResidenteReservaController {
 
-    private final ZonaComunService zonas;
     private final ReservaZonaComunService reservas;
 
-    public ResidenteReservaController(ZonaComunService zonas, ReservaZonaComunService reservas) {
-        this.zonas = zonas;
+    public ResidenteReservaController(ReservaZonaComunService reservas) {
         this.reservas = reservas;
     }
 
     @SoloResidente
     @GetMapping("/zonas-comunes")
     public Pagina<ZonaResponses.Zona> zonasDisponibles(UsuarioAutenticado usuario, SolicitudPagina pagina) {
-        return zonas.mostrarZonasComunes(reservas.inmuebleDelResidente(usuario.id()), pagina);
+        return reservas.zonasDisponibles(usuario.id(), pagina);
     }
 
     @SoloResidente

@@ -9,7 +9,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import unisimon.demo.dto.request.ReservaRequests;
 import unisimon.demo.dto.request.SolicitudPagina;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReservaResponses;
+import unisimon.demo.dto.response.ZonaResponses;
 import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.exception.ProhibidoException;
 import unisimon.demo.exception.RecursoNoEncontradoException;
@@ -25,6 +27,7 @@ import unisimon.demo.repository.RompimientoRepository.LimitesReservaView;
 import unisimon.demo.repository.ZonaComunRepository;
 import unisimon.demo.repository.ZonaComunRepository.ZonaView;
 import unisimon.demo.service.NotificacionService;
+import unisimon.demo.service.ZonaComunService;
 import unisimon.demo.support.Proyecciones;
 
 import java.time.Clock;
@@ -60,13 +63,16 @@ class ReservaZonaComunServiceImplTest {
     private RompimientoRepository reglas;
     @Mock
     private NotificacionService notificaciones;
+    @Mock
+    private ZonaComunService zonasComunes;
 
     private ReservaZonaComunServiceImpl servicio;
 
     @BeforeEach
     void preparar() {
         Clock reloj = Clock.fixed(Instant.parse("2026-11-08T15:00:00Z"), ZoneOffset.UTC);
-        servicio = new ReservaZonaComunServiceImpl(reservas, zonas, residentes, reglas, notificaciones, reloj);
+        servicio = new ReservaZonaComunServiceImpl(reservas, zonas, residentes, reglas, notificaciones, zonasComunes,
+                reloj);
     }
 
     private ContextoResidenteView residente(boolean activo, String estadoLiquidacion) {
@@ -318,20 +324,24 @@ class ReservaZonaComunServiceImplTest {
     }
 
     @Test
-    @DisplayName("inmuebleDelResidente devuelve el inmueble asignado al residente")
-    void inmuebleDelResidente() {
+    @DisplayName("zonasDisponibles lista las zonas del inmueble del residente")
+    void zonasDisponibles() {
+        SolicitudPagina pagina = SolicitudPagina.primera();
+        Pagina<ZonaResponses.Zona> zonasDelInmueble = Pagina.de(List.of(), 0L, pagina);
         when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(true, Liquidacion.PENDIENTE)));
+        when(zonasComunes.mostrarZonasComunes(1L, pagina)).thenReturn(zonasDelInmueble);
 
-        assertThat(servicio.inmuebleDelResidente(5L)).isEqualTo(1L);
+        assertThat(servicio.zonasDisponibles(5L, pagina)).isSameAs(zonasDelInmueble);
     }
 
     @Test
-    @DisplayName("inmuebleDelResidente sin inmueble asignado es 404")
-    void inmuebleDelResidenteSinInmueble() {
+    @DisplayName("zonasDisponibles sin inmueble asignado es 404")
+    void zonasDisponiblesSinInmueble() {
         when(residentes.buscarContexto(5L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> servicio.inmuebleDelResidente(5L))
+        assertThatThrownBy(() -> servicio.zonasDisponibles(5L, SolicitudPagina.primera()))
                 .isInstanceOf(RecursoNoEncontradoException.class)
                 .hasMessageContaining("no tiene un inmueble asignado");
+        verify(zonasComunes, never()).mostrarZonasComunes(any(), any());
     }
 }

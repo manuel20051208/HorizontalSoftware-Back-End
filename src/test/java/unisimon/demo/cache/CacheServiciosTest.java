@@ -126,9 +126,9 @@ class CacheServiciosTest {
 
         @Bean
         ReservaZonaComunService reservaService(ReservaZonaComunRepository reservas, ZonaComunRepository zonas,
-                                               RompimientoRepository rompimientos) {
+                                               RompimientoRepository rompimientos, ZonaComunService zonaComunService) {
             return new ReservaZonaComunServiceImpl(reservas, zonas, mock(ResidenteRepository.class), rompimientos,
-                    mock(NotificacionService.class), Clock.systemDefaultZone());
+                    mock(NotificacionService.class), zonaComunService, Clock.systemDefaultZone());
         }
 
         @Bean
