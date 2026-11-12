@@ -128,6 +128,12 @@ public class ReservaZonaComunServiceImpl implements ReservaZonaComunService {
                 cumple(incumplimientos, Motivo.HABILITACION), incumplimientos.isEmpty(), mensaje);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Long inmuebleDelResidente(Long residenteId) {
+        return contexto(residenteId).getInmuebleId();
+    }
+
     // ------------------------------------------------------------------ validacion comun
 
     /** Por que no se puede reservar, con el codigo HTTP que corresponde a cada motivo. */

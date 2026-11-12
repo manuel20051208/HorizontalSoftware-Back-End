@@ -25,4 +25,7 @@ public interface ReservaZonaComunService {
     /** Las mismas validaciones de reservar, sin reservar: informa que condiciones se cumplen. */
     ReservaResponses.Disponibilidad verificarDisponibilidad(Long residenteId, Long zonaComunId,
                                                             LocalDateTime inicio, LocalDateTime fin);
+
+    /** Inmueble asignado al residente; sirve para listarle solo las zonas comunes de ese inmueble. */
+    Long inmuebleDelResidente(Long residenteId);
 }

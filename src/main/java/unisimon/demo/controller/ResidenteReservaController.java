@@ -17,8 +17,6 @@ import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReservaResponses;
 import unisimon.demo.dto.response.ZonaResponses;
-import unisimon.demo.exception.RecursoNoEncontradoException;
-import unisimon.demo.repository.ResidenteRepository;
 import unisimon.demo.security.UsuarioAutenticado;
 import unisimon.demo.security.annotation.SoloResidente;
 import unisimon.demo.service.ReservaZonaComunService;
@@ -33,22 +31,16 @@ public class ResidenteReservaController {
 
     private final ZonaComunService zonas;
     private final ReservaZonaComunService reservas;
-    private final ResidenteRepository residentes;
 
-    public ResidenteReservaController(ZonaComunService zonas, ReservaZonaComunService reservas,
-                                      ResidenteRepository residentes) {
+    public ResidenteReservaController(ZonaComunService zonas, ReservaZonaComunService reservas) {
         this.zonas = zonas;
         this.reservas = reservas;
-        this.residentes = residentes;
     }
 
     @SoloResidente
     @GetMapping("/zonas-comunes")
     public Pagina<ZonaResponses.Zona> zonasDisponibles(UsuarioAutenticado usuario, SolicitudPagina pagina) {
-        Long inmuebleId = residentes.buscarContexto(usuario.id())
-                .orElseThrow(() -> new RecursoNoEncontradoException("El residente no tiene un inmueble asignado"))
-                .getInmuebleId();
-        return zonas.mostrarZonasComunes(inmuebleId, pagina);
+        return zonas.mostrarZonasComunes(reservas.inmuebleDelResidente(usuario.id()), pagina);
     }
 
     @SoloResidente

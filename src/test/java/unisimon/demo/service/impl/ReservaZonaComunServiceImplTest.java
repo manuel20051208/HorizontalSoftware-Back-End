@@ -316,4 +316,22 @@ class ReservaZonaComunServiceImplTest {
                     assertThat(r.cancelable()).isFalse();
                 });
     }
+
+    @Test
+    @DisplayName("inmuebleDelResidente devuelve el inmueble asignado al residente")
+    void inmuebleDelResidente() {
+        when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(true, Liquidacion.PENDIENTE)));
+
+        assertThat(servicio.inmuebleDelResidente(5L)).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("inmuebleDelResidente sin inmueble asignado es 404")
+    void inmuebleDelResidenteSinInmueble() {
+        when(residentes.buscarContexto(5L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> servicio.inmuebleDelResidente(5L))
+                .isInstanceOf(RecursoNoEncontradoException.class)
+                .hasMessageContaining("no tiene un inmueble asignado");
+    }
 }
