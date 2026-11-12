@@ -2,13 +2,13 @@
  "schema_version": 1,
  "diagram_type": "architecture",
  "meta": {
-  "title": "Diagrama de paquetes del backend",
+  "title": "Diagrama de paquetes del backend (interfaces provistas y requeridas)",
   "output": "Diagramas/Paquetes/paquetes-backend.html",
   "quality_profile": "showcase",
   "locale": "es",
   "repository": {
    "url": "https://github.com/manuel20051208/HorizontalSoftware-Back-End.git",
-   "revision": "34417f2446e6061461965d63d256a162e4f34753",
+   "revision": "4579abfd25f71a1a868e441fc44aa5eba1200518",
    "provider": "github"
   }
  },
@@ -104,7 +104,7 @@
    "sublabel": "datos iniciales y pasarela",
    "pos": [
     40,
-    200
+    300
    ],
    "size": [
     150,
@@ -125,7 +125,7 @@
    "sublabel": "logica de negocio",
    "pos": [
     260,
-    200
+    300
    ],
    "size": [
     150,
@@ -146,8 +146,8 @@
    "label": "integration",
    "sublabel": "cliente Wompi",
    "pos": [
-    480,
-    200
+    720,
+    300
    ],
    "size": [
     150,
@@ -168,7 +168,7 @@
    "sublabel": "reglas de estado",
    "pos": [
     40,
-    360
+    430
    ],
    "size": [
     150,
@@ -189,7 +189,7 @@
    "sublabel": "SQL nativo",
    "pos": [
     260,
-    360
+    560
    ],
    "size": [
     150,
@@ -210,7 +210,7 @@
    "sublabel": "vista a respuesta",
    "pos": [
     480,
-    360
+    430
    ],
    "size": [
     150,
@@ -231,7 +231,7 @@
    "sublabel": "dominio",
    "pos": [
     260,
-    520
+    690
    ],
    "size": [
     150,
@@ -244,77 +244,216 @@
      "end_line": 138
     }
    ]
+  },
+  {
+   "id": "i_service",
+   "type": "messagebus",
+   "label": "«interface» *Service",
+   "sublabel": "16 contratos de negocio",
+   "tag": "interface",
+   "pos": [
+    260,
+    170
+   ],
+   "size": [
+    170,
+    50
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/service/PagoService.java",
+     "line": 1,
+     "end_line": 37
+    }
+   ]
+  },
+  {
+   "id": "i_repo",
+   "type": "messagebus",
+   "label": "«interface» *Repository",
+   "sublabel": "15 contratos de datos",
+   "tag": "interface",
+   "pos": [
+    260,
+    430
+   ],
+   "size": [
+    170,
+    50
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/repository/PagoRepository.java",
+     "line": 1,
+     "end_line": 101
+    }
+   ]
+  },
+  {
+   "id": "i_wompi",
+   "type": "messagebus",
+   "label": "«interface» ClienteWompi",
+   "sublabel": "pasarela de pagos",
+   "tag": "interface",
+   "pos": [
+    490,
+    300
+   ],
+   "size": [
+    170,
+    50
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/integration/wompi/ClienteWompi.java",
+     "line": 1,
+     "end_line": 12
+    }
+   ]
+  },
+  {
+   "id": "i_mail",
+   "type": "messagebus",
+   "label": "«interface» CorreoSender",
+   "sublabel": "envio de correo",
+   "tag": "interface",
+   "pos": [
+    490,
+    190
+   ],
+   "size": [
+    170,
+    50
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/mail/CorreoSender.java",
+     "line": 1,
+     "end_line": 7
+    }
+   ]
+  },
+  {
+   "id": "mail",
+   "type": "external",
+   "label": "mail",
+   "sublabel": "CorreoLogSender",
+   "pos": [
+    720,
+    190
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/mail/CorreoLogSender.java",
+     "line": 1,
+     "end_line": 20
+    }
+   ]
   }
  ],
  "connections": [
   {
    "id": "e0",
    "from": "controller",
-   "to": "service",
-   "label": "usa"
+   "to": "i_service",
+   "label": "requiere"
   },
   {
    "id": "e1",
    "from": "scheduler",
-   "to": "service",
-   "label": "invoca"
+   "to": "i_service",
+   "label": "requiere"
   },
   {
    "id": "e2",
    "from": "bootstrap",
-   "to": "service",
-   "label": "usa"
+   "to": "i_service",
+   "label": "requiere"
   },
   {
    "id": "e3",
    "from": "service",
-   "to": "integration",
-   "label": "llama"
+   "to": "i_service",
+   "label": "provee"
   },
   {
    "id": "e4",
    "from": "service",
-   "to": "repository",
-   "label": "consulta"
+   "to": "i_repo",
+   "label": "requiere"
   },
   {
    "id": "e5",
+   "from": "policy",
+   "to": "i_repo",
+   "label": "requiere"
+  },
+  {
+   "id": "e6",
+   "from": "mapper",
+   "to": "i_repo",
+   "label": "requiere"
+  },
+  {
+   "id": "e7",
+   "from": "repository",
+   "to": "i_repo",
+   "label": "provee"
+  },
+  {
+   "id": "e8",
+   "from": "service",
+   "to": "i_wompi",
+   "label": "requiere"
+  },
+  {
+   "id": "e9",
+   "from": "integration",
+   "to": "i_wompi",
+   "label": "provee"
+  },
+  {
+   "id": "e10",
+   "from": "service",
+   "to": "i_mail",
+   "label": "requiere"
+  },
+  {
+   "id": "e11",
+   "from": "mail",
+   "to": "i_mail",
+   "label": "provee"
+  },
+  {
+   "id": "e12",
    "from": "service",
    "to": "policy",
    "label": "aplica"
   },
   {
-   "id": "e6",
+   "id": "e13",
    "from": "service",
    "to": "mapper",
    "label": "mapea"
   },
   {
-   "id": "e7",
-   "from": "mapper",
-   "to": "repository",
-   "label": "vistas"
-  },
-  {
-   "id": "e8",
-   "from": "policy",
-   "to": "repository",
-   "label": "lee"
-  },
-  {
-   "id": "e9",
+   "id": "e14",
    "from": "repository",
    "to": "model",
    "label": "hidrata"
   },
   {
-   "id": "e10",
+   "id": "e15",
    "from": "controller",
    "to": "security",
    "label": "roles"
   },
   {
-   "id": "e11",
+   "id": "e16",
    "from": "config",
    "to": "security",
    "label": "filtro"
@@ -323,19 +462,20 @@
  "cards": [
   {
    "dot": "emerald",
-   "title": "Capas",
+   "title": "Como leerlo",
    "items": [
-    "controller depende de service; service de repository y model",
-    "Nada depende hacia arriba, salvo configuracion"
+    "Paquete que provee: su flecha 'provee' llega a la interfaz (piruleta)",
+    "Paquete que requiere: su flecha 'requiere' sale hacia la interfaz (enchufe)",
+    "controller, scheduler y bootstrap dependen de *Service, nunca de impl"
    ]
   },
   {
    "dot": "orange",
    "title": "Omitido",
    "items": [
-    "dto y exception los usa casi todo (service: 99 y 42 imports)",
-    "service tambien usa cache, mail y factory",
-    "integration lee propiedades de bootstrap"
+    "dto, exception, cache y factory los usa casi todo",
+    "TokenService (security) lo requieren config y AutenticacionServiceImpl",
+    "policy y mapper son clases concretas, sin interfaz"
    ]
   }
  ]
