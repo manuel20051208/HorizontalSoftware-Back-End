@@ -160,7 +160,7 @@ Arquitectura por capas: **Controller → Service → Repository → PostgreSQL**
 
 Los `.svg` son exportaciones de las fuentes. Si cambias un diagrama, vuelve a exportarlo para que el README no quede desactualizado:
 
-- **Secuencia y arquitectura** (`.html` de archify): abre el `.html` → botón **Export** → **SVG**, y guárdalo con el mismo nombre al lado.
+- **Secuencia y arquitectura** (`.html` de archify): abre el `.html` → botón **Export** → **SVG en tema claro** (light), y guárdalo con el mismo nombre al lado.
 - **Clases y paquetes** (`.xml` de draw.io): ábrelo en [app.diagrams.net](https://app.diagrams.net) → **Archivo → Exportar como → SVG**, y guárdalo con el mismo nombre al lado.
 
 ---
