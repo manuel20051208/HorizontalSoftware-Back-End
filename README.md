@@ -80,6 +80,15 @@ Login, y cómo se renueva la sesión sin pedir la contraseña otra vez. Si algui
 
 El flujo más delicado del sistema: **el front nunca decide si un pago quedó aprobado**. El servidor fija el monto y firma el checkout. Cuando llega el webhook, verifica la firma, le pregunta a Wompi el estado real y solo aprueba si el monto y la moneda coinciden.
 
+El diagrama muestra también los casos en que el pago no sale bien:
+
+| Caso | Qué pasa |
+|---|---|
+| Firma del webhook inválida | Responde `401` y Wompi reintenta; no se toca el pago |
+| `APPROVED` y monto/moneda coinciden | El pago pasa a `APROBADO` |
+| `DECLINED`, `ERROR` o `VOIDED` | El pago pasa a `RECHAZADO` |
+| `PENDING`, monto/moneda distintos o evento repetido | No se actualiza: queda `PENDIENTE` (con monto distinto, para revisión manual) |
+
 ![Secuencia: pago con Wompi](Diagramas/Secuencia/pago-wompi-v1.svg)
 
 <details>
