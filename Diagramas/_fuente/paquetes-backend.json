@@ -2,25 +2,50 @@
  "schema_version": 1,
  "diagram_type": "architecture",
  "meta": {
-  "title": "Diagrama de paquetes del backend (interfaces provistas y requeridas)",
+  "title": "Diagrama de paquetes del backend (unisimon.demo)",
   "output": "Diagramas/Paquetes/paquetes-backend.html",
   "quality_profile": "showcase",
   "locale": "es",
   "repository": {
    "url": "https://github.com/manuel20051208/HorizontalSoftware-Back-End.git",
-   "revision": "4579abfd25f71a1a868e441fc44aa5eba1200518",
+   "revision": "f0e12564742dee6471a587df5a5f52213ecdb32b",
    "provider": "github"
+  },
+  "legend": {
+   "entries": {
+    "frontend": {
+     "label": "Entrada (REST y tareas)"
+    },
+    "security": {
+     "label": "Seguridad y configuración"
+    },
+    "backend": {
+     "label": "Negocio"
+    },
+    "external": {
+     "label": "Integraciones"
+    },
+    "cloud": {
+     "label": "Arranque"
+    },
+    "database": {
+     "label": "Datos"
+    },
+    "messagebus": {
+     "label": "Transversales (sin flechas)"
+    }
+   }
   }
  },
  "components": [
   {
    "id": "scheduler",
-   "type": "backend",
+   "type": "frontend",
    "label": "scheduler",
    "sublabel": "tarea nocturna",
    "pos": [
     40,
-    40
+    60
    ],
    "size": [
     150,
@@ -36,33 +61,12 @@
   },
   {
    "id": "controller",
-   "type": "backend",
+   "type": "frontend",
    "label": "controller",
    "sublabel": "16 controladores REST",
    "pos": [
-    260,
-    40
-   ],
-   "size": [
-    150,
-    60
-   ],
-   "sources": [
-    {
-     "path": "src/main/java/unisimon/demo/controller/PagoController.java",
-     "line": 1,
-     "end_line": 37
-    }
-   ]
-  },
-  {
-   "id": "security",
-   "type": "security",
-   "label": "security",
-   "sublabel": "JWT y roles",
-   "pos": [
     480,
-    40
+    60
    ],
    "size": [
     150,
@@ -70,20 +74,27 @@
    ],
    "sources": [
     {
-     "path": "src/main/java/unisimon/demo/security/JwtTokenService.java",
-     "line": 1,
-     "end_line": 91
+     "path": "src/main/java/unisimon/demo/controller/ResidenteReservaController.java",
+     "line": 15,
+     "end_line": 25,
+     "label": "imports"
+    },
+    {
+     "path": "src/main/java/unisimon/demo/controller/ResidenteReservaController.java",
+     "line": 36,
+     "end_line": 39,
+     "label": "usa ResidenteRepository"
     }
    ]
   },
   {
    "id": "config",
-   "type": "backend",
+   "type": "security",
    "label": "config",
-   "sublabel": "seguridad, cache, CORS",
+   "sublabel": "seguridad, CORS, cache",
    "pos": [
-    700,
-    40
+    920,
+    60
    ],
    "size": [
     150,
@@ -94,27 +105,11 @@
      "path": "src/main/java/unisimon/demo/config/SecurityConfig.java",
      "line": 1,
      "end_line": 44
-    }
-   ]
-  },
-  {
-   "id": "bootstrap",
-   "type": "backend",
-   "label": "bootstrap",
-   "sublabel": "datos iniciales y pasarela",
-   "pos": [
-    40,
-    300
-   ],
-   "size": [
-    150,
-    60
-   ],
-   "sources": [
+    },
     {
-     "path": "src/main/java/unisimon/demo/bootstrap/DatosIniciales.java",
+     "path": "src/main/java/unisimon/demo/config/CacheConfig.java",
      "line": 1,
-     "end_line": 65
+     "end_line": 28
     }
    ]
   },
@@ -122,10 +117,10 @@
    "id": "service",
    "type": "backend",
    "label": "service",
-   "sublabel": "logica de negocio",
+   "sublabel": "16 interfaces de negocio",
    "pos": [
     260,
-    300
+    210
    ],
    "size": [
     150,
@@ -133,21 +128,20 @@
    ],
    "sources": [
     {
-     "path": "src/main/java/unisimon/demo/service/impl/PagoServiceImpl.java",
+     "path": "src/main/java/unisimon/demo/service/LiquidacionService.java",
      "line": 1,
-     "end_line": 241
+     "end_line": 43
     }
-   ],
-   "tag": "impl"
+   ]
   },
   {
-   "id": "integration",
-   "type": "external",
-   "label": "integration",
-   "sublabel": "cliente Wompi",
+   "id": "annotation",
+   "type": "security",
+   "label": "security.annotation",
+   "sublabel": "anotaciones de rol",
    "pos": [
-    720,
-    300
+    480,
+    210
    ],
    "size": [
     150,
@@ -155,9 +149,111 @@
    ],
    "sources": [
     {
-     "path": "src/main/java/unisimon/demo/integration/wompi/ClienteWompiRest.java",
+     "path": "src/main/java/unisimon/demo/security/annotation/SoloAdministrador.java",
      "line": 1,
-     "end_line": 67
+     "end_line": 20
+    }
+   ]
+  },
+  {
+   "id": "security",
+   "type": "security",
+   "label": "security",
+   "sublabel": "JWT y usuario actual",
+   "pos": [
+    700,
+    210
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/security/TokenService.java",
+     "line": 1,
+     "end_line": 18
+    },
+    {
+     "path": "src/main/java/unisimon/demo/security/JwtTokenService.java",
+     "line": 23,
+     "end_line": 25
+    }
+   ]
+  },
+  {
+   "id": "cache",
+   "type": "backend",
+   "label": "cache",
+   "sublabel": "nombres de cache",
+   "pos": [
+    920,
+    210
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/cache/NombresCache.java",
+     "line": 1,
+     "end_line": 30
+    }
+   ]
+  },
+  {
+   "id": "impl",
+   "type": "backend",
+   "label": "service.impl",
+   "sublabel": "16 implementaciones de los servicios",
+   "pos": [
+    280,
+    360
+   ],
+   "size": [
+    570,
+    64
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/PasarelaPagoServiceImpl.java",
+     "line": 9,
+     "end_line": 34,
+     "label": "imports"
+    },
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/AutenticacionServiceImpl.java",
+     "line": 6,
+     "end_line": 16,
+     "label": "imports"
+    },
+    {
+     "path": "src/main/java/unisimon/demo/service/impl/CuentaServiceImpl.java",
+     "line": 9,
+     "end_line": 36,
+     "label": "CorreoSender"
+    }
+   ]
+  },
+  {
+   "id": "factory",
+   "type": "backend",
+   "label": "factory",
+   "sublabel": "crea usuarios",
+   "pos": [
+    40,
+    510
+   ],
+   "size": [
+    150,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/factory/UsuarioFactory.java",
+     "line": 1,
+     "end_line": 57
     }
    ]
   },
@@ -165,10 +261,10 @@
    "id": "policy",
    "type": "backend",
    "label": "policy",
-   "sublabel": "reglas de estado",
+   "sublabel": "reglas de estado y acceso",
    "pos": [
-    40,
-    430
+    260,
+    510
    ],
    "size": [
     150,
@@ -179,17 +275,22 @@
      "path": "src/main/java/unisimon/demo/policy/EstadoPagoPolicy.java",
      "line": 1,
      "end_line": 43
+    },
+    {
+     "path": "src/main/java/unisimon/demo/policy/AccesoInmueblePolicy.java",
+     "line": 6,
+     "end_line": 16
     }
    ]
   },
   {
-   "id": "repository",
-   "type": "backend",
-   "label": "repository",
-   "sublabel": "SQL nativo",
+   "id": "wompi",
+   "type": "external",
+   "label": "integration.wompi",
+   "sublabel": "cliente REST de Wompi",
    "pos": [
-    260,
-    560
+    700,
+    510
    ],
    "size": [
     150,
@@ -197,9 +298,40 @@
    ],
    "sources": [
     {
-     "path": "src/main/java/unisimon/demo/repository/PagoRepository.java",
+     "path": "src/main/java/unisimon/demo/integration/wompi/ClienteWompi.java",
      "line": 1,
-     "end_line": 101
+     "end_line": 12
+    },
+    {
+     "path": "src/main/java/unisimon/demo/integration/wompi/ClienteWompiRest.java",
+     "line": 10,
+     "end_line": 25
+    }
+   ]
+  },
+  {
+   "id": "mail",
+   "type": "external",
+   "label": "mail",
+   "sublabel": "CorreoLogSender (log)",
+   "pos": [
+    40,
+    362
+   ],
+   "size": [
+    130,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/mail/CorreoSender.java",
+     "line": 1,
+     "end_line": 7
+    },
+    {
+     "path": "src/main/java/unisimon/demo/mail/CorreoLogSender.java",
+     "line": 1,
+     "end_line": 20
     }
    ]
   },
@@ -207,10 +339,10 @@
    "id": "mapper",
    "type": "backend",
    "label": "mapper",
-   "sublabel": "vista a respuesta",
+   "sublabel": "vista SQL a respuesta",
    "pos": [
-    480,
-    430
+    40,
+    660
    ],
    "size": [
     150,
@@ -225,13 +357,13 @@
    ]
   },
   {
-   "id": "model",
-   "type": "backend",
-   "label": "model",
-   "sublabel": "dominio",
+   "id": "bootstrap",
+   "type": "cloud",
+   "label": "bootstrap",
+   "sublabel": "datos iniciales y pasarela",
    "pos": [
-    260,
-    690
+    700,
+    660
    ],
    "size": [
     150,
@@ -239,243 +371,345 @@
    ],
    "sources": [
     {
-     "path": "src/main/java/unisimon/demo/model/Pago.java",
-     "line": 1,
-     "end_line": 138
+     "path": "src/main/java/unisimon/demo/bootstrap/DatosIniciales.java",
+     "line": 11,
+     "end_line": 35
+    },
+    {
+     "path": "src/main/java/unisimon/demo/bootstrap/SincronizacionPasarela.java",
+     "line": 9,
+     "end_line": 10
     }
    ]
   },
   {
-   "id": "i_service",
-   "type": "messagebus",
-   "label": "«interface» *Service",
-   "sublabel": "16 contratos de negocio",
-   "tag": "interface",
+   "id": "support",
+   "type": "backend",
+   "label": "service.support",
+   "sublabel": "UsuarioPersistidor",
    "pos": [
-    260,
-    170
+    920,
+    660
    ],
    "size": [
-    170,
-    50
+    150,
+    60
    ],
    "sources": [
     {
-     "path": "src/main/java/unisimon/demo/service/PagoService.java",
+     "path": "src/main/java/unisimon/demo/service/support/UsuarioPersistidor.java",
      "line": 1,
-     "end_line": 37
+     "end_line": 31
     }
    ]
   },
   {
-   "id": "i_repo",
-   "type": "messagebus",
-   "label": "«interface» *Repository",
-   "sublabel": "15 contratos de datos",
-   "tag": "interface",
+   "id": "repository",
+   "type": "database",
+   "label": "repository",
+   "sublabel": "14 interfaces Spring Data con SQL nativo",
    "pos": [
-    260,
-    430
+    40,
+    960
    ],
    "size": [
-    170,
-    50
+    1030,
+    60
    ],
    "sources": [
     {
      "path": "src/main/java/unisimon/demo/repository/PagoRepository.java",
      "line": 1,
-     "end_line": 101
+     "end_line": 20
     }
    ]
   },
   {
-   "id": "i_wompi",
-   "type": "messagebus",
-   "label": "«interface» ClienteWompi",
-   "sublabel": "pasarela de pagos",
-   "tag": "interface",
+   "id": "model",
+   "type": "database",
+   "label": "model",
+   "sublabel": "entidades del dominio",
    "pos": [
-    490,
-    300
+    380,
+    1110
    ],
    "size": [
-    170,
-    50
-   ],
-   "sources": [
-    {
-     "path": "src/main/java/unisimon/demo/integration/wompi/ClienteWompi.java",
-     "line": 1,
-     "end_line": 12
-    }
-   ]
-  },
-  {
-   "id": "i_mail",
-   "type": "messagebus",
-   "label": "«interface» CorreoSender",
-   "sublabel": "envio de correo",
-   "tag": "interface",
-   "pos": [
-    490,
-    190
-   ],
-   "size": [
-    170,
-    50
-   ],
-   "sources": [
-    {
-     "path": "src/main/java/unisimon/demo/mail/CorreoSender.java",
-     "line": 1,
-     "end_line": 7
-    }
-   ]
-  },
-  {
-   "id": "mail",
-   "type": "external",
-   "label": "mail",
-   "sublabel": "CorreoLogSender",
-   "pos": [
-    720,
-    190
-   ],
-   "size": [
-    150,
+    350,
     60
    ],
    "sources": [
     {
-     "path": "src/main/java/unisimon/demo/mail/CorreoLogSender.java",
-     "line": 1,
-     "end_line": 20
+     "path": "src/main/java/unisimon/demo/model/Pago.java",
+     "line": 30,
+     "end_line": 40
     }
+   ]
+  },
+  {
+   "id": "dtoreq",
+   "type": "messagebus",
+   "label": "dto.request",
+   "sublabel": "lo que entra a la API",
+   "pos": [
+    750,
+    1110
+   ],
+   "size": [
+    130,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/dto/request/PagoRequests.java",
+     "line": 1,
+     "end_line": 28
+    }
+   ]
+  },
+  {
+   "id": "dtores",
+   "type": "messagebus",
+   "label": "dto.response",
+   "sublabel": "lo que sale de la API",
+   "pos": [
+    895,
+    1110
+   ],
+   "size": [
+    130,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/dto/response/PagoResponses.java",
+     "line": 1,
+     "end_line": 29
+    }
+   ]
+  },
+  {
+   "id": "exception",
+   "type": "messagebus",
+   "label": "exception",
+   "sublabel": "errores uniformes",
+   "pos": [
+    1040,
+    1110
+   ],
+   "size": [
+    130,
+    60
+   ],
+   "sources": [
+    {
+     "path": "src/main/java/unisimon/demo/exception/ApiException.java",
+     "line": 1,
+     "end_line": 18
+    }
+   ]
+  }
+ ],
+ "boundaries": [
+  {
+   "kind": "region",
+   "label": "Transversales: los usa casi todo",
+   "wraps": [
+    "dtoreq",
+    "dtores",
+    "exception"
    ]
   }
  ],
  "connections": [
   {
-   "id": "e0",
-   "from": "controller",
-   "to": "i_service",
-   "label": "requiere"
-  },
-  {
-   "id": "e1",
+   "id": "sch-srv",
    "from": "scheduler",
-   "to": "i_service",
-   "label": "requiere"
+   "to": "service"
   },
   {
-   "id": "e2",
-   "from": "bootstrap",
-   "to": "i_service",
-   "label": "requiere"
-  },
-  {
-   "id": "e3",
-   "from": "service",
-   "to": "i_service",
-   "label": "provee"
-  },
-  {
-   "id": "e4",
-   "from": "service",
-   "to": "i_repo",
-   "label": "requiere"
-  },
-  {
-   "id": "e5",
-   "from": "policy",
-   "to": "i_repo",
-   "label": "requiere"
-  },
-  {
-   "id": "e6",
-   "from": "mapper",
-   "to": "i_repo",
-   "label": "requiere"
-  },
-  {
-   "id": "e7",
-   "from": "repository",
-   "to": "i_repo",
-   "label": "provee"
-  },
-  {
-   "id": "e8",
-   "from": "service",
-   "to": "i_wompi",
-   "label": "requiere"
-  },
-  {
-   "id": "e9",
-   "from": "integration",
-   "to": "i_wompi",
-   "label": "provee"
-  },
-  {
-   "id": "e10",
-   "from": "service",
-   "to": "i_mail",
-   "label": "requiere"
-  },
-  {
-   "id": "e11",
-   "from": "mail",
-   "to": "i_mail",
-   "label": "provee"
-  },
-  {
-   "id": "e12",
-   "from": "service",
-   "to": "policy",
-   "label": "aplica"
-  },
-  {
-   "id": "e13",
-   "from": "service",
-   "to": "mapper",
-   "label": "mapea"
-  },
-  {
-   "id": "e14",
-   "from": "repository",
-   "to": "model",
-   "label": "hidrata"
-  },
-  {
-   "id": "e15",
+   "id": "ctl-srv",
    "from": "controller",
-   "to": "security",
-   "label": "roles"
+   "to": "service"
   },
   {
-   "id": "e16",
+   "id": "ctl-ann",
+   "from": "controller",
+   "to": "annotation"
+  },
+  {
+   "id": "ctl-sec",
+   "from": "controller",
+   "to": "security"
+  },
+  {
+   "id": "ctl-repo",
+   "from": "controller",
+   "to": "repository",
+   "fromSide": "top",
+   "toSide": "right",
+   "via": [
+    [
+     555,
+     24
+    ],
+    [
+     1110,
+     24
+    ],
+    [
+     1110,
+     990
+    ]
+   ],
+   "label": "acceso directo",
+   "variant": "dashed"
+  },
+  {
+   "id": "cfg-sec",
    "from": "config",
+   "to": "security"
+  },
+  {
+   "id": "cfg-cache",
+   "from": "config",
+   "to": "cache"
+  },
+  {
+   "id": "impl-srv",
+   "from": "impl",
+   "to": "service",
+   "label": "implementa",
+   "variant": "emphasis"
+  },
+  {
+   "id": "impl-sec",
+   "from": "impl",
    "to": "security",
-   "label": "filtro"
+   "label": "TokenService"
+  },
+  {
+   "id": "impl-cache",
+   "from": "impl",
+   "to": "cache"
+  },
+  {
+   "id": "impl-factory",
+   "from": "impl",
+   "to": "factory"
+  },
+  {
+   "id": "impl-policy",
+   "from": "impl",
+   "to": "policy"
+  },
+  {
+   "id": "impl-wompi",
+   "from": "impl",
+   "to": "wompi",
+   "label": "ClienteWompi"
+  },
+  {
+   "id": "impl-mail",
+   "from": "impl",
+   "to": "mail",
+   "label": "CorreoSender"
+  },
+  {
+   "id": "impl-mapper",
+   "from": "impl",
+   "to": "mapper"
+  },
+  {
+   "id": "impl-boot",
+   "from": "impl",
+   "to": "bootstrap"
+  },
+  {
+   "id": "impl-support",
+   "from": "impl",
+   "to": "support"
+  },
+  {
+   "id": "impl-repo",
+   "from": "impl",
+   "to": "repository"
+  },
+  {
+   "id": "factory-mapper",
+   "from": "factory",
+   "to": "mapper"
+  },
+  {
+   "id": "policy-repo",
+   "from": "policy",
+   "to": "repository"
+  },
+  {
+   "id": "wompi-boot",
+   "from": "wompi",
+   "to": "bootstrap",
+   "label": "PasarelaProperties"
+  },
+  {
+   "id": "boot-support",
+   "from": "bootstrap",
+   "to": "support"
+  },
+  {
+   "id": "boot-repo",
+   "from": "bootstrap",
+   "to": "repository"
+  },
+  {
+   "id": "support-repo",
+   "from": "support",
+   "to": "repository"
+  },
+  {
+   "id": "mapper-repo",
+   "from": "mapper",
+   "to": "repository",
+   "label": "proyecciones *View"
+  },
+  {
+   "id": "repo-model",
+   "from": "repository",
+   "to": "model"
   }
  ],
  "cards": [
   {
-   "dot": "emerald",
-   "title": "Como leerlo",
+   "dot": "cyan",
+   "title": "Cómo leerlo",
    "items": [
-    "Paquete que provee: su flecha 'provee' llega a la interfaz (piruleta)",
-    "Paquete que requiere: su flecha 'requiere' sale hacia la interfaz (enchufe)",
-    "controller, scheduler y bootstrap dependen de *Service, nunca de impl"
+    "Cada caja es un paquete de unisimon.demo",
+    "Flecha A → B: alguna clase de A importa una de B",
+    "service.impl implementa las interfaces de service"
    ]
   },
   {
    "dot": "orange",
-   "title": "Omitido",
+   "title": "Flechas resumidas",
    "items": [
-    "dto, exception, cache y factory los usa casi todo",
-    "TokenService (security) lo requieren config y AutenticacionServiceImpl",
-    "policy y mapper son clases concretas, sin interfaz"
+    "model también lo usan service.impl, factory, policy, bootstrap, service.support y mapper",
+    "security (UsuarioAutenticado) también lo usan service, policy y mapper",
+    "No se dibujan para no enredar el diagrama"
+   ]
+  },
+  {
+   "dot": "slate",
+   "title": "Quién usa los transversales",
+   "items": [
+    "dto.request: config, controller, service, service.impl, factory, dto.response",
+    "dto.response: controller, service, service.impl, mapper",
+    "exception: config, controller, dto.request, factory, integration.wompi, policy, security, service.impl"
+   ]
+  },
+  {
+   "dot": "rose",
+   "title": "Hallazgo",
+   "items": [
+    "ResidenteReservaController usa ResidenteRepository sin pasar por service"
    ]
   }
  ]

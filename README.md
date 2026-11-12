@@ -137,7 +137,7 @@ El administrador crea zonas, las lista (con caché) y las activa o inactiva. Cad
 
 ## 5. Arquitectura y paquetes
 
-Arquitectura por capas: **Controller → Service → Repository → PostgreSQL**, con Spring Security delante de todo y Wompi como servicio externo.
+Arquitectura por capas: **Controller → Service → Repository → PostgreSQL**, con Spring Security delante de todo y Wompi como servicio externo. Abajo están también el diagrama de componentes y el de paquetes.
 
 ![Arquitectura del backend](Diagramas/Arquitectura/backend-horizontal.svg)
 
@@ -148,32 +148,47 @@ Arquitectura por capas: **Controller → Service → Repository → PostgreSQL**
 
 </details>
 
+### Componentes
+
+Los componentes del backend y las interfaces que se conectan entre ellos: el círculo es la interfaz que un componente **provee** y el semicírculo la que otro **requiere**. Afuera quedan el front-end (Next.js), Wompi y PostgreSQL.
+
+![Diagrama de componentes](Diagramas/Componentes/componentes-backend.svg)
+
 ### Paquetes
+
+Cada caja es un paquete de `unisimon.demo` y cada flecha `A → B` significa que alguna clase de `A` importa una de `B`. Los colores marcan la capa. `dto.request`, `dto.response` y `exception` se usan en casi todo el código, así que van aparte, sin flechas. Las tarjetas del `.html` interactivo dicen quién los usa y qué dependencias hacia `model` y `security` se resumieron para no enredar el diagrama.
 
 ![Diagrama de paquetes](Diagramas/Paquetes/paquetes-backend.svg)
 
 | Paquete (`unisimon.demo`) | Para qué es |
 |---|---|
 | `controller` | Endpoints REST, uno por rol/recurso (`Admin*`, `Residente*`, `Vigilante*`, `Auth`, `PasarelaWebhook`) |
-| `service` / `service/impl` | Reglas de negocio (interfaces + implementaciones) |
-| `repository` | Acceso a datos con SQL nativo |
-| `model` | Clases del dominio |
-| `dto/request`, `dto/response`, `mapper` | Lo que entra y sale de la API, y la conversión desde el modelo |
-| `security` | Emisión/lectura de JWT, roles y anotaciones de acceso |
-| `policy`, `factory` | Reglas reutilizables y creación de objetos |
-| `integration/wompi` | Cliente de la pasarela de pagos |
 | `scheduler` | Tareas programadas (mora de liquidaciones) |
-| `exception` | Manejo uniforme de errores (404, 405, 409…) |
+| `config` | Seguridad, CORS, cache y resolvedores de la web |
+| `security` / `security/annotation` | Emisión/lectura de JWT (`TokenService`), usuario autenticado y anotaciones de rol |
+| `service` / `service/impl` | Reglas de negocio (interfaces + implementaciones) |
+| `service/support` | Apoyo compartido entre servicios (`UsuarioPersistidor`) |
+| `policy`, `factory` | Reglas de estado y acceso reutilizables, y creación de usuarios |
+| `mapper` | Conversión de las vistas SQL a objetos de respuesta |
+| `cache` | Nombres de las caches de consultas |
+| `integration/wompi` | Cliente de la pasarela de pagos |
+| `mail` | Envío de correo (`CorreoLogSender`: por ahora lo escribe en el log) |
 | `bootstrap` | Datos iniciales (admin semilla, sincronizar pasarela con el `.env`) |
+| `repository` | Acceso a datos con SQL nativo (Spring Data) |
+| `model` | Clases del dominio |
+| `dto/request`, `dto/response` | Lo que entra y sale de la API |
+| `exception` | Manejo uniforme de errores (404, 405, 409…) |
 
-> Fuentes: [`Arquitectura/*.html`](Diagramas/Arquitectura) (interactivos) · [`Paquetes/paquetes-backend.xml`](Diagramas/Paquetes/paquetes-backend.xml) (draw.io)
+> Hallazgo: `ResidenteReservaController` usa `ResidenteRepository` directamente, sin pasar por `service` (la flecha punteada del diagrama).
+
+> Fuentes: [`Arquitectura/*.html`](Diagramas/Arquitectura) y [`Paquetes/paquetes-backend.html`](Diagramas/Paquetes/paquetes-backend.html) (interactivos de archify, generados desde [`_fuente/`](Diagramas/_fuente)) · [`Componentes/componentes-backend.xml`](Diagramas/Componentes/componentes-backend.xml) (draw.io)
 
 ### Cómo regenerar las imágenes
 
 Los `.svg` son exportaciones de las fuentes. Si cambias un diagrama, vuelve a exportarlo para que el README no quede desactualizado:
 
-- **Secuencia y arquitectura** (`.html` de archify): abre el `.html` → botón **Export** → **SVG en tema claro** (light), y guárdalo con el mismo nombre al lado.
-- **Clases y paquetes** (`.xml` de draw.io): ábrelo en [app.diagrams.net](https://app.diagrams.net) → **Archivo → Exportar como → SVG**, y guárdalo con el mismo nombre al lado.
+- **Secuencia, arquitectura y paquetes** (`.html` de archify): abre el `.html` → botón **Export** → **SVG en tema claro** (light), y guárdalo con el mismo nombre al lado.
+- **Clases y componentes** (`.xml` de draw.io): ábrelo en [app.diagrams.net](https://app.diagrams.net) → **Archivo → Exportar como → SVG**, y guárdalo con el mismo nombre al lado.
 
 ---
 
