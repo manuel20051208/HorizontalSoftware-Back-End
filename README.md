@@ -52,6 +52,22 @@ Quién hace qué en el sistema, agrupado por módulo: actores y configuración b
 
 > Fuente editable en draw.io: [`Diagramas/UML/Untitled Diagram.drawio.svg`](Diagramas/UML/Untitled%20Diagram.drawio.svg)
 
+### De caso de uso a diagrama de secuencia
+
+Cada caso de uso principal tiene su diagrama de secuencia, que muestra cómo lo resuelve el backend por dentro:
+
+| Caso de uso | Actor | Diagrama de secuencia |
+|---|---|---|
+| Iniciar sesión | Todos | [4.1 Sesión con refresh token rotativo](#41-sesión-con-refresh-token-rotativo) |
+| Realizar pagos | Residente | [4.2 Pago de administración con Wompi](#42-pago-de-administración-con-wompi) |
+| Generar liquidación mensual | Administrador / Sistema | [4.3 Liquidaciones de administración](#43-liquidaciones-de-administración) |
+| Reservar zona común | Residente | [4.4 Reservar una zona común](#44-reservar-una-zona-común) |
+| Módulo de portería (ingreso de invitados) | Vigilante | [4.5 Ingreso de un invitado por portería](#45-ingreso-de-un-invitado-por-portería) |
+| Configurar zonas comunes | Administrador | [Zonas comunes](#otros-flujos) |
+| Enviar notificación · Consultar notificaciones | Administrador · Residente | [Notificaciones](#otros-flujos) |
+
+Los demás casos de uso (recuperar contraseña, cancelar reserva, conciliar pagos, incidencias, reportes…) no tienen diagrama de secuencia propio.
+
 ---
 
 ## 3. Modelo de clases (UML)
@@ -66,7 +82,7 @@ El dominio está en `src/main/java/unisimon/demo/model`. La idea central es que 
 
 ## 4. Diagramas de secuencia
 
-Los flujos clave, de la petición a la base de datos. Cada imagen tiene su versión interactiva en `.html` en [`Diagramas/Secuencia/`](Diagramas/Secuencia) (descárgala y ábrela en el navegador para recorrer el flujo paso a paso).
+Los flujos clave, de la petición a la base de datos. Para ver a qué caso de uso corresponde cada uno, mira la [tabla de la sección 2](#de-caso-de-uso-a-diagrama-de-secuencia). Cada imagen tiene su versión interactiva en `.html` en [`Diagramas/Secuencia/`](Diagramas/Secuencia) (descárgala y ábrela en el navegador para recorrer el flujo paso a paso).
 
 **Leyenda:** verde = solicitud principal · rojo = paso de seguridad · punteado = respuesta o paso asíncrono.
 
