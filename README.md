@@ -56,234 +56,89 @@ Quién hace qué en el sistema, agrupado por módulo: actores y configuración b
 
 ## 3. Modelo de clases (UML)
 
-Vista resumida del dominio (`src/main/java/unisimon/demo/model`). La idea central: **todo gira alrededor del `Inmueble`**; los usuarios heredan de `Usuario`, y el invitado (`UsuarioAutorizado`) es un tipo de residente sin sesión.
+El dominio está en `src/main/java/unisimon/demo/model`. La idea central es que **todo gira alrededor del `Inmueble`** (residentes, parqueadero, liquidaciones, pagos y zonas comunes). `Administrador`, `Residente` y `Vigilante` heredan de `Usuario`, y el invitado (`UsuarioAutorizado`) es un tipo de residente que no inicia sesión.
 
-```mermaid
-classDiagram
-    direction LR
+![Diagrama de clases](Diagramas/Clases/DiagramaClasesSoftwareHorizontal.svg)
 
-    class Usuario {
-        identificacion
-        nombre
-        correo
-        rol
-    }
-    class NoAdmin {
-        <<interface>>
-    }
-    Usuario <|-- Administrador
-    Usuario <|-- Residente
-    Usuario <|-- Vigilante
-    Residente <|-- UsuarioAutorizado : invitado
-    NoAdmin <|.. Residente
-    NoAdmin <|.. Vigilante
-
-    Inmueble "1" o-- "*" Residente : habitan
-    Inmueble "1" -- "0..1" Parqueadero
-    Inmueble "1" -- "*" Liquidacion : cuotas
-    Inmueble "1" -- "*" Pago
-    Inmueble "*" -- "*" ZonaComun : acceso
-    Inmueble "*" -- "*" Notificacion
-
-    Residente "1" -- "*" UsuarioAutorizado : invita
-    Residente "1" -- "0..1" Auto
-    Auto "0..1" -- "0..1" Parqueadero
-
-    Pago "*" --> "1" PasarelaPago : Wompi
-    ReservaZonaComun "*" --> "1" Residente : dueño
-    ReservaZonaComun "*" --> "1" ZonaComun
-    ZonaComun "1" -- "*" Rompimiento
-    Rompimiento "*" --> "1" ReglaReserva
-    Notificacion "*" -- "*" Usuario : destinatarios
-```
-
-> Diagrama completo con atributos y métodos (draw.io): [`Diagramas/Clases/DiagramaClasesSoftwareHorizontal.xml`](Diagramas/Clases/DiagramaClasesSoftwareHorizontal.xml) — ábrelo en [app.diagrams.net](https://app.diagrams.net).
+> Fuente editable (draw.io): [`Diagramas/Clases/DiagramaClasesSoftwareHorizontal.xml`](Diagramas/Clases/DiagramaClasesSoftwareHorizontal.xml)
 
 ---
 
 ## 4. Diagramas de secuencia
 
-Los flujos clave, de petición a base de datos. Cada uno tiene además su versión interactiva en [`Diagramas/Secuencia/`](Diagramas/Secuencia) (abre el `.html` en el navegador).
+Los flujos clave, de la petición a la base de datos. Cada imagen tiene su versión interactiva en `.html` en [`Diagramas/Secuencia/`](Diagramas/Secuencia) (descárgala y ábrela en el navegador para recorrer el flujo paso a paso).
+
+**Leyenda:** verde = solicitud principal · rojo = paso de seguridad · punteado = respuesta o paso asíncrono.
 
 ### 4.1 Sesión con refresh token rotativo
 
-Login, y cómo se renueva la sesión sin pedir la contraseña otra vez.
+Login, y cómo se renueva la sesión sin pedir la contraseña otra vez. Si alguien usa un refresh viejo, la huella no coincide y la sesión se anula (401).
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant C as Cliente
-    participant A as AuthController
-    participant S as AutenticacionService
-    participant T as JwtTokenService
-    participant DB as PostgreSQL
-
-    C->>A: POST /api/auth/login
-    A->>S: iniciarSesion
-    S->>DB: validar credenciales
-    S->>T: emitir access + refresh
-    Note over S,T: Credenciales malas → 401<br/>Invitado o cuenta inactiva → 403
-    S->>DB: guardar huella del refresh
-    A-->>C: access (15 min) + refresh (7 días)
-
-    C->>A: POST /api/auth/refresh
-    A->>S: renovarSesion
-    S->>T: leer refresh
-    S->>DB: comparar huella
-    Note over S,DB: Si no coincide se anula la sesión → 401
-    S->>T: emitir nuevo par
-    A-->>C: tokens rotados
-```
-
-Interactivo: [`sesion-jwt.html`](Diagramas/Secuencia/sesion-jwt.html)
+![Secuencia: sesión JWT](Diagramas/Secuencia/sesion-jwt.svg)
 
 ### 4.2 Pago de administración con Wompi
 
-El flujo más delicado del sistema: **el front nunca decide si un pago quedó aprobado**, lo decide el back con el webhook firmado y confirmando con Wompi.
+El flujo más delicado del sistema: **el front nunca decide si un pago quedó aprobado**. El servidor fija el monto y firma el checkout. Cuando llega el webhook, verifica la firma, le pregunta a Wompi el estado real y solo aprueba si el monto y la moneda coinciden.
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor R as Residente
-    participant F as Front
-    participant API as API de pagos
-    participant DB as PostgreSQL
-    participant W as Wompi
+![Secuencia: pago con Wompi](Diagramas/Secuencia/pago-wompi-v1.svg)
 
-    R->>F: pagar saldo
-    F->>API: POST /api/residente/pagos (@SoloResidente)
-    Note over API: El monto lo fija el servidor<br/>y valida que la pasarela esté lista
-    API->>DB: INSERT pago PENDIENTE
-    API-->>F: urlCheckout firmada
-    Note over API,F: firma = SHA-256(ref + centavos + COP + secreto)
-    F->>W: abre checkout
-    R->>W: paga
-    W->>API: POST /api/pasarela/webhook (público)
-    Note over API: Verifica el checksum con el secreto de eventos<br/>Firma inválida → 401
-    API->>W: GET /transactions/{id} (llave privada)
-    W-->>API: estado, monto, moneda
-    API->>DB: UPDATE a APROBADO o RECHAZADO
-    Note over API,DB: Solo si sigue PENDIENTE y monto y moneda coinciden (idempotente)
-    API-->>W: 200 OK
-    W-->>F: redirect
-    F->>API: GET /api/pagos/estado/{ref}
-    API-->>F: estado del pago
-    F-->>R: muestra resultado
-```
+<details>
+<summary>Ver la misma secuencia desde los servicios internos (<code>PagoService</code> / <code>PasarelaService</code>)</summary>
 
-Interactivo: [`pago-wompi-v1.html`](Diagramas/Secuencia/pago-wompi-v1.html) · [`pagos-wompi.html`](Diagramas/Secuencia/pagos-wompi.html)
+![Secuencia: pago con Wompi, vista de servicios](Diagramas/Secuencia/pagos-wompi.svg)
+
+</details>
 
 ### 4.3 Liquidaciones de administración
 
-Cómo nace la cuota mensual de un inmueble y cuándo pasa a mora.
+Cómo nace la cuota mensual de un inmueble y cuándo pasa a mora, ya sea a mano o con la tarea nocturna.
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Ad as Administrador
-    participant C as AdminLiquidacionController
-    participant S as LiquidacionService
-    participant DB as PostgreSQL
-    participant J as Tarea nocturna
-
-    Ad->>C: POST /api/admin/liquidaciones
-    C->>S: generarLiquidacion
-    S->>DB: inmueble y periodo
-    Note over S,DB: Inmueble inactivo o periodo repetido → 409
-    DB-->>S: liquidación previa
-    S->>DB: insertar liquidación
-    Note over S,DB: Sin cuota indicada copia la previa<br/>Sin previa → 400
-    S-->>C: liquidación
-
-    Ad->>C: PATCH /api/admin/liquidaciones/{id}/mora
-    C->>S: marcarEnMora
-    S->>DB: estado EN_MORA
-
-    J-)S: marcarVencidas
-    S-)DB: PENDIENTE vencidas → EN_MORA
-```
-
-Interactivo: [`liquidaciones.html`](Diagramas/Secuencia/liquidaciones.html)
+![Secuencia: liquidaciones](Diagramas/Secuencia/liquidaciones.svg)
 
 ### 4.4 Reservar una zona común
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor R as Residente
-    participant C as ResidenteReservaController
-    participant S as ReservaService
-    participant Repo as Repositorios
-    participant N as Notificaciones
+Antes de guardar la reserva se valida la fecha, que la zona esté habilitada, el horario, las reglas, el cupo y que no se cruce con otra reserva.
 
-    R->>C: POST /api/residente/reservas
-    C->>S: reservarZonaComun
-    S->>Repo: contexto, zona y reglas
-    Repo-->>S: datos
-    Note over S: Valida fecha, zona habilitada, horario,<br/>reglas, cupo y que no se solape
-    S->>Repo: insertar reserva
-    Repo-->>S: id
-    S-)N: notificarReserva
-    N-)Repo: guardar aviso
-    S-->>C: reserva
-    C-->>R: 200 reserva
-```
-
-Interactivo: [`reservas.html`](Diagramas/Secuencia/reservas.html)
+![Secuencia: reservas](Diagramas/Secuencia/reservas.svg)
 
 ### 4.5 Ingreso de un invitado por portería
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor V as Vigilante
-    participant C as VigilanteController
-    participant S as VigilanteService
-    participant DB as PostgreSQL
-    participant N as Notificaciones
-
-    V->>C: GET /api/vigilante/invitados/{identificacion}
-    C->>S: existeInvitado
-    S->>DB: buscar invitado
-    S-->>V: existe y vigente
-    V->>C: POST /invitados/{identificacion}/ingreso
-    C->>S: registrarIngreso
-    S->>DB: invitado y anfitriones
-    Note over S,DB: Inactivo o vencido → se deniega sin avisar
-    S-)N: notificarVisita
-    N-)DB: aviso a los residentes
-    S-->>V: ingreso permitido
-```
-
-Interactivo: [`porteria-invitados.html`](Diagramas/Secuencia/porteria-invitados.html)
+![Secuencia: portería](Diagramas/Secuencia/porteria-invitados.svg)
 
 ### Otros flujos
 
-| Flujo | Qué muestra | Diagrama |
-|---|---|---|
-| Zonas comunes (admin) | Crear, listar con caché y activar/inactivar zonas | [`zonas-comunes.html`](Diagramas/Secuencia/zonas-comunes.html) |
-| Notificaciones | El admin envía, el residente lista y marca como leída | [`notificaciones.html`](Diagramas/Secuencia/notificaciones.html) |
+<details>
+<summary>Zonas comunes (admin): crear, listar con caché y activar/inactivar</summary>
+
+![Secuencia: zonas comunes](Diagramas/Secuencia/zonas-comunes.svg)
+
+</details>
+
+<details>
+<summary>Notificaciones: el admin envía y el residente lista y marca como leída</summary>
+
+![Secuencia: notificaciones](Diagramas/Secuencia/notificaciones.svg)
+
+</details>
 
 ---
 
 ## 5. Arquitectura y paquetes
 
-Arquitectura por capas clásica: **Controller → Service → Repository → PostgreSQL**, con la seguridad delante de todo.
+Arquitectura por capas: **Controller → Service → Repository → PostgreSQL**, con Spring Security delante de todo y Wompi como servicio externo.
 
-```mermaid
-flowchart LR
-    Front[Front Next.js] -->|HTTPS + Bearer JWT| Sec[Spring Security<br/>JWT + @PreAuthorize]
-    Wompi[Wompi] -->|webhook firmado| Sec
-    Sec --> Ctrl[controller]
-    Ctrl --> Srv[service]
-    Srv --> Repo[repository<br/>SQL nativo]
-    Repo --> DB[(PostgreSQL<br/>Flyway)]
-    Srv --> Int[integration/wompi]
-    Int -->|API REST| Wompi
-    Srv --> Mail[mail]
-    Sched[scheduler<br/>tarea nocturna] --> Srv
-    Srv --> Cache[cache]
-```
+![Arquitectura del backend](Diagramas/Arquitectura/backend-horizontal.svg)
+
+<details>
+<summary>Ver la versión v1 de la arquitectura</summary>
+
+![Arquitectura del backend v1](Diagramas/Arquitectura/backend-v1.svg)
+
+</details>
+
+### Paquetes
+
+![Diagrama de paquetes](Diagramas/Paquetes/paquetes-backend.svg)
 
 | Paquete (`unisimon.demo`) | Para qué es |
 |---|---|
@@ -299,7 +154,14 @@ flowchart LR
 | `exception` | Manejo uniforme de errores (404, 405, 409…) |
 | `bootstrap` | Datos iniciales (admin semilla, sincronizar pasarela con el `.env`) |
 
-Diagramas completos: [`Arquitectura/backend-horizontal.html`](Diagramas/Arquitectura/backend-horizontal.html) · [`Arquitectura/backend-v1.html`](Diagramas/Arquitectura/backend-v1.html) · [`Paquetes/paquetes-backend.xml`](Diagramas/Paquetes/paquetes-backend.xml) (draw.io)
+> Fuentes: [`Arquitectura/*.html`](Diagramas/Arquitectura) (interactivos) · [`Paquetes/paquetes-backend.xml`](Diagramas/Paquetes/paquetes-backend.xml) (draw.io)
+
+### Cómo regenerar las imágenes
+
+Los `.svg` son exportaciones de las fuentes. Si cambias un diagrama, vuelve a exportarlo para que el README no quede desactualizado:
+
+- **Secuencia y arquitectura** (`.html` de archify): abre el `.html` → botón **Export** → **SVG**, y guárdalo con el mismo nombre al lado.
+- **Clases y paquetes** (`.xml` de draw.io): ábrelo en [app.diagrams.net](https://app.diagrams.net) → **Archivo → Exportar como → SVG**, y guárdalo con el mismo nombre al lado.
 
 ---
 
