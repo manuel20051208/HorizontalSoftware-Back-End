@@ -1,2 +1,5 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
+
+# Diagramas exportados (archify / draw.io): no cuentan en los lenguajes de GitHub
+Diagramas/** linguist-generated=true
