@@ -108,53 +108,23 @@
  ],
  "segments": [
   {
-   "from": 156,
-   "to": 328,
+   "from": 150,
+   "to": 331,
    "label": "Iniciar pago"
   },
   {
-   "from": 344,
-   "to": 404,
+   "from": 339,
+   "to": 382,
    "label": "Checkout en Wompi"
   },
   {
-   "from": 420,
-   "to": 452,
-   "label": "Llega el webhook"
+   "from": 408,
+   "to": 552,
+   "label": "Webhook verificado"
   },
   {
-   "from": 468,
-   "to": 500,
-   "label": "Si la firma es inválida"
-  },
-  {
-   "from": 516,
-   "to": 576,
-   "label": "Si la firma es válida: consultar a Wompi"
-  },
-  {
-   "from": 592,
-   "to": 624,
-   "label": "APPROVED y monto/moneda coinciden"
-  },
-  {
-   "from": 640,
-   "to": 672,
-   "label": "DECLINED, ERROR o VOIDED"
-  },
-  {
-   "from": 688,
-   "to": 720,
-   "label": "PENDING, monto distinto o evento repetido"
-  },
-  {
-   "from": 736,
-   "to": 768,
-   "label": "Firma válida: confirmar el evento"
-  },
-  {
-   "from": 784,
-   "to": 900,
+   "from": 578,
+   "to": 696,
    "label": "Resultado"
   }
  ],
@@ -209,7 +179,7 @@
    "id": "redirige",
    "from": "front",
    "to": "wompi",
-   "y": 366,
+   "y": 346,
    "label": "abre checkout",
    "variant": "emphasis"
   },
@@ -217,30 +187,22 @@
    "id": "paga",
    "from": "residente",
    "to": "wompi",
-   "y": 394,
+   "y": 374,
    "label": "paga"
   },
   {
    "id": "webhook",
    "from": "wompi",
    "to": "api",
-   "y": 442,
+   "y": 432,
    "label": "POST /api/pasarela/webhook",
    "variant": "security"
-  },
-  {
-   "id": "firma-mala",
-   "from": "api",
-   "to": "wompi",
-   "y": 490,
-   "label": "401 · Wompi reintenta",
-   "variant": "return"
   },
   {
    "id": "consulta-tx",
    "from": "api",
    "to": "wompi",
-   "y": 538,
+   "y": 460,
    "label": "GET /transactions/{id}",
    "variant": "security"
   },
@@ -248,38 +210,23 @@
    "id": "datos-tx",
    "from": "wompi",
    "to": "api",
-   "y": 566,
+   "y": 488,
    "label": "status, monto, moneda",
    "variant": "return"
   },
   {
-   "id": "aprueba",
+   "id": "actualiza",
    "from": "api",
    "to": "neon",
-   "y": 614,
-   "label": "UPDATE a APROBADO",
+   "y": 516,
+   "label": "UPDATE estado",
    "variant": "emphasis"
-  },
-  {
-   "id": "rechaza",
-   "from": "api",
-   "to": "neon",
-   "y": 662,
-   "label": "UPDATE a RECHAZADO"
-  },
-  {
-   "id": "sin-cambios",
-   "from": "api",
-   "to": "neon",
-   "y": 710,
-   "label": "sin UPDATE: sigue PENDIENTE",
-   "variant": "dashed"
   },
   {
    "id": "ok-200",
    "from": "api",
    "to": "wompi",
-   "y": 758,
+   "y": 544,
    "label": "200 OK",
    "variant": "return"
   },
@@ -287,7 +234,7 @@
    "id": "vuelve",
    "from": "wompi",
    "to": "front",
-   "y": 806,
+   "y": 602,
    "label": "redirect-url",
    "variant": "dashed"
   },
@@ -295,22 +242,22 @@
    "id": "consulta-estado",
    "from": "front",
    "to": "api",
-   "y": 834,
+   "y": 630,
    "label": "GET /api/pagos/estado/{ref}"
   },
   {
    "id": "estado",
    "from": "api",
    "to": "front",
-   "y": 862,
-   "label": "APROBADO, RECHAZADO o PENDIENTE",
+   "y": 658,
+   "label": "estado del pago",
    "variant": "return"
   },
   {
    "id": "muestra",
    "from": "front",
    "to": "residente",
-   "y": 890,
+   "y": 684,
    "label": "muestra resultado",
    "variant": "return"
   }
@@ -319,7 +266,7 @@
   {
    "participant": "front",
    "from": 174,
-   "to": 371,
+   "to": 351,
    "type": "frontend"
   },
   {
@@ -331,7 +278,7 @@
   {
    "participant": "api",
    "from": 231,
-   "to": 323,
+   "to": 319,
    "type": "backend"
   },
   {
@@ -342,32 +289,26 @@
   },
   {
    "participant": "api",
-   "from": 438,
-   "to": 762,
+   "from": 428,
+   "to": 548,
    "type": "backend"
   },
   {
    "participant": "neon",
-   "from": 610,
-   "to": 627,
-   "type": "database"
-  },
-  {
-   "participant": "neon",
-   "from": 658,
-   "to": 675,
+   "from": 512,
+   "to": 529,
    "type": "database"
   },
   {
    "participant": "front",
-   "from": 802,
-   "to": 894,
+   "from": 598,
+   "to": 688,
    "type": "frontend"
   },
   {
    "participant": "api",
-   "from": 830,
-   "to": 866,
+   "from": 626,
+   "to": 662,
    "type": "backend"
   }
  ],
