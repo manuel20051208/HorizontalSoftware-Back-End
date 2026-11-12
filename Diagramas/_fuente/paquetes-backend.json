@@ -8,7 +8,7 @@
   "locale": "es",
   "repository": {
    "url": "https://github.com/manuel20051208/HorizontalSoftware-Back-End.git",
-   "revision": "f0e12564742dee6471a587df5a5f52213ecdb32b",
+   "revision": "06bd7326418f324bebc16060d87445f35ae95891",
    "provider": "github"
   },
   "legend": {
@@ -75,15 +75,9 @@
    "sources": [
     {
      "path": "src/main/java/unisimon/demo/controller/ResidenteReservaController.java",
-     "line": 15,
-     "end_line": 25,
-     "label": "imports"
-    },
-    {
-     "path": "src/main/java/unisimon/demo/controller/ResidenteReservaController.java",
-     "line": 36,
-     "end_line": 39,
-     "label": "usa ResidenteRepository"
+     "line": 1,
+     "end_line": 74,
+     "label": "solo llama a services"
     }
    ]
   },
@@ -430,11 +424,11 @@
    "label": "model",
    "sublabel": "entidades del dominio",
    "pos": [
-    380,
+    405,
     1110
    ],
    "size": [
-    350,
+    300,
     60
    ],
    "sources": [
@@ -451,11 +445,11 @@
    "label": "dto.request",
    "sublabel": "lo que entra a la API",
    "pos": [
-    750,
+    770,
     1110
    ],
    "size": [
-    130,
+    125,
     60
    ],
    "sources": [
@@ -472,11 +466,11 @@
    "label": "dto.response",
    "sublabel": "lo que sale de la API",
    "pos": [
-    895,
+    905,
     1110
    ],
    "size": [
-    130,
+    125,
     60
    ],
    "sources": [
@@ -497,7 +491,7 @@
     1110
    ],
    "size": [
-    130,
+    125,
     60
    ],
    "sources": [
@@ -540,29 +534,6 @@
    "id": "ctl-sec",
    "from": "controller",
    "to": "security"
-  },
-  {
-   "id": "ctl-repo",
-   "from": "controller",
-   "to": "repository",
-   "fromSide": "top",
-   "toSide": "right",
-   "via": [
-    [
-     555,
-     24
-    ],
-    [
-     1110,
-     24
-    ],
-    [
-     1110,
-     990
-    ]
-   ],
-   "label": "acceso directo",
-   "variant": "dashed"
   },
   {
    "id": "cfg-sec",
@@ -684,7 +655,8 @@
    "items": [
     "Cada caja es un paquete de unisimon.demo",
     "Flecha A → B: alguna clase de A importa una de B",
-    "service.impl implementa las interfaces de service"
+    "service.impl implementa las interfaces de service",
+    "controller solo llama a services: ningún controlador usa repository"
    ]
   },
   {
@@ -703,13 +675,6 @@
     "dto.request: config, controller, service, service.impl, factory, dto.response",
     "dto.response: controller, service, service.impl, mapper",
     "exception: config, controller, dto.request, factory, integration.wompi, policy, security, service.impl"
-   ]
-  },
-  {
-   "dot": "rose",
-   "title": "Hallazgo",
-   "items": [
-    "ResidenteReservaController usa ResidenteRepository sin pasar por service"
    ]
   }
  ]
