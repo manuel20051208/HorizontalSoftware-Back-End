@@ -103,14 +103,13 @@
    "to": "tok",
    "y": 278,
    "label": "emitir tokens",
-   "variant": "security",
-   "note": "Rechaza credenciales invalidas (401), invitados y cuentas inactivas (403)."
+   "variant": "security"
   },
   {
    "id": "m5",
    "from": "aut",
    "to": "db",
-   "y": 348,
+   "y": 314,
    "label": "guardar huella",
    "variant": "default"
   },
@@ -118,7 +117,7 @@
    "id": "m6",
    "from": "ctl",
    "to": "cli",
-   "y": 384,
+   "y": 350,
    "label": "access + refresh",
    "variant": "return"
   },
@@ -126,7 +125,7 @@
    "id": "m7",
    "from": "cli",
    "to": "ctl",
-   "y": 420,
+   "y": 386,
    "label": "POST /refresh",
    "variant": "emphasis"
   },
@@ -134,7 +133,7 @@
    "id": "m8",
    "from": "ctl",
    "to": "aut",
-   "y": 456,
+   "y": 422,
    "label": "renovarSesion",
    "variant": "default"
   },
@@ -142,7 +141,7 @@
    "id": "m9",
    "from": "aut",
    "to": "tok",
-   "y": 492,
+   "y": 458,
    "label": "leer refresh",
    "variant": "security"
   },
@@ -150,16 +149,15 @@
    "id": "m10",
    "from": "aut",
    "to": "db",
-   "y": 528,
+   "y": 494,
    "label": "comparar huella",
-   "variant": "default",
-   "note": "Si la huella no coincide se anula la sesion y responde 401."
+   "variant": "default"
   },
   {
    "id": "m11",
    "from": "aut",
    "to": "tok",
-   "y": 598,
+   "y": 530,
    "label": "emitir nuevo par",
    "variant": "security"
   },
@@ -167,7 +165,7 @@
    "id": "m12",
    "from": "ctl",
    "to": "cli",
-   "y": 634,
+   "y": 566,
    "label": "tokens rotados",
    "variant": "return"
   }
@@ -176,25 +174,25 @@
   {
    "participant": "ctl",
    "from": 164,
-   "to": 642,
+   "to": 574,
    "type": "backend"
   },
   {
    "participant": "aut",
    "from": 200,
-   "to": 606,
+   "to": 538,
    "type": "security"
   },
   {
    "participant": "db",
    "from": 236,
-   "to": 536,
+   "to": 498,
    "type": "database"
   },
   {
    "participant": "tok",
    "from": 272,
-   "to": 606,
+   "to": 538,
    "type": "security"
   }
  ],

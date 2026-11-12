@@ -100,14 +100,13 @@
    "to": "db",
    "y": 242,
    "label": "inmueble y periodo",
-   "variant": "default",
-   "note": "Inmueble inactivo o periodo repetido responde 409."
+   "variant": "default"
   },
   {
    "id": "m4",
    "from": "db",
    "to": "srv",
-   "y": 312,
+   "y": 278,
    "label": "liquidacion previa",
    "variant": "return"
   },
@@ -115,16 +114,15 @@
    "id": "m5",
    "from": "srv",
    "to": "db",
-   "y": 348,
+   "y": 314,
    "label": "insertar liquidacion",
-   "variant": "emphasis",
-   "note": "Sin cuota indicada copia la de la previa; sin previa responde 400."
+   "variant": "emphasis"
   },
   {
    "id": "m6",
    "from": "srv",
    "to": "ctl",
-   "y": 418,
+   "y": 350,
    "label": "liquidacion",
    "variant": "return"
   },
@@ -132,7 +130,7 @@
    "id": "m7",
    "from": "adm",
    "to": "ctl",
-   "y": 454,
+   "y": 386,
    "label": "PATCH /{id}/mora",
    "variant": "default"
   },
@@ -140,7 +138,7 @@
    "id": "m8",
    "from": "ctl",
    "to": "srv",
-   "y": 490,
+   "y": 422,
    "label": "marcarEnMora",
    "variant": "default"
   },
@@ -148,7 +146,7 @@
    "id": "m9",
    "from": "srv",
    "to": "db",
-   "y": 526,
+   "y": 458,
    "label": "estado EN_MORA",
    "variant": "default"
   },
@@ -156,7 +154,7 @@
    "id": "m10",
    "from": "job",
    "to": "srv",
-   "y": 562,
+   "y": 494,
    "label": "marcarVencidas",
    "variant": "dashed"
   },
@@ -164,7 +162,7 @@
    "id": "m11",
    "from": "srv",
    "to": "db",
-   "y": 598,
+   "y": 530,
    "label": "PENDIENTE vencidas a EN_MORA",
    "variant": "dashed"
   }
@@ -173,25 +171,25 @@
   {
    "participant": "ctl",
    "from": 164,
-   "to": 498,
+   "to": 430,
    "type": "backend"
   },
   {
    "participant": "srv",
    "from": 200,
-   "to": 606,
+   "to": 538,
    "type": "backend"
   },
   {
    "participant": "db",
    "from": 236,
-   "to": 606,
+   "to": 538,
    "type": "database"
   },
   {
    "participant": "job",
-   "from": 556,
-   "to": 570,
+   "from": 488,
+   "to": 502,
    "type": "messagebus"
   }
  ],

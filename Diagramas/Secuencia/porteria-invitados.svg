@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 920 634" data-sequence-column-fit="spread" data-reader-fit="width-first" role="img" lang="es" aria-labelledby="archify-diagram-title archify-diagram-description" data-animation="trace" data-preset="classic" data-quality-profile="showcase" data-motion-choreography="sequence" style="--flow-cycle: 10.628s; width: 920px; height: 634px; min-width: 0px;" width="920" height="634" xmlns="http://www.w3.org/2000/svg" data-theme="light"><style>
+<svg viewBox="0 0 920 600" data-sequence-column-fit="spread" data-reader-fit="width-first" role="img" lang="es" aria-labelledby="archify-diagram-title archify-diagram-description" data-animation="trace" data-preset="classic" data-quality-profile="showcase" data-motion-choreography="sequence" style="--flow-cycle: 10.628s; width: 920px; height: 600px; min-width: 0px;" width="920" height="600" xmlns="http://www.w3.org/2000/svg" data-theme="light"><style>
 /*
 JetBrains Mono variable WOFF2 subsets from Google Fonts service revision v24.
 These fixed bytes are shared by the viewer and its SVG/raster exports.
@@ -563,7 +563,7 @@ svg[data-preset="editorial"] { --flow-halo-peak: 0.07; --flow-glow-peak: 0.28; -
   72.436% { filter: var(--ambient-node-base-filter, none); }
 }
 :root, svg { --bg: #f4f5f7; --grid: #e9edf2; --canvas-dot: #e2e7ec; --text: #111827; --text-muted: #5b6474; --text-dim: #9aa3b2; --text-faint: #6b7280; --panel: #ffffff; --panel-border: #e5e7eb; --lane-fill: rgba(248, 250, 252, 0.65); --lane-stroke: #cbd5e1; --arrow: #64748b; --arrow-emphasis: #059669; --mask: #ffffff; --frontend-fill: rgba(34, 211, 238, 0.15); --frontend-stroke: #0891b2; --backend-fill: rgba(52, 211, 153, 0.18); --backend-stroke: #059669; --database-fill: rgba(167, 139, 250, 0.2); --database-stroke: #7c3aed; --cloud-fill: rgba(251, 191, 36, 0.18); --cloud-stroke: #d97706; --security-fill: rgba(251, 113, 133, 0.15); --security-stroke: #e11d48; --messagebus-fill: rgba(251, 146, 60, 0.15); --messagebus-stroke: #ea580c; --external-fill: rgba(148, 163, 184, 0.18); --external-stroke: #64748b; --toolbar-bg: rgba(255, 255, 255, 0.92); --toolbar-border: #cbd5e1; --toolbar-text: #334155; --toolbar-hover: #ffffff; --toolbar-menu-bg: #ffffff; --flow-cycle: ; --flow-halo-peak: ; --flow-glow-peak: ; --flow-tail-peak: ; --flow-head-peak: ; --flow-wake-peak: ; --flow-ripple-peak: ; --flow-peak: ; }
-</style><rect x="0" y="0" width="920" height="634" fill="#f4f5f7"/><metadata id="archify-software-notices">NOTICE
+</style><rect x="0" y="0" width="920" height="600" fill="#f4f5f7"/><metadata id="archify-software-notices">NOTICE
 Archify
 Copyright (c) 2026 tt-a1i (Archify)
 Copyright (c) 2025 Cocoon AI
@@ -926,21 +926,21 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
 
 
         <!-- Lifelines -->
-        <path d="M 129.5 142 L 129.5 538" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 300.25 142 L 300.25 538" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 471 142 L 471 538" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 641.75 142 L 641.75 538" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 812.5 142 L 812.5 538" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 129.5 142 L 129.5 504" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 300.25 142 L 300.25 504" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 471 142 L 471 504" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 641.75 142 L 641.75 504" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 812.5 142 L 812.5 504" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
 
         <!-- Activations -->
         <rect x="295.25" y="164" width="10" height="194" rx="3" class="c-mask"/>
         <rect x="295.25" y="164" width="10" height="194" rx="3" class="c-backend" stroke-width="1"/>
-        <rect x="466" y="200" width="10" height="336" rx="3" class="c-mask"/>
-        <rect x="466" y="200" width="10" height="336" rx="3" class="c-backend" stroke-width="1"/>
-        <rect x="636.75" y="236" width="10" height="264" rx="3" class="c-mask"/>
-        <rect x="636.75" y="236" width="10" height="264" rx="3" class="c-database" stroke-width="1"/>
-        <rect x="807.5" y="450" width="10" height="50" rx="3" class="c-mask"/>
-        <rect x="807.5" y="450" width="10" height="50" rx="3" class="c-messagebus" stroke-width="1"/>
+        <rect x="466" y="200" width="10" height="302" rx="3" class="c-mask"/>
+        <rect x="466" y="200" width="10" height="302" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="636.75" y="236" width="10" height="230" rx="3" class="c-mask"/>
+        <rect x="636.75" y="236" width="10" height="230" rx="3" class="c-database" stroke-width="1"/>
+        <rect x="807.5" y="419" width="10" height="47" rx="3" class="c-mask"/>
+        <rect x="807.5" y="419" width="10" height="47" rx="3" class="c-messagebus" stroke-width="1"/>
 
         <!-- Messages -->
         <g data-edge-from="vig" data-edge-to="ctl" data-edge-label="GET /invitados/{id}" data-edge-key="0" data-edge-id="m1">
@@ -990,27 +990,26 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
         <g>
           <text x="556.375" y="376" class="t-muted" font-size="11" text-anchor="middle">invitado y anfitriones</text>
         </g>
-        <text x="490" y="404" class="t-muted" font-size="7"><tspan x="490" dy="0">Si esta inactivo o vencido,</tspan><tspan x="490" dy="11">deniega el ingreso sin avisar.</tspan></text>
         </g>
 
         <g data-edge-from="srv" data-edge-to="not" data-edge-label="notificarVisita" data-edge-key="7" data-edge-id="m8">
-          <path data-composition-edge-from="srv" data-composition-edge-to="not" data-composition-edge-id="m8" data-composition-points="478,456;805.5,456" d="M 478 456 L 805.5 456" class="a-dashed" data-animate="edge" style="--step: 7;" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+          <path data-composition-edge-from="srv" data-composition-edge-to="not" data-composition-edge-id="m8" data-composition-points="478,422;805.5,422" d="M 478 422 L 805.5 422" class="a-dashed" data-animate="edge" style="--step: 7;" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
         <g>
-          <text x="641.75" y="446" class="t-edge-dashed" font-size="11" text-anchor="middle">notificarVisita</text>
+          <text x="641.75" y="412" class="t-edge-dashed" font-size="11" text-anchor="middle">notificarVisita</text>
         </g>
         </g>
 
         <g data-edge-from="not" data-edge-to="db" data-edge-label="aviso a residentes" data-edge-key="8" data-edge-id="m9">
-          <path data-composition-edge-from="not" data-composition-edge-to="db" data-composition-edge-id="m9" data-composition-points="805.5,492;648.75,492" d="M 805.5 492 L 648.75 492" class="a-dashed" data-animate="edge" style="--step: 8;" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+          <path data-composition-edge-from="not" data-composition-edge-to="db" data-composition-edge-id="m9" data-composition-points="805.5,458;648.75,458" d="M 805.5 458 L 648.75 458" class="a-dashed" data-animate="edge" style="--step: 8;" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
         <g>
-          <text x="727.125" y="482" class="t-edge-dashed" font-size="11" text-anchor="middle">aviso a residentes</text>
+          <text x="727.125" y="448" class="t-edge-dashed" font-size="11" text-anchor="middle">aviso a residentes</text>
         </g>
         </g>
 
         <g data-edge-from="srv" data-edge-to="vig" data-edge-label="ingreso permitido" data-edge-key="9" data-edge-id="m10">
-          <path data-composition-edge-from="srv" data-composition-edge-to="vig" data-composition-edge-id="m10" data-composition-points="464,528;136.5,528" d="M 464 528 L 136.5 528" class="a-default" data-animate="edge" style="--step: 9;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="srv" data-composition-edge-to="vig" data-composition-edge-id="m10" data-composition-points="464,494;136.5,494" d="M 464 494 L 136.5 494" class="a-default" data-animate="edge" style="--step: 9;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="300.25" y="518" class="t-muted" font-size="11" text-anchor="middle">ingreso permitido</text>
+          <text x="300.25" y="484" class="t-muted" font-size="11" text-anchor="middle">ingreso permitido</text>
         </g>
         </g>
 
@@ -1080,22 +1079,22 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
 
         <!-- Legend -->
         <g data-legend="">
-          <text x="40" y="560" class="t-primary" font-size="12" font-weight="650">Leyenda</text>
-          <g data-legend-semantic-kind="emphasis" data-legend-x="40" data-legend-baseline="580" data-legend-width="161">
-            <path d="M 40 577 L 74 577" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-            <text x="83" y="580" class="t-muted" font-size="10" font-weight="500">solicitud principal</text>
+          <text x="40" y="526" class="t-primary" font-size="12" font-weight="650">Leyenda</text>
+          <g data-legend-semantic-kind="emphasis" data-legend-x="40" data-legend-baseline="546" data-legend-width="161">
+            <path d="M 40 543 L 74 543" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+            <text x="83" y="546" class="t-muted" font-size="10" font-weight="500">solicitud principal</text>
           </g>
-          <g data-legend-semantic-kind="return" data-legend-x="223" data-legend-baseline="580" data-legend-width="99">
-            <path d="M 223 577 L 257 577" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-            <text x="266" y="580" class="t-muted" font-size="10" font-weight="500">respuesta</text>
+          <g data-legend-semantic-kind="return" data-legend-x="223" data-legend-baseline="546" data-legend-width="99">
+            <path d="M 223 543 L 257 543" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+            <text x="266" y="546" class="t-muted" font-size="10" font-weight="500">respuesta</text>
           </g>
-          <g data-legend-semantic-kind="dashed" data-legend-x="344" data-legend-baseline="580" data-legend-width="136">
-            <path d="M 344 577 L 378 577" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-            <text x="387" y="580" class="t-muted" font-size="10" font-weight="500">traza asincrona</text>
+          <g data-legend-semantic-kind="dashed" data-legend-x="344" data-legend-baseline="546" data-legend-width="136">
+            <path d="M 344 543 L 378 543" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+            <text x="387" y="546" class="t-muted" font-size="10" font-weight="500">traza asíncrona</text>
           </g>
-          <g data-legend-semantic-kind="default" data-legend-x="502" data-legend-baseline="580" data-legend-width="87">
-            <path d="M 502 577 L 536 577" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-            <text x="545" y="580" class="t-muted" font-size="10" font-weight="500">mensaje</text>
+          <g data-legend-semantic-kind="default" data-legend-x="502" data-legend-baseline="546" data-legend-width="87">
+            <path d="M 502 543 L 536 543" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+            <text x="545" y="546" class="t-muted" font-size="10" font-weight="500">mensaje</text>
           </g>
         </g>
       </svg>

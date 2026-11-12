@@ -127,14 +127,13 @@
    "to": "db",
    "y": 386,
    "label": "invitado y anfitriones",
-   "variant": "default",
-   "note": "Si esta inactivo o vencido, deniega el ingreso sin avisar."
+   "variant": "default"
   },
   {
    "id": "m8",
    "from": "srv",
    "to": "not",
-   "y": 456,
+   "y": 422,
    "label": "notificarVisita",
    "variant": "dashed"
   },
@@ -142,7 +141,7 @@
    "id": "m9",
    "from": "not",
    "to": "db",
-   "y": 492,
+   "y": 458,
    "label": "aviso a residentes",
    "variant": "dashed"
   },
@@ -150,7 +149,7 @@
    "id": "m10",
    "from": "srv",
    "to": "vig",
-   "y": 528,
+   "y": 494,
    "label": "ingreso permitido",
    "variant": "return"
   }
@@ -165,19 +164,19 @@
   {
    "participant": "srv",
    "from": 200,
-   "to": 536,
+   "to": 502,
    "type": "backend"
   },
   {
    "participant": "db",
    "from": 236,
-   "to": 500,
+   "to": 466,
    "type": "database"
   },
   {
    "participant": "not",
-   "from": 450,
-   "to": 500,
+   "from": 419,
+   "to": 466,
    "type": "messagebus"
   }
  ],

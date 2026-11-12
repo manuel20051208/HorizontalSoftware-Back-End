@@ -87,14 +87,13 @@
    "to": "srv",
    "y": 206,
    "label": "crearZona",
-   "variant": "default",
-   "note": "Horas iguales responde 400; nombre repetido responde 409."
+   "variant": "default"
   },
   {
    "id": "m3",
    "from": "srv",
    "to": "db",
-   "y": 276,
+   "y": 242,
    "label": "insertar zona",
    "variant": "emphasis"
   },
@@ -102,16 +101,15 @@
    "id": "m4",
    "from": "srv",
    "to": "db",
-   "y": 312,
+   "y": 278,
    "label": "asignar a inmuebles",
-   "variant": "default",
-   "note": "Solo si aplicarATodosLosInmuebles no es false."
+   "variant": "default"
   },
   {
    "id": "m5",
    "from": "srv",
    "to": "cac",
-   "y": 382,
+   "y": 314,
    "label": "limpiar caches",
    "variant": "dashed"
   },
@@ -119,7 +117,7 @@
    "id": "m6",
    "from": "srv",
    "to": "ctl",
-   "y": 418,
+   "y": 350,
    "label": "zona",
    "variant": "return"
   },
@@ -127,7 +125,7 @@
    "id": "m7",
    "from": "adm",
    "to": "ctl",
-   "y": 454,
+   "y": 386,
    "label": "GET /zonas-comunes",
    "variant": "default"
   },
@@ -135,7 +133,7 @@
    "id": "m8",
    "from": "ctl",
    "to": "srv",
-   "y": 490,
+   "y": 422,
    "label": "listar",
    "variant": "default"
   },
@@ -143,7 +141,7 @@
    "id": "m9",
    "from": "srv",
    "to": "cac",
-   "y": 526,
+   "y": 458,
    "label": "buscar en cache",
    "variant": "dashed"
   },
@@ -151,7 +149,7 @@
    "id": "m10",
    "from": "cac",
    "to": "srv",
-   "y": 562,
+   "y": 494,
    "label": "acierto o fallo",
    "variant": "return"
   },
@@ -159,7 +157,7 @@
    "id": "m11",
    "from": "srv",
    "to": "db",
-   "y": 598,
+   "y": 530,
    "label": "consultar si falla",
    "variant": "default"
   },
@@ -167,7 +165,7 @@
    "id": "m12",
    "from": "adm",
    "to": "ctl",
-   "y": 634,
+   "y": 566,
    "label": "PATCH /{id}/estado",
    "variant": "default"
   },
@@ -175,7 +173,7 @@
    "id": "m13",
    "from": "ctl",
    "to": "srv",
-   "y": 670,
+   "y": 602,
    "label": "cambiarEstado",
    "variant": "default"
   },
@@ -183,7 +181,7 @@
    "id": "m14",
    "from": "srv",
    "to": "db",
-   "y": 706,
+   "y": 638,
    "label": "activa o inactiva",
    "variant": "default"
   },
@@ -191,7 +189,7 @@
    "id": "m15",
    "from": "srv",
    "to": "cac",
-   "y": 742,
+   "y": 674,
    "label": "limpiar caches",
    "variant": "dashed"
   }
@@ -200,25 +198,25 @@
   {
    "participant": "ctl",
    "from": 164,
-   "to": 678,
+   "to": 610,
    "type": "backend"
   },
   {
    "participant": "srv",
    "from": 200,
-   "to": 750,
+   "to": 682,
    "type": "backend"
   },
   {
    "participant": "db",
-   "from": 270,
-   "to": 714,
+   "from": 239,
+   "to": 646,
    "type": "database"
   },
   {
    "participant": "cac",
-   "from": 376,
-   "to": 750,
+   "from": 311,
+   "to": 682,
    "type": "database"
   }
  ],

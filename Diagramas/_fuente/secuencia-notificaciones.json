@@ -85,14 +85,13 @@
    "to": "srv",
    "y": 206,
    "label": "enviarNotificacion",
-   "variant": "default",
-   "note": "Destinatarios: usuarios indicados, residentes activos del inmueble o todos los residentes."
+   "variant": "default"
   },
   {
    "id": "m3",
    "from": "srv",
    "to": "db",
-   "y": 276,
+   "y": 242,
    "label": "insertar + destinatarios",
    "variant": "emphasis"
   },
@@ -100,7 +99,7 @@
    "id": "m4",
    "from": "srv",
    "to": "db",
-   "y": 312,
+   "y": 278,
    "label": "marcar no leida",
    "variant": "default"
   },
@@ -108,7 +107,7 @@
    "id": "m5",
    "from": "srv",
    "to": "ctl",
-   "y": 348,
+   "y": 314,
    "label": "notificacion",
    "variant": "return"
   },
@@ -116,7 +115,7 @@
    "id": "m6",
    "from": "ctl",
    "to": "adm",
-   "y": 384,
+   "y": 350,
    "label": "200",
    "variant": "return"
   },
@@ -124,7 +123,7 @@
    "id": "m7",
    "from": "res",
    "to": "ctl",
-   "y": 420,
+   "y": 386,
    "label": "GET /notificaciones",
    "variant": "default"
   },
@@ -132,7 +131,7 @@
    "id": "m8",
    "from": "ctl",
    "to": "srv",
-   "y": 456,
+   "y": 422,
    "label": "consultarNotificacion",
    "variant": "default"
   },
@@ -140,7 +139,7 @@
    "id": "m9",
    "from": "srv",
    "to": "db",
-   "y": 492,
+   "y": 458,
    "label": "listarDeUsuario",
    "variant": "default"
   },
@@ -148,7 +147,7 @@
    "id": "m10",
    "from": "db",
    "to": "srv",
-   "y": 528,
+   "y": 494,
    "label": "pagina",
    "variant": "return"
   },
@@ -156,7 +155,7 @@
    "id": "m11",
    "from": "res",
    "to": "ctl",
-   "y": 564,
+   "y": 530,
    "label": "PUT /leida",
    "variant": "default"
   },
@@ -164,7 +163,7 @@
    "id": "m12",
    "from": "ctl",
    "to": "srv",
-   "y": 600,
+   "y": 566,
    "label": "marcarLeida",
    "variant": "default"
   },
@@ -172,7 +171,7 @@
    "id": "m13",
    "from": "srv",
    "to": "db",
-   "y": 636,
+   "y": 602,
    "label": "leida = true",
    "variant": "default"
   }
@@ -181,19 +180,19 @@
   {
    "participant": "ctl",
    "from": 164,
-   "to": 608,
+   "to": 574,
    "type": "backend"
   },
   {
    "participant": "srv",
    "from": 200,
-   "to": 644,
+   "to": 610,
    "type": "backend"
   },
   {
    "participant": "db",
-   "from": 270,
-   "to": 644,
+   "from": 239,
+   "to": 610,
    "type": "database"
   }
  ],

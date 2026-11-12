@@ -111,14 +111,13 @@
    "to": "repo",
    "y": 314,
    "label": "insertar reserva",
-   "variant": "emphasis",
-   "note": "Antes valida fecha, zona, habilitacion, horario, reglas, cupo y solape."
+   "variant": "emphasis"
   },
   {
    "id": "m6",
    "from": "repo",
    "to": "srv",
-   "y": 384,
+   "y": 350,
    "label": "id",
    "variant": "return"
   },
@@ -126,7 +125,7 @@
    "id": "m7",
    "from": "srv",
    "to": "not",
-   "y": 420,
+   "y": 386,
    "label": "notificarReserva",
    "variant": "dashed"
   },
@@ -134,7 +133,7 @@
    "id": "m8",
    "from": "not",
    "to": "repo",
-   "y": 456,
+   "y": 422,
    "label": "guardar aviso",
    "variant": "dashed"
   },
@@ -142,7 +141,7 @@
    "id": "m9",
    "from": "srv",
    "to": "ctl",
-   "y": 492,
+   "y": 458,
    "label": "reserva",
    "variant": "return"
   },
@@ -150,7 +149,7 @@
    "id": "m10",
    "from": "ctl",
    "to": "res",
-   "y": 528,
+   "y": 494,
    "label": "200 reserva",
    "variant": "return"
   }
@@ -159,25 +158,25 @@
   {
    "participant": "ctl",
    "from": 164,
-   "to": 536,
+   "to": 502,
    "type": "backend"
   },
   {
    "participant": "srv",
    "from": 200,
-   "to": 500,
+   "to": 466,
    "type": "backend"
   },
   {
    "participant": "repo",
    "from": 236,
-   "to": 464,
+   "to": 430,
    "type": "database"
   },
   {
    "participant": "not",
-   "from": 414,
-   "to": 464,
+   "from": 380,
+   "to": 430,
    "type": "messagebus"
   }
  ],

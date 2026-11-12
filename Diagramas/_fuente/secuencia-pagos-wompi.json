@@ -84,14 +84,13 @@
    "to": "srv",
    "y": 170,
    "label": "iniciar pago",
-   "variant": "emphasis",
-   "note": "Valor = saldo pendiente del servidor; la pasarela debe estar bien configurada."
+   "variant": "emphasis"
   },
   {
    "id": "m2",
    "from": "srv",
    "to": "db",
-   "y": 240,
+   "y": 206,
    "label": "insertar PENDIENTE",
    "variant": "default"
   },
@@ -99,7 +98,7 @@
    "id": "m3",
    "from": "srv",
    "to": "res",
-   "y": 276,
+   "y": 242,
    "label": "URL checkout firmada",
    "variant": "return"
   },
@@ -107,7 +106,7 @@
    "id": "m4",
    "from": "res",
    "to": "wom",
-   "y": 312,
+   "y": 278,
    "label": "paga en checkout",
    "variant": "emphasis"
   },
@@ -115,16 +114,15 @@
    "id": "m5",
    "from": "wom",
    "to": "pas",
-   "y": 348,
+   "y": 314,
    "label": "webhook firmado",
-   "variant": "security",
-   "note": "Verifica el checksum con el secreto de eventos; firma invalida responde 401."
+   "variant": "security"
   },
   {
    "id": "m6",
    "from": "pas",
    "to": "wom",
-   "y": 418,
+   "y": 350,
    "label": "consultar transaccion",
    "variant": "security"
   },
@@ -132,7 +130,7 @@
    "id": "m7",
    "from": "wom",
    "to": "pas",
-   "y": 454,
+   "y": 386,
    "label": "estado y monto",
    "variant": "return"
   },
@@ -140,16 +138,15 @@
    "id": "m8",
    "from": "pas",
    "to": "srv",
-   "y": 490,
+   "y": 422,
    "label": "aprobarPago",
-   "variant": "default",
-   "note": "Solo si es APPROVED y monto y moneda coinciden; es idempotente."
+   "variant": "default"
   },
   {
    "id": "m9",
    "from": "srv",
    "to": "db",
-   "y": 560,
+   "y": 458,
    "label": "APROBADO, al dia",
    "variant": "emphasis"
   },
@@ -157,7 +154,7 @@
    "id": "m10",
    "from": "pas",
    "to": "wom",
-   "y": 596,
+   "y": 494,
    "label": "200 sin cuerpo",
    "variant": "return"
   }
@@ -166,19 +163,19 @@
   {
    "participant": "srv",
    "from": 164,
-   "to": 568,
+   "to": 466,
    "type": "backend"
   },
   {
    "participant": "db",
-   "from": 234,
-   "to": 568,
+   "from": 203,
+   "to": 466,
    "type": "database"
   },
   {
    "participant": "pas",
-   "from": 342,
-   "to": 604,
+   "from": 308,
+   "to": 502,
    "type": "security"
   }
  ],

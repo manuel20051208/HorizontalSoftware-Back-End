@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 920 848" data-sequence-column-fit="spread" data-reader-fit="width-first" role="img" lang="es" aria-labelledby="archify-diagram-title archify-diagram-description" data-animation="trace" data-preset="classic" data-quality-profile="showcase" data-motion-choreography="sequence" style="--flow-cycle: 11.300s; width: 920px; height: 848px; min-width: 0px;" width="920" height="848" xmlns="http://www.w3.org/2000/svg" data-theme="light"><style>
+<svg viewBox="0 0 920 780" data-sequence-column-fit="spread" data-reader-fit="width-first" role="img" lang="es" aria-labelledby="archify-diagram-title archify-diagram-description" data-animation="trace" data-preset="classic" data-quality-profile="showcase" data-motion-choreography="sequence" style="--flow-cycle: 11.300s; width: 920px; height: 780px; min-width: 0px;" width="920" height="780" xmlns="http://www.w3.org/2000/svg" data-theme="light"><style>
 /*
 JetBrains Mono variable WOFF2 subsets from Google Fonts service revision v24.
 These fixed bytes are shared by the viewer and its SVG/raster exports.
@@ -627,7 +627,7 @@ svg[data-preset="editorial"] { --flow-halo-peak: 0.07; --flow-glow-peak: 0.28; -
   90.265% { filter: var(--ambient-node-base-filter, none); }
 }
 :root, svg { --bg: #f4f5f7; --grid: #e9edf2; --canvas-dot: #e2e7ec; --text: #111827; --text-muted: #5b6474; --text-dim: #9aa3b2; --text-faint: #6b7280; --panel: #ffffff; --panel-border: #e5e7eb; --lane-fill: rgba(248, 250, 252, 0.65); --lane-stroke: #cbd5e1; --arrow: #64748b; --arrow-emphasis: #059669; --mask: #ffffff; --frontend-fill: rgba(34, 211, 238, 0.15); --frontend-stroke: #0891b2; --backend-fill: rgba(52, 211, 153, 0.18); --backend-stroke: #059669; --database-fill: rgba(167, 139, 250, 0.2); --database-stroke: #7c3aed; --cloud-fill: rgba(251, 191, 36, 0.18); --cloud-stroke: #d97706; --security-fill: rgba(251, 113, 133, 0.15); --security-stroke: #e11d48; --messagebus-fill: rgba(251, 146, 60, 0.15); --messagebus-stroke: #ea580c; --external-fill: rgba(148, 163, 184, 0.18); --external-stroke: #64748b; --toolbar-bg: rgba(255, 255, 255, 0.92); --toolbar-border: #cbd5e1; --toolbar-text: #334155; --toolbar-hover: #ffffff; --toolbar-menu-bg: #ffffff; --flow-cycle: ; --flow-halo-peak: ; --flow-glow-peak: ; --flow-tail-peak: ; --flow-head-peak: ; --flow-wake-peak: ; --flow-ripple-peak: ; --flow-peak: ; }
-</style><rect x="0" y="0" width="920" height="848" fill="#f4f5f7"/><metadata id="archify-software-notices">NOTICE
+</style><rect x="0" y="0" width="920" height="780" fill="#f4f5f7"/><metadata id="archify-software-notices">NOTICE
 Archify
 Copyright (c) 2026 tt-a1i (Archify)
 Copyright (c) 2025 Cocoon AI
@@ -990,21 +990,21 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
 
 
         <!-- Lifelines -->
-        <path d="M 129.5 142 L 129.5 752" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 300.25 142 L 300.25 752" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 471 142 L 471 752" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 641.75 142 L 641.75 752" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 812.5 142 L 812.5 752" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 129.5 142 L 129.5 684" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 300.25 142 L 300.25 684" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 471 142 L 471 684" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 641.75 142 L 641.75 684" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 812.5 142 L 812.5 684" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
 
         <!-- Activations -->
-        <rect x="295.25" y="164" width="10" height="514" rx="3" class="c-mask"/>
-        <rect x="295.25" y="164" width="10" height="514" rx="3" class="c-backend" stroke-width="1"/>
-        <rect x="466" y="200" width="10" height="550" rx="3" class="c-mask"/>
-        <rect x="466" y="200" width="10" height="550" rx="3" class="c-backend" stroke-width="1"/>
-        <rect x="807.5" y="270" width="10" height="444" rx="3" class="c-mask"/>
-        <rect x="807.5" y="270" width="10" height="444" rx="3" class="c-database" stroke-width="1"/>
-        <rect x="636.75" y="376" width="10" height="374" rx="3" class="c-mask"/>
-        <rect x="636.75" y="376" width="10" height="374" rx="3" class="c-database" stroke-width="1"/>
+        <rect x="295.25" y="164" width="10" height="446" rx="3" class="c-mask"/>
+        <rect x="295.25" y="164" width="10" height="446" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="466" y="200" width="10" height="482" rx="3" class="c-mask"/>
+        <rect x="466" y="200" width="10" height="482" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="807.5" y="239" width="10" height="407" rx="3" class="c-mask"/>
+        <rect x="807.5" y="239" width="10" height="407" rx="3" class="c-database" stroke-width="1"/>
+        <rect x="636.75" y="311" width="10" height="371" rx="3" class="c-mask"/>
+        <rect x="636.75" y="311" width="10" height="371" rx="3" class="c-database" stroke-width="1"/>
 
         <!-- Messages -->
         <g data-edge-from="adm" data-edge-to="ctl" data-edge-label="POST /zonas-comunes" data-edge-key="0" data-edge-id="m1">
@@ -1019,98 +1019,96 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
         <g>
           <text x="385.625" y="196" class="t-muted" font-size="11" text-anchor="middle">crearZona</text>
         </g>
-        <text x="319.25" y="224" class="t-muted" font-size="7"><tspan x="319.25" dy="0">Horas iguales responde 400;</tspan><tspan x="319.25" dy="11">nombre repetido responde 409.</tspan></text>
         </g>
 
         <g data-edge-from="srv" data-edge-to="db" data-edge-label="insertar zona" data-edge-key="2" data-edge-id="m3">
-          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m3" data-composition-points="478,276;805.5,276" d="M 478 276 L 805.5 276" class="a-emphasis" data-animate="edge" style="--step: 2;" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m3" data-composition-points="478,242;805.5,242" d="M 478 242 L 805.5 242" class="a-emphasis" data-animate="edge" style="--step: 2;" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         <g>
-          <text x="641.75" y="266" class="t-edge-emphasis" font-size="11" text-anchor="middle">insertar zona</text>
+          <text x="641.75" y="232" class="t-edge-emphasis" font-size="11" text-anchor="middle">insertar zona</text>
         </g>
         </g>
 
         <g data-edge-from="srv" data-edge-to="db" data-edge-label="asignar a inmuebles" data-edge-key="3" data-edge-id="m4">
-          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m4" data-composition-points="478,312;805.5,312" d="M 478 312 L 805.5 312" class="a-default" data-animate="edge" style="--step: 3;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m4" data-composition-points="478,278;805.5,278" d="M 478 278 L 805.5 278" class="a-default" data-animate="edge" style="--step: 3;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="641.75" y="302" class="t-muted" font-size="11" text-anchor="middle">asignar a inmuebles</text>
+          <text x="641.75" y="268" class="t-muted" font-size="11" text-anchor="middle">asignar a inmuebles</text>
         </g>
-        <text x="490" y="330" class="t-muted" font-size="7"><tspan x="490" dy="0">Solo si aplicarATodosLosInmuebles</tspan><tspan x="490" dy="11">no es false.</tspan></text>
         </g>
 
         <g data-edge-from="srv" data-edge-to="cac" data-edge-label="limpiar caches" data-edge-key="4" data-edge-id="m5">
-          <path data-composition-edge-from="srv" data-composition-edge-to="cac" data-composition-edge-id="m5" data-composition-points="478,382;634.75,382" d="M 478 382 L 634.75 382" class="a-dashed" data-animate="edge" style="--step: 4;" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+          <path data-composition-edge-from="srv" data-composition-edge-to="cac" data-composition-edge-id="m5" data-composition-points="478,314;634.75,314" d="M 478 314 L 634.75 314" class="a-dashed" data-animate="edge" style="--step: 4;" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
         <g>
-          <text x="556.375" y="372" class="t-edge-dashed" font-size="11" text-anchor="middle">limpiar caches</text>
+          <text x="556.375" y="304" class="t-edge-dashed" font-size="11" text-anchor="middle">limpiar caches</text>
         </g>
         </g>
 
         <g data-edge-from="srv" data-edge-to="ctl" data-edge-label="zona" data-edge-key="5" data-edge-id="m6">
-          <path data-composition-edge-from="srv" data-composition-edge-to="ctl" data-composition-edge-id="m6" data-composition-points="464,418;307.25,418" d="M 464 418 L 307.25 418" class="a-default" data-animate="edge" style="--step: 5;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="srv" data-composition-edge-to="ctl" data-composition-edge-id="m6" data-composition-points="464,350;307.25,350" d="M 464 350 L 307.25 350" class="a-default" data-animate="edge" style="--step: 5;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="385.625" y="408" class="t-muted" font-size="11" text-anchor="middle">zona</text>
+          <text x="385.625" y="340" class="t-muted" font-size="11" text-anchor="middle">zona</text>
         </g>
         </g>
 
         <g data-edge-from="adm" data-edge-to="ctl" data-edge-label="GET /zonas-comunes" data-edge-key="6" data-edge-id="m7">
-          <path data-composition-edge-from="adm" data-composition-edge-to="ctl" data-composition-edge-id="m7" data-composition-points="136.5,454;293.25,454" d="M 136.5 454 L 293.25 454" class="a-default" data-animate="edge" style="--step: 6;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="adm" data-composition-edge-to="ctl" data-composition-edge-id="m7" data-composition-points="136.5,386;293.25,386" d="M 136.5 386 L 293.25 386" class="a-default" data-animate="edge" style="--step: 6;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="214.875" y="444" class="t-muted" font-size="11" text-anchor="middle">GET /zonas-comunes</text>
+          <text x="214.875" y="376" class="t-muted" font-size="11" text-anchor="middle">GET /zonas-comunes</text>
         </g>
         </g>
 
         <g data-edge-from="ctl" data-edge-to="srv" data-edge-label="listar" data-edge-key="7" data-edge-id="m8">
-          <path data-composition-edge-from="ctl" data-composition-edge-to="srv" data-composition-edge-id="m8" data-composition-points="307.25,490;464,490" d="M 307.25 490 L 464 490" class="a-default" data-animate="edge" style="--step: 7;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="ctl" data-composition-edge-to="srv" data-composition-edge-id="m8" data-composition-points="307.25,422;464,422" d="M 307.25 422 L 464 422" class="a-default" data-animate="edge" style="--step: 7;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="385.625" y="480" class="t-muted" font-size="11" text-anchor="middle">listar</text>
+          <text x="385.625" y="412" class="t-muted" font-size="11" text-anchor="middle">listar</text>
         </g>
         </g>
 
         <g data-edge-from="srv" data-edge-to="cac" data-edge-label="buscar en cache" data-edge-key="8" data-edge-id="m9">
-          <path data-composition-edge-from="srv" data-composition-edge-to="cac" data-composition-edge-id="m9" data-composition-points="478,526;634.75,526" d="M 478 526 L 634.75 526" class="a-dashed" data-animate="edge" style="--step: 8;" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+          <path data-composition-edge-from="srv" data-composition-edge-to="cac" data-composition-edge-id="m9" data-composition-points="478,458;634.75,458" d="M 478 458 L 634.75 458" class="a-dashed" data-animate="edge" style="--step: 8;" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
         <g>
-          <text x="556.375" y="516" class="t-edge-dashed" font-size="11" text-anchor="middle">buscar en cache</text>
+          <text x="556.375" y="448" class="t-edge-dashed" font-size="11" text-anchor="middle">buscar en cache</text>
         </g>
         </g>
 
         <g data-edge-from="cac" data-edge-to="srv" data-edge-label="acierto o fallo" data-edge-key="9" data-edge-id="m10">
-          <path data-composition-edge-from="cac" data-composition-edge-to="srv" data-composition-edge-id="m10" data-composition-points="634.75,562;478,562" d="M 634.75 562 L 478 562" class="a-default" data-animate="edge" style="--step: 9;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="cac" data-composition-edge-to="srv" data-composition-edge-id="m10" data-composition-points="634.75,494;478,494" d="M 634.75 494 L 478 494" class="a-default" data-animate="edge" style="--step: 9;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="556.375" y="552" class="t-muted" font-size="11" text-anchor="middle">acierto o fallo</text>
+          <text x="556.375" y="484" class="t-muted" font-size="11" text-anchor="middle">acierto o fallo</text>
         </g>
         </g>
 
         <g data-edge-from="srv" data-edge-to="db" data-edge-label="consultar si falla" data-edge-key="10" data-edge-id="m11">
-          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m11" data-composition-points="478,598;805.5,598" d="M 478 598 L 805.5 598" class="a-default" data-animate="edge" style="--step: 10;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m11" data-composition-points="478,530;805.5,530" d="M 478 530 L 805.5 530" class="a-default" data-animate="edge" style="--step: 10;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="641.75" y="588" class="t-muted" font-size="11" text-anchor="middle">consultar si falla</text>
+          <text x="641.75" y="520" class="t-muted" font-size="11" text-anchor="middle">consultar si falla</text>
         </g>
         </g>
 
         <g data-edge-from="adm" data-edge-to="ctl" data-edge-label="PATCH /{id}/estado" data-edge-key="11" data-edge-id="m12">
-          <path data-composition-edge-from="adm" data-composition-edge-to="ctl" data-composition-edge-id="m12" data-composition-points="136.5,634;293.25,634" d="M 136.5 634 L 293.25 634" class="a-default" data-animate="edge" style="--step: 11;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="adm" data-composition-edge-to="ctl" data-composition-edge-id="m12" data-composition-points="136.5,566;293.25,566" d="M 136.5 566 L 293.25 566" class="a-default" data-animate="edge" style="--step: 11;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="214.875" y="624" class="t-muted" font-size="11" text-anchor="middle">PATCH /{id}/estado</text>
+          <text x="214.875" y="556" class="t-muted" font-size="11" text-anchor="middle">PATCH /{id}/estado</text>
         </g>
         </g>
 
         <g data-edge-from="ctl" data-edge-to="srv" data-edge-label="cambiarEstado" data-edge-key="12" data-edge-id="m13">
-          <path data-composition-edge-from="ctl" data-composition-edge-to="srv" data-composition-edge-id="m13" data-composition-points="307.25,670;464,670" d="M 307.25 670 L 464 670" class="a-default" data-animate="edge" style="--step: 12;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="ctl" data-composition-edge-to="srv" data-composition-edge-id="m13" data-composition-points="307.25,602;464,602" d="M 307.25 602 L 464 602" class="a-default" data-animate="edge" style="--step: 12;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="385.625" y="660" class="t-muted" font-size="11" text-anchor="middle">cambiarEstado</text>
+          <text x="385.625" y="592" class="t-muted" font-size="11" text-anchor="middle">cambiarEstado</text>
         </g>
         </g>
 
         <g data-edge-from="srv" data-edge-to="db" data-edge-label="activa o inactiva" data-edge-key="13" data-edge-id="m14">
-          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m14" data-composition-points="478,706;805.5,706" d="M 478 706 L 805.5 706" class="a-default" data-animate="edge" style="--step: 12;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m14" data-composition-points="478,638;805.5,638" d="M 478 638 L 805.5 638" class="a-default" data-animate="edge" style="--step: 12;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="641.75" y="696" class="t-muted" font-size="11" text-anchor="middle">activa o inactiva</text>
+          <text x="641.75" y="628" class="t-muted" font-size="11" text-anchor="middle">activa o inactiva</text>
         </g>
         </g>
 
         <g data-edge-from="srv" data-edge-to="cac" data-edge-label="limpiar caches" data-edge-key="14" data-edge-id="m15">
-          <path data-composition-edge-from="srv" data-composition-edge-to="cac" data-composition-edge-id="m15" data-composition-points="478,742;634.75,742" d="M 478 742 L 634.75 742" class="a-dashed" data-animate="edge" style="--step: 12;" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+          <path data-composition-edge-from="srv" data-composition-edge-to="cac" data-composition-edge-id="m15" data-composition-points="478,674;634.75,674" d="M 478 674 L 634.75 674" class="a-dashed" data-animate="edge" style="--step: 12;" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
         <g>
-          <text x="556.375" y="732" class="t-edge-dashed" font-size="11" text-anchor="middle">limpiar caches</text>
+          <text x="556.375" y="664" class="t-edge-dashed" font-size="11" text-anchor="middle">limpiar caches</text>
         </g>
         </g>
 
@@ -1178,22 +1176,22 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
 
         <!-- Legend -->
         <g data-legend="">
-          <text x="40" y="774" class="t-primary" font-size="12" font-weight="650">Leyenda</text>
-          <g data-legend-semantic-kind="emphasis" data-legend-x="40" data-legend-baseline="794" data-legend-width="161">
-            <path d="M 40 791 L 74 791" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-            <text x="83" y="794" class="t-muted" font-size="10" font-weight="500">solicitud principal</text>
+          <text x="40" y="706" class="t-primary" font-size="12" font-weight="650">Leyenda</text>
+          <g data-legend-semantic-kind="emphasis" data-legend-x="40" data-legend-baseline="726" data-legend-width="161">
+            <path d="M 40 723 L 74 723" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+            <text x="83" y="726" class="t-muted" font-size="10" font-weight="500">solicitud principal</text>
           </g>
-          <g data-legend-semantic-kind="return" data-legend-x="223" data-legend-baseline="794" data-legend-width="99">
-            <path d="M 223 791 L 257 791" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-            <text x="266" y="794" class="t-muted" font-size="10" font-weight="500">respuesta</text>
+          <g data-legend-semantic-kind="return" data-legend-x="223" data-legend-baseline="726" data-legend-width="99">
+            <path d="M 223 723 L 257 723" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+            <text x="266" y="726" class="t-muted" font-size="10" font-weight="500">respuesta</text>
           </g>
-          <g data-legend-semantic-kind="dashed" data-legend-x="344" data-legend-baseline="794" data-legend-width="136">
-            <path d="M 344 791 L 378 791" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-            <text x="387" y="794" class="t-muted" font-size="10" font-weight="500">traza asincrona</text>
+          <g data-legend-semantic-kind="dashed" data-legend-x="344" data-legend-baseline="726" data-legend-width="136">
+            <path d="M 344 723 L 378 723" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+            <text x="387" y="726" class="t-muted" font-size="10" font-weight="500">traza asíncrona</text>
           </g>
-          <g data-legend-semantic-kind="default" data-legend-x="502" data-legend-baseline="794" data-legend-width="87">
-            <path d="M 502 791 L 536 791" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-            <text x="545" y="794" class="t-muted" font-size="10" font-weight="500">mensaje</text>
+          <g data-legend-semantic-kind="default" data-legend-x="502" data-legend-baseline="726" data-legend-width="87">
+            <path d="M 502 723 L 536 723" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+            <text x="545" y="726" class="t-muted" font-size="10" font-weight="500">mensaje</text>
           </g>
         </g>
       </svg>

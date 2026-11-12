@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 920 742" data-sequence-column-fit="spread" data-reader-fit="width-first" role="img" lang="es" aria-labelledby="archify-diagram-title archify-diagram-description" data-animation="trace" data-preset="classic" data-quality-profile="showcase" data-motion-choreography="sequence" style="--flow-cycle: 11.300s; width: 920px; height: 742px; min-width: 0px;" width="920" height="742" xmlns="http://www.w3.org/2000/svg" data-theme="light"><style>
+<svg viewBox="0 0 920 708" data-sequence-column-fit="spread" data-reader-fit="width-first" role="img" lang="es" aria-labelledby="archify-diagram-title archify-diagram-description" data-animation="trace" data-preset="classic" data-quality-profile="showcase" data-motion-choreography="sequence" style="--flow-cycle: 11.300s; width: 920px; height: 708px; min-width: 0px;" width="920" height="708" xmlns="http://www.w3.org/2000/svg" data-theme="light"><style>
 /*
 JetBrains Mono variable WOFF2 subsets from Google Fonts service revision v24.
 These fixed bytes are shared by the viewer and its SVG/raster exports.
@@ -602,7 +602,7 @@ svg[data-preset="editorial"] { --flow-halo-peak: 0.07; --flow-glow-peak: 0.28; -
   68.584% { filter: var(--ambient-node-base-filter, none); }
 }
 :root, svg { --bg: #f4f5f7; --grid: #e9edf2; --canvas-dot: #e2e7ec; --text: #111827; --text-muted: #5b6474; --text-dim: #9aa3b2; --text-faint: #6b7280; --panel: #ffffff; --panel-border: #e5e7eb; --lane-fill: rgba(248, 250, 252, 0.65); --lane-stroke: #cbd5e1; --arrow: #64748b; --arrow-emphasis: #059669; --mask: #ffffff; --frontend-fill: rgba(34, 211, 238, 0.15); --frontend-stroke: #0891b2; --backend-fill: rgba(52, 211, 153, 0.18); --backend-stroke: #059669; --database-fill: rgba(167, 139, 250, 0.2); --database-stroke: #7c3aed; --cloud-fill: rgba(251, 191, 36, 0.18); --cloud-stroke: #d97706; --security-fill: rgba(251, 113, 133, 0.15); --security-stroke: #e11d48; --messagebus-fill: rgba(251, 146, 60, 0.15); --messagebus-stroke: #ea580c; --external-fill: rgba(148, 163, 184, 0.18); --external-stroke: #64748b; --toolbar-bg: rgba(255, 255, 255, 0.92); --toolbar-border: #cbd5e1; --toolbar-text: #334155; --toolbar-hover: #ffffff; --toolbar-menu-bg: #ffffff; --flow-cycle: ; --flow-halo-peak: ; --flow-glow-peak: ; --flow-tail-peak: ; --flow-head-peak: ; --flow-wake-peak: ; --flow-ripple-peak: ; --flow-peak: ; }
-</style><rect x="0" y="0" width="920" height="742" fill="#f4f5f7"/><metadata id="archify-software-notices">NOTICE
+</style><rect x="0" y="0" width="920" height="708" fill="#f4f5f7"/><metadata id="archify-software-notices">NOTICE
 Archify
 Copyright (c) 2026 tt-a1i (Archify)
 Copyright (c) 2025 Cocoon AI
@@ -965,19 +965,19 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
 
 
         <!-- Lifelines -->
-        <path d="M 129.5 142 L 129.5 646" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 300.25 142 L 300.25 646" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 471 142 L 471 646" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 641.75 142 L 641.75 646" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 812.5 142 L 812.5 646" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 129.5 142 L 129.5 612" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 300.25 142 L 300.25 612" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 471 142 L 471 612" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 641.75 142 L 641.75 612" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 812.5 142 L 812.5 612" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
 
         <!-- Activations -->
-        <rect x="295.25" y="164" width="10" height="444" rx="3" class="c-mask"/>
-        <rect x="295.25" y="164" width="10" height="444" rx="3" class="c-backend" stroke-width="1"/>
-        <rect x="466" y="200" width="10" height="444" rx="3" class="c-mask"/>
-        <rect x="466" y="200" width="10" height="444" rx="3" class="c-backend" stroke-width="1"/>
-        <rect x="636.75" y="270" width="10" height="374" rx="3" class="c-mask"/>
-        <rect x="636.75" y="270" width="10" height="374" rx="3" class="c-database" stroke-width="1"/>
+        <rect x="295.25" y="164" width="10" height="410" rx="3" class="c-mask"/>
+        <rect x="295.25" y="164" width="10" height="410" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="466" y="200" width="10" height="410" rx="3" class="c-mask"/>
+        <rect x="466" y="200" width="10" height="410" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="636.75" y="239" width="10" height="371" rx="3" class="c-mask"/>
+        <rect x="636.75" y="239" width="10" height="371" rx="3" class="c-database" stroke-width="1"/>
 
         <!-- Messages -->
         <g data-edge-from="adm" data-edge-to="ctl" data-edge-label="POST /admin/notificaciones" data-edge-key="0" data-edge-id="m1">
@@ -992,83 +992,82 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
         <g>
           <text x="385.625" y="196" class="t-muted" font-size="11" text-anchor="middle">enviarNotificacion</text>
         </g>
-        <text x="319.25" y="224" class="t-muted" font-size="7"><tspan x="319.25" dy="0">Destinatarios: usuarios</tspan><tspan x="319.25" dy="11">indicados, residentes activos del</tspan><tspan x="319.25" dy="11">inmueble o todos los residentes.</tspan></text>
         </g>
 
         <g data-edge-from="srv" data-edge-to="db" data-edge-label="insertar + destinatarios" data-edge-key="2" data-edge-id="m3">
-          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m3" data-composition-points="478,276;634.75,276" d="M 478 276 L 634.75 276" class="a-emphasis" data-animate="edge" style="--step: 2;" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m3" data-composition-points="478,242;634.75,242" d="M 478 242 L 634.75 242" class="a-emphasis" data-animate="edge" style="--step: 2;" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         <g>
-          <text x="556.375" y="266" class="t-edge-emphasis" font-size="11" text-anchor="middle">insertar + destinatarios</text>
+          <text x="556.375" y="232" class="t-edge-emphasis" font-size="11" text-anchor="middle">insertar + destinatarios</text>
         </g>
         </g>
 
         <g data-edge-from="srv" data-edge-to="db" data-edge-label="marcar no leida" data-edge-key="3" data-edge-id="m4">
-          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m4" data-composition-points="478,312;634.75,312" d="M 478 312 L 634.75 312" class="a-default" data-animate="edge" style="--step: 3;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m4" data-composition-points="478,278;634.75,278" d="M 478 278 L 634.75 278" class="a-default" data-animate="edge" style="--step: 3;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="556.375" y="302" class="t-muted" font-size="11" text-anchor="middle">marcar no leida</text>
+          <text x="556.375" y="268" class="t-muted" font-size="11" text-anchor="middle">marcar no leida</text>
         </g>
         </g>
 
         <g data-edge-from="srv" data-edge-to="ctl" data-edge-label="notificacion" data-edge-key="4" data-edge-id="m5">
-          <path data-composition-edge-from="srv" data-composition-edge-to="ctl" data-composition-edge-id="m5" data-composition-points="464,348;307.25,348" d="M 464 348 L 307.25 348" class="a-default" data-animate="edge" style="--step: 4;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="srv" data-composition-edge-to="ctl" data-composition-edge-id="m5" data-composition-points="464,314;307.25,314" d="M 464 314 L 307.25 314" class="a-default" data-animate="edge" style="--step: 4;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="385.625" y="338" class="t-muted" font-size="11" text-anchor="middle">notificacion</text>
+          <text x="385.625" y="304" class="t-muted" font-size="11" text-anchor="middle">notificacion</text>
         </g>
         </g>
 
         <g data-edge-from="ctl" data-edge-to="adm" data-edge-label="200" data-edge-key="5" data-edge-id="m6">
-          <path data-composition-edge-from="ctl" data-composition-edge-to="adm" data-composition-edge-id="m6" data-composition-points="293.25,384;136.5,384" d="M 293.25 384 L 136.5 384" class="a-default" data-animate="edge" style="--step: 5;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="ctl" data-composition-edge-to="adm" data-composition-edge-id="m6" data-composition-points="293.25,350;136.5,350" d="M 293.25 350 L 136.5 350" class="a-default" data-animate="edge" style="--step: 5;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="214.875" y="374" class="t-muted" font-size="11" text-anchor="middle">200</text>
+          <text x="214.875" y="340" class="t-muted" font-size="11" text-anchor="middle">200</text>
         </g>
         </g>
 
         <g data-edge-from="res" data-edge-to="ctl" data-edge-label="GET /notificaciones" data-edge-key="6" data-edge-id="m7">
-          <path data-composition-edge-from="res" data-composition-edge-to="ctl" data-composition-edge-id="m7" data-composition-points="805.5,420;307.25,420" d="M 805.5 420 L 307.25 420" class="a-default" data-animate="edge" style="--step: 6;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="res" data-composition-edge-to="ctl" data-composition-edge-id="m7" data-composition-points="805.5,386;307.25,386" d="M 805.5 386 L 307.25 386" class="a-default" data-animate="edge" style="--step: 6;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="556.375" y="410" class="t-muted" font-size="11" text-anchor="middle">GET /notificaciones</text>
+          <text x="556.375" y="376" class="t-muted" font-size="11" text-anchor="middle">GET /notificaciones</text>
         </g>
         </g>
 
         <g data-edge-from="ctl" data-edge-to="srv" data-edge-label="consultarNotificacion" data-edge-key="7" data-edge-id="m8">
-          <path data-composition-edge-from="ctl" data-composition-edge-to="srv" data-composition-edge-id="m8" data-composition-points="307.25,456;464,456" d="M 307.25 456 L 464 456" class="a-default" data-animate="edge" style="--step: 7;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="ctl" data-composition-edge-to="srv" data-composition-edge-id="m8" data-composition-points="307.25,422;464,422" d="M 307.25 422 L 464 422" class="a-default" data-animate="edge" style="--step: 7;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="385.625" y="446" class="t-muted" font-size="11" text-anchor="middle">consultarNotificacion</text>
+          <text x="385.625" y="412" class="t-muted" font-size="11" text-anchor="middle">consultarNotificacion</text>
         </g>
         </g>
 
         <g data-edge-from="srv" data-edge-to="db" data-edge-label="listarDeUsuario" data-edge-key="8" data-edge-id="m9">
-          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m9" data-composition-points="478,492;634.75,492" d="M 478 492 L 634.75 492" class="a-default" data-animate="edge" style="--step: 8;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m9" data-composition-points="478,458;634.75,458" d="M 478 458 L 634.75 458" class="a-default" data-animate="edge" style="--step: 8;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="556.375" y="482" class="t-muted" font-size="11" text-anchor="middle">listarDeUsuario</text>
+          <text x="556.375" y="448" class="t-muted" font-size="11" text-anchor="middle">listarDeUsuario</text>
         </g>
         </g>
 
         <g data-edge-from="db" data-edge-to="srv" data-edge-label="pagina" data-edge-key="9" data-edge-id="m10">
-          <path data-composition-edge-from="db" data-composition-edge-to="srv" data-composition-edge-id="m10" data-composition-points="634.75,528;478,528" d="M 634.75 528 L 478 528" class="a-default" data-animate="edge" style="--step: 9;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="db" data-composition-edge-to="srv" data-composition-edge-id="m10" data-composition-points="634.75,494;478,494" d="M 634.75 494 L 478 494" class="a-default" data-animate="edge" style="--step: 9;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="556.375" y="518" class="t-muted" font-size="11" text-anchor="middle">pagina</text>
+          <text x="556.375" y="484" class="t-muted" font-size="11" text-anchor="middle">pagina</text>
         </g>
         </g>
 
         <g data-edge-from="res" data-edge-to="ctl" data-edge-label="PUT /leida" data-edge-key="10" data-edge-id="m11">
-          <path data-composition-edge-from="res" data-composition-edge-to="ctl" data-composition-edge-id="m11" data-composition-points="805.5,564;307.25,564" d="M 805.5 564 L 307.25 564" class="a-default" data-animate="edge" style="--step: 10;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="res" data-composition-edge-to="ctl" data-composition-edge-id="m11" data-composition-points="805.5,530;307.25,530" d="M 805.5 530 L 307.25 530" class="a-default" data-animate="edge" style="--step: 10;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="556.375" y="554" class="t-muted" font-size="11" text-anchor="middle">PUT /leida</text>
+          <text x="556.375" y="520" class="t-muted" font-size="11" text-anchor="middle">PUT /leida</text>
         </g>
         </g>
 
         <g data-edge-from="ctl" data-edge-to="srv" data-edge-label="marcarLeida" data-edge-key="11" data-edge-id="m12">
-          <path data-composition-edge-from="ctl" data-composition-edge-to="srv" data-composition-edge-id="m12" data-composition-points="307.25,600;464,600" d="M 307.25 600 L 464 600" class="a-default" data-animate="edge" style="--step: 11;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="ctl" data-composition-edge-to="srv" data-composition-edge-id="m12" data-composition-points="307.25,566;464,566" d="M 307.25 566 L 464 566" class="a-default" data-animate="edge" style="--step: 11;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="385.625" y="590" class="t-muted" font-size="11" text-anchor="middle">marcarLeida</text>
+          <text x="385.625" y="556" class="t-muted" font-size="11" text-anchor="middle">marcarLeida</text>
         </g>
         </g>
 
         <g data-edge-from="srv" data-edge-to="db" data-edge-label="leida = true" data-edge-key="12" data-edge-id="m13">
-          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m13" data-composition-points="478,636;634.75,636" d="M 478 636 L 634.75 636" class="a-default" data-animate="edge" style="--step: 12;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="srv" data-composition-edge-to="db" data-composition-edge-id="m13" data-composition-points="478,602;634.75,602" d="M 478 602 L 634.75 602" class="a-default" data-animate="edge" style="--step: 12;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="556.375" y="626" class="t-muted" font-size="11" text-anchor="middle">leida = true</text>
+          <text x="556.375" y="592" class="t-muted" font-size="11" text-anchor="middle">leida = true</text>
         </g>
         </g>
 
@@ -1136,18 +1135,18 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
 
         <!-- Legend -->
         <g data-legend="">
-          <text x="40" y="668" class="t-primary" font-size="12" font-weight="650">Leyenda</text>
-          <g data-legend-semantic-kind="emphasis" data-legend-x="40" data-legend-baseline="688" data-legend-width="161">
-            <path d="M 40 685 L 74 685" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-            <text x="83" y="688" class="t-muted" font-size="10" font-weight="500">solicitud principal</text>
+          <text x="40" y="634" class="t-primary" font-size="12" font-weight="650">Leyenda</text>
+          <g data-legend-semantic-kind="emphasis" data-legend-x="40" data-legend-baseline="654" data-legend-width="161">
+            <path d="M 40 651 L 74 651" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+            <text x="83" y="654" class="t-muted" font-size="10" font-weight="500">solicitud principal</text>
           </g>
-          <g data-legend-semantic-kind="return" data-legend-x="223" data-legend-baseline="688" data-legend-width="99">
-            <path d="M 223 685 L 257 685" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-            <text x="266" y="688" class="t-muted" font-size="10" font-weight="500">respuesta</text>
+          <g data-legend-semantic-kind="return" data-legend-x="223" data-legend-baseline="654" data-legend-width="99">
+            <path d="M 223 651 L 257 651" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+            <text x="266" y="654" class="t-muted" font-size="10" font-weight="500">respuesta</text>
           </g>
-          <g data-legend-semantic-kind="default" data-legend-x="344" data-legend-baseline="688" data-legend-width="87">
-            <path d="M 344 685 L 378 685" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-            <text x="387" y="688" class="t-muted" font-size="10" font-weight="500">mensaje</text>
+          <g data-legend-semantic-kind="default" data-legend-x="344" data-legend-baseline="654" data-legend-width="87">
+            <path d="M 344 651 L 378 651" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+            <text x="387" y="654" class="t-muted" font-size="10" font-weight="500">mensaje</text>
           </g>
         </g>
       </svg>

@@ -109,22 +109,22 @@
  "segments": [
   {
    "from": 150,
-   "to": 416,
+   "to": 331,
    "label": "Iniciar pago"
   },
   {
-   "from": 444,
-   "to": 504,
+   "from": 339,
+   "to": 382,
    "label": "Checkout en Wompi"
   },
   {
-   "from": 530,
-   "to": 788,
+   "from": 408,
+   "to": 552,
    "label": "Webhook verificado"
   },
   {
-   "from": 814,
-   "to": 932,
+   "from": 578,
+   "to": 696,
    "label": "Resultado"
   }
  ],
@@ -157,14 +157,13 @@
    "from": "api",
    "to": "neon",
    "y": 262,
-   "label": "INSERT pago",
-   "note": "El monto lo fija el servidor; antes valida que el .env este listo para cobrar"
+   "label": "INSERT pago"
   },
   {
    "id": "pago-pendiente",
    "from": "neon",
    "to": "api",
-   "y": 340,
+   "y": 290,
    "label": "pago PENDIENTE",
    "variant": "return"
   },
@@ -172,16 +171,15 @@
    "id": "url-firmada",
    "from": "api",
    "to": "front",
-   "y": 368,
+   "y": 318,
    "label": "urlCheckout firmada",
-   "variant": "return",
-   "note": "signature:integrity = SHA-256(ref + centavos + COP + secreto)"
+   "variant": "return"
   },
   {
    "id": "redirige",
    "from": "front",
    "to": "wompi",
-   "y": 468,
+   "y": 346,
    "label": "abre checkout",
    "variant": "emphasis"
   },
@@ -189,32 +187,30 @@
    "id": "paga",
    "from": "residente",
    "to": "wompi",
-   "y": 496,
+   "y": 374,
    "label": "paga"
   },
   {
    "id": "webhook",
    "from": "wompi",
    "to": "api",
-   "y": 554,
+   "y": 432,
    "label": "POST /api/pasarela/webhook",
-   "variant": "security",
-   "note": "@Publico; verifica signature.checksum con el secreto de eventos"
+   "variant": "security"
   },
   {
    "id": "consulta-tx",
    "from": "api",
    "to": "wompi",
-   "y": 620,
+   "y": 460,
    "label": "GET /transactions/{id}",
-   "variant": "security",
-   "note": "Bearer con la llave privada: la fuente de verdad"
+   "variant": "security"
   },
   {
    "id": "datos-tx",
    "from": "wompi",
    "to": "api",
-   "y": 686,
+   "y": 488,
    "label": "status, monto, moneda",
    "variant": "return"
   },
@@ -222,16 +218,15 @@
    "id": "actualiza",
    "from": "api",
    "to": "neon",
-   "y": 714,
+   "y": 516,
    "label": "UPDATE estado",
-   "variant": "emphasis",
-   "note": "APROBADO o RECHAZADO, solo si sigue PENDIENTE y monto y moneda coinciden"
+   "variant": "emphasis"
   },
   {
    "id": "ok-200",
    "from": "api",
    "to": "wompi",
-   "y": 780,
+   "y": 544,
    "label": "200 OK",
    "variant": "return"
   },
@@ -239,7 +234,7 @@
    "id": "vuelve",
    "from": "wompi",
    "to": "front",
-   "y": 838,
+   "y": 602,
    "label": "redirect-url",
    "variant": "dashed"
   },
@@ -247,14 +242,14 @@
    "id": "consulta-estado",
    "from": "front",
    "to": "api",
-   "y": 866,
+   "y": 630,
    "label": "GET /api/pagos/estado/{ref}"
   },
   {
    "id": "estado",
    "from": "api",
    "to": "front",
-   "y": 894,
+   "y": 658,
    "label": "estado del pago",
    "variant": "return"
   },
@@ -262,7 +257,7 @@
    "id": "muestra",
    "from": "front",
    "to": "residente",
-   "y": 920,
+   "y": 684,
    "label": "muestra resultado",
    "variant": "return"
   }
@@ -271,7 +266,7 @@
   {
    "participant": "front",
    "from": 174,
-   "to": 473,
+   "to": 351,
    "type": "frontend"
   },
   {
@@ -283,37 +278,37 @@
   {
    "participant": "api",
    "from": 231,
-   "to": 373,
+   "to": 319,
    "type": "backend"
   },
   {
    "participant": "neon",
    "from": 258,
-   "to": 344,
+   "to": 294,
    "type": "database"
   },
   {
    "participant": "api",
-   "from": 550,
-   "to": 784,
+   "from": 428,
+   "to": 548,
    "type": "backend"
   },
   {
    "participant": "neon",
-   "from": 710,
-   "to": 744,
+   "from": 512,
+   "to": 529,
    "type": "database"
   },
   {
    "participant": "front",
-   "from": 834,
-   "to": 924,
+   "from": 598,
+   "to": 688,
    "type": "frontend"
   },
   {
    "participant": "api",
-   "from": 862,
-   "to": 898,
+   "from": 626,
+   "to": 662,
    "type": "backend"
   }
  ],

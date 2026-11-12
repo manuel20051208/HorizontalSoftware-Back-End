@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 920 1030" data-sequence-column-fit="spread" data-reader-fit="width-first" role="img" lang="es" aria-labelledby="archify-diagram-title archify-diagram-description" data-animation="trace" data-preset="classic" data-quality-profile="showcase" data-motion-choreography="sequence" style="--flow-cycle: 11.300s; width: 920px; height: 1030px; min-width: 0px;" width="920" height="1030" xmlns="http://www.w3.org/2000/svg" data-theme="light"><style>
+<svg viewBox="0 0 920 794" data-sequence-column-fit="spread" data-reader-fit="width-first" role="img" lang="es" aria-labelledby="archify-diagram-title archify-diagram-description" data-animation="trace" data-preset="classic" data-quality-profile="showcase" data-motion-choreography="sequence" style="--flow-cycle: 11.300s; width: 920px; height: 794px; min-width: 0px;" width="920" height="794" xmlns="http://www.w3.org/2000/svg" data-theme="light"><style>
 /*
 JetBrains Mono variable WOFF2 subsets from Google Fonts service revision v24.
 These fixed bytes are shared by the viewer and its SVG/raster exports.
@@ -649,7 +649,7 @@ svg[data-preset="editorial"] { --flow-halo-peak: 0.07; --flow-glow-peak: 0.28; -
   69.493% { filter: var(--ambient-node-base-filter, none); }
 }
 :root, svg { --bg: #f4f5f7; --grid: #e9edf2; --canvas-dot: #e2e7ec; --text: #111827; --text-muted: #5b6474; --text-dim: #9aa3b2; --text-faint: #6b7280; --panel: #ffffff; --panel-border: #e5e7eb; --lane-fill: rgba(248, 250, 252, 0.65); --lane-stroke: #cbd5e1; --arrow: #64748b; --arrow-emphasis: #059669; --mask: #ffffff; --frontend-fill: rgba(34, 211, 238, 0.15); --frontend-stroke: #0891b2; --backend-fill: rgba(52, 211, 153, 0.18); --backend-stroke: #059669; --database-fill: rgba(167, 139, 250, 0.2); --database-stroke: #7c3aed; --cloud-fill: rgba(251, 191, 36, 0.18); --cloud-stroke: #d97706; --security-fill: rgba(251, 113, 133, 0.15); --security-stroke: #e11d48; --messagebus-fill: rgba(251, 146, 60, 0.15); --messagebus-stroke: #ea580c; --external-fill: rgba(148, 163, 184, 0.18); --external-stroke: #64748b; --toolbar-bg: rgba(255, 255, 255, 0.92); --toolbar-border: #cbd5e1; --toolbar-text: #334155; --toolbar-hover: #ffffff; --toolbar-menu-bg: #ffffff; --flow-cycle: ; --flow-halo-peak: ; --flow-glow-peak: ; --flow-tail-peak: ; --flow-head-peak: ; --flow-wake-peak: ; --flow-ripple-peak: ; --flow-peak: ; }
-</style><rect x="0" y="0" width="920" height="1030" fill="#f4f5f7"/><metadata id="archify-software-notices">NOTICE
+</style><rect x="0" y="0" width="920" height="794" fill="#f4f5f7"/><metadata id="archify-software-notices">NOTICE
 Archify
 Copyright (c) 2026 tt-a1i (Archify)
 Copyright (c) 2025 Cocoon AI
@@ -1009,39 +1009,39 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
         <rect width="100%" height="100%" fill="url(#grid)"/>
 
         <!-- Time Segments -->
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="0" x="48" y="150" width="824" height="266" rx="10" class="c-lane" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="0" x="48" y="150" width="824" height="181" rx="10" class="c-lane" stroke-width="1"/>
 
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="1" x="48" y="444" width="824" height="60" rx="10" class="c-lane" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="1" x="48" y="339" width="824" height="43" rx="10" class="c-lane" stroke-width="1"/>
 
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="2" x="48" y="530" width="824" height="258" rx="10" class="c-lane" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="2" x="48" y="408" width="824" height="144" rx="10" class="c-lane" stroke-width="1"/>
 
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="3" x="48" y="814" width="824" height="118" rx="10" class="c-lane" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="3" x="48" y="578" width="824" height="118" rx="10" class="c-lane" stroke-width="1"/>
 
         <!-- Lifelines -->
-        <path d="M 116.5 142 L 116.5 934" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 258.3 142 L 258.3 934" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 400.1 142 L 400.1 934" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 541.9000000000001 142 L 541.9000000000001 934" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 683.7 142 L 683.7 934" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 825.5 142 L 825.5 934" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 116.5 142 L 116.5 698" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 258.3 142 L 258.3 698" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 400.1 142 L 400.1 698" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 541.9000000000001 142 L 541.9000000000001 698" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 683.7 142 L 683.7 698" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 825.5 142 L 825.5 698" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
 
         <!-- Activations -->
-        <rect x="253.3" y="174" width="10" height="299" rx="3" class="c-mask"/>
-        <rect x="253.3" y="174" width="10" height="299" rx="3" class="c-frontend" stroke-width="1"/>
+        <rect x="253.3" y="174" width="10" height="177" rx="3" class="c-mask"/>
+        <rect x="253.3" y="174" width="10" height="177" rx="3" class="c-frontend" stroke-width="1"/>
         <rect x="395.1" y="203" width="10" height="35" rx="3" class="c-mask"/>
         <rect x="395.1" y="203" width="10" height="35" rx="3" class="c-security" stroke-width="1"/>
-        <rect x="536.9000000000001" y="231" width="10" height="142" rx="3" class="c-mask"/>
-        <rect x="536.9000000000001" y="231" width="10" height="142" rx="3" class="c-backend" stroke-width="1"/>
-        <rect x="678.7" y="258" width="10" height="86" rx="3" class="c-mask"/>
-        <rect x="678.7" y="258" width="10" height="86" rx="3" class="c-database" stroke-width="1"/>
-        <rect x="536.9000000000001" y="550" width="10" height="234" rx="3" class="c-mask"/>
-        <rect x="536.9000000000001" y="550" width="10" height="234" rx="3" class="c-backend" stroke-width="1"/>
-        <rect x="678.7" y="710" width="10" height="34" rx="3" class="c-mask"/>
-        <rect x="678.7" y="710" width="10" height="34" rx="3" class="c-database" stroke-width="1"/>
-        <rect x="253.3" y="834" width="10" height="90" rx="3" class="c-mask"/>
-        <rect x="253.3" y="834" width="10" height="90" rx="3" class="c-frontend" stroke-width="1"/>
-        <rect x="536.9000000000001" y="862" width="10" height="36" rx="3" class="c-mask"/>
-        <rect x="536.9000000000001" y="862" width="10" height="36" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="536.9000000000001" y="231" width="10" height="88" rx="3" class="c-mask"/>
+        <rect x="536.9000000000001" y="231" width="10" height="88" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="678.7" y="258" width="10" height="36" rx="3" class="c-mask"/>
+        <rect x="678.7" y="258" width="10" height="36" rx="3" class="c-database" stroke-width="1"/>
+        <rect x="536.9000000000001" y="428" width="10" height="120" rx="3" class="c-mask"/>
+        <rect x="536.9000000000001" y="428" width="10" height="120" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="678.7" y="512" width="10" height="17" rx="3" class="c-mask"/>
+        <rect x="678.7" y="512" width="10" height="17" rx="3" class="c-database" stroke-width="1"/>
+        <rect x="253.3" y="598" width="10" height="90" rx="3" class="c-mask"/>
+        <rect x="253.3" y="598" width="10" height="90" rx="3" class="c-frontend" stroke-width="1"/>
+        <rect x="536.9000000000001" y="626" width="10" height="36" rx="3" class="c-mask"/>
+        <rect x="536.9000000000001" y="626" width="10" height="36" rx="3" class="c-backend" stroke-width="1"/>
 
         <!-- Messages -->
         <g data-edge-from="residente" data-edge-to="front" data-edge-label="pagar saldo" data-edge-key="0" data-edge-id="pide-pagar">
@@ -1070,101 +1070,96 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
         <g>
           <text x="612.8000000000001" y="252" class="t-muted" font-size="11" text-anchor="middle">INSERT pago</text>
         </g>
-        <text x="560.9000000000001" y="280" class="t-muted" font-size="7"><tspan x="560.9000000000001" dy="0">El monto lo fija el</tspan><tspan x="560.9000000000001" dy="11">servidor; antes valida que</tspan><tspan x="560.9000000000001" dy="11">el .env este listo para</tspan><tspan x="560.9000000000001" dy="11">cobrar</tspan></text>
         </g>
 
         <g data-edge-from="neon" data-edge-to="api" data-edge-label="pago PENDIENTE" data-edge-key="4" data-edge-id="pago-pendiente">
-          <path data-composition-edge-from="neon" data-composition-edge-to="api" data-composition-edge-id="pago-pendiente" data-composition-points="676.7,340;548.9000000000001,340" d="M 676.7 340 L 548.9000000000001 340" class="a-default" data-animate="edge" style="--step: 4;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="neon" data-composition-edge-to="api" data-composition-edge-id="pago-pendiente" data-composition-points="676.7,290;548.9000000000001,290" d="M 676.7 290 L 548.9000000000001 290" class="a-default" data-animate="edge" style="--step: 4;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="612.8000000000001" y="330" class="t-muted" font-size="11" text-anchor="middle">pago PENDIENTE</text>
+          <text x="612.8000000000001" y="280" class="t-muted" font-size="11" text-anchor="middle">pago PENDIENTE</text>
         </g>
         </g>
 
         <g data-edge-from="api" data-edge-to="front" data-edge-label="urlCheckout firmada" data-edge-key="5" data-edge-id="url-firmada">
-          <path data-composition-edge-from="api" data-composition-edge-to="front" data-composition-edge-id="url-firmada" data-composition-points="534.9000000000001,368;265.3,368" d="M 534.9000000000001 368 L 265.3 368" class="a-default" data-animate="edge" style="--step: 5;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="api" data-composition-edge-to="front" data-composition-edge-id="url-firmada" data-composition-points="534.9000000000001,318;265.3,318" d="M 534.9000000000001 318 L 265.3 318" class="a-default" data-animate="edge" style="--step: 5;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="400.1" y="358" class="t-muted" font-size="11" text-anchor="middle">urlCheckout firmada</text>
+          <text x="400.1" y="308" class="t-muted" font-size="11" text-anchor="middle">urlCheckout firmada</text>
         </g>
-        <text x="277.3" y="386" class="t-muted" font-size="7"><tspan x="277.3" dy="0">signature:integrity =</tspan><tspan x="277.3" dy="11">SHA-256(ref + centavos +</tspan><tspan x="277.3" dy="11">COP + secreto)</tspan></text>
         </g>
 
         <g data-edge-from="front" data-edge-to="wompi" data-edge-label="abre checkout" data-edge-key="6" data-edge-id="redirige">
-          <path data-composition-edge-from="front" data-composition-edge-to="wompi" data-composition-edge-id="redirige" data-composition-points="265.3,468;818.5,468" d="M 265.3 468 L 818.5 468" class="a-emphasis" data-animate="edge" style="--step: 6;" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+          <path data-composition-edge-from="front" data-composition-edge-to="wompi" data-composition-edge-id="redirige" data-composition-points="265.3,346;818.5,346" d="M 265.3 346 L 818.5 346" class="a-emphasis" data-animate="edge" style="--step: 6;" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         <g>
-          <text x="541.9" y="458" class="t-edge-emphasis" font-size="11" text-anchor="middle">abre checkout</text>
+          <text x="541.9" y="336" class="t-edge-emphasis" font-size="11" text-anchor="middle">abre checkout</text>
         </g>
         </g>
 
         <g data-edge-from="residente" data-edge-to="wompi" data-edge-label="paga" data-edge-key="7" data-edge-id="paga">
-          <path data-composition-edge-from="residente" data-composition-edge-to="wompi" data-composition-edge-id="paga" data-composition-points="123.5,496;818.5,496" d="M 123.5 496 L 818.5 496" class="a-default" data-animate="edge" style="--step: 7;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="residente" data-composition-edge-to="wompi" data-composition-edge-id="paga" data-composition-points="123.5,374;818.5,374" d="M 123.5 374 L 818.5 374" class="a-default" data-animate="edge" style="--step: 7;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="471" y="486" class="t-muted" font-size="11" text-anchor="middle">paga</text>
+          <text x="471" y="364" class="t-muted" font-size="11" text-anchor="middle">paga</text>
         </g>
         </g>
 
         <g data-edge-from="wompi" data-edge-to="api" data-edge-label="POST /api/pasarela/webhook" data-edge-key="8" data-edge-id="webhook">
-          <path data-composition-edge-from="wompi" data-composition-edge-to="api" data-composition-edge-id="webhook" data-composition-points="818.5,554;548.9000000000001,554" d="M 818.5 554 L 548.9000000000001 554" class="a-security" data-animate="edge" style="--step: 8;" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
+          <path data-composition-edge-from="wompi" data-composition-edge-to="api" data-composition-edge-id="webhook" data-composition-points="818.5,432;548.9000000000001,432" d="M 818.5 432 L 548.9000000000001 432" class="a-security" data-animate="edge" style="--step: 8;" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
         <g>
-          <text x="683.7" y="544" class="t-edge-security" font-size="11" text-anchor="middle">POST /api/pasarela/webhook</text>
+          <text x="683.7" y="422" class="t-edge-security" font-size="11" text-anchor="middle">POST /api/pasarela/webhook</text>
         </g>
-        <text x="560.9000000000001" y="572" class="t-muted" font-size="7"><tspan x="560.9000000000001" dy="0">@Publico; verifica</tspan><tspan x="560.9000000000001" dy="11">signature.checksum con el</tspan><tspan x="560.9000000000001" dy="11">secreto de eventos</tspan></text>
         </g>
 
         <g data-edge-from="api" data-edge-to="wompi" data-edge-label="GET /transactions/{id}" data-edge-key="9" data-edge-id="consulta-tx">
-          <path data-composition-edge-from="api" data-composition-edge-to="wompi" data-composition-edge-id="consulta-tx" data-composition-points="548.9000000000001,620;818.5,620" d="M 548.9000000000001 620 L 818.5 620" class="a-security" data-animate="edge" style="--step: 9;" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
+          <path data-composition-edge-from="api" data-composition-edge-to="wompi" data-composition-edge-id="consulta-tx" data-composition-points="548.9000000000001,460;818.5,460" d="M 548.9000000000001 460 L 818.5 460" class="a-security" data-animate="edge" style="--step: 9;" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
         <g>
-          <text x="683.7" y="610" class="t-edge-security" font-size="11" text-anchor="middle">GET /transactions/{id}</text>
+          <text x="683.7" y="450" class="t-edge-security" font-size="11" text-anchor="middle">GET /transactions/{id}</text>
         </g>
-        <text x="560.9000000000001" y="638" class="t-muted" font-size="7"><tspan x="560.9000000000001" dy="0">Bearer con la llave</tspan><tspan x="560.9000000000001" dy="11">privada: la fuente de</tspan><tspan x="560.9000000000001" dy="11">verdad</tspan></text>
         </g>
 
         <g data-edge-from="wompi" data-edge-to="api" data-edge-label="status, monto, moneda" data-edge-key="10" data-edge-id="datos-tx">
-          <path data-composition-edge-from="wompi" data-composition-edge-to="api" data-composition-edge-id="datos-tx" data-composition-points="818.5,686;548.9000000000001,686" d="M 818.5 686 L 548.9000000000001 686" class="a-default" data-animate="edge" style="--step: 10;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="wompi" data-composition-edge-to="api" data-composition-edge-id="datos-tx" data-composition-points="818.5,488;548.9000000000001,488" d="M 818.5 488 L 548.9000000000001 488" class="a-default" data-animate="edge" style="--step: 10;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="683.7" y="676" class="t-muted" font-size="11" text-anchor="middle">status, monto, moneda</text>
+          <text x="683.7" y="478" class="t-muted" font-size="11" text-anchor="middle">status, monto, moneda</text>
         </g>
         </g>
 
         <g data-edge-from="api" data-edge-to="neon" data-edge-label="UPDATE estado" data-edge-key="11" data-edge-id="actualiza">
-          <path data-composition-edge-from="api" data-composition-edge-to="neon" data-composition-edge-id="actualiza" data-composition-points="548.9000000000001,714;676.7,714" d="M 548.9000000000001 714 L 676.7 714" class="a-emphasis" data-animate="edge" style="--step: 11;" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+          <path data-composition-edge-from="api" data-composition-edge-to="neon" data-composition-edge-id="actualiza" data-composition-points="548.9000000000001,516;676.7,516" d="M 548.9000000000001 516 L 676.7 516" class="a-emphasis" data-animate="edge" style="--step: 11;" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         <g>
-          <text x="612.8000000000001" y="704" class="t-edge-emphasis" font-size="11" text-anchor="middle">UPDATE estado</text>
+          <text x="612.8000000000001" y="506" class="t-edge-emphasis" font-size="11" text-anchor="middle">UPDATE estado</text>
         </g>
-        <text x="560.9000000000001" y="732" class="t-muted" font-size="7"><tspan x="560.9000000000001" dy="0">APROBADO o RECHAZADO, solo</tspan><tspan x="560.9000000000001" dy="11">si sigue PENDIENTE y monto</tspan><tspan x="560.9000000000001" dy="11">y moneda coinciden</tspan></text>
         </g>
 
         <g data-edge-from="api" data-edge-to="wompi" data-edge-label="200 OK" data-edge-key="12" data-edge-id="ok-200">
-          <path data-composition-edge-from="api" data-composition-edge-to="wompi" data-composition-edge-id="ok-200" data-composition-points="548.9000000000001,780;818.5,780" d="M 548.9000000000001 780 L 818.5 780" class="a-default" data-animate="edge" style="--step: 12;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="api" data-composition-edge-to="wompi" data-composition-edge-id="ok-200" data-composition-points="548.9000000000001,544;818.5,544" d="M 548.9000000000001 544 L 818.5 544" class="a-default" data-animate="edge" style="--step: 12;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="683.7" y="770" class="t-muted" font-size="11" text-anchor="middle">200 OK</text>
+          <text x="683.7" y="534" class="t-muted" font-size="11" text-anchor="middle">200 OK</text>
         </g>
         </g>
 
         <g data-edge-from="wompi" data-edge-to="front" data-edge-label="redirect-url" data-edge-key="13" data-edge-id="vuelve">
-          <path data-composition-edge-from="wompi" data-composition-edge-to="front" data-composition-edge-id="vuelve" data-composition-points="818.5,838;265.3,838" d="M 818.5 838 L 265.3 838" class="a-dashed" data-animate="edge" style="--step: 12;" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+          <path data-composition-edge-from="wompi" data-composition-edge-to="front" data-composition-edge-id="vuelve" data-composition-points="818.5,602;265.3,602" d="M 818.5 602 L 265.3 602" class="a-dashed" data-animate="edge" style="--step: 12;" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
         <g>
-          <text x="541.9" y="828" class="t-edge-dashed" font-size="11" text-anchor="middle">redirect-url</text>
+          <text x="541.9" y="592" class="t-edge-dashed" font-size="11" text-anchor="middle">redirect-url</text>
         </g>
         </g>
 
         <g data-edge-from="front" data-edge-to="api" data-edge-label="GET /api/pagos/estado/{ref}" data-edge-key="14" data-edge-id="consulta-estado">
-          <path data-composition-edge-from="front" data-composition-edge-to="api" data-composition-edge-id="consulta-estado" data-composition-points="265.3,866;534.9000000000001,866" d="M 265.3 866 L 534.9000000000001 866" class="a-default" data-animate="edge" style="--step: 12;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="front" data-composition-edge-to="api" data-composition-edge-id="consulta-estado" data-composition-points="265.3,630;534.9000000000001,630" d="M 265.3 630 L 534.9000000000001 630" class="a-default" data-animate="edge" style="--step: 12;" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="400.1" y="856" class="t-muted" font-size="11" text-anchor="middle">GET /api/pagos/estado/{ref}</text>
+          <text x="400.1" y="620" class="t-muted" font-size="11" text-anchor="middle">GET /api/pagos/estado/{ref}</text>
         </g>
         </g>
 
         <g data-edge-from="api" data-edge-to="front" data-edge-label="estado del pago" data-edge-key="15" data-edge-id="estado">
-          <path data-composition-edge-from="api" data-composition-edge-to="front" data-composition-edge-id="estado" data-composition-points="534.9000000000001,894;265.3,894" d="M 534.9000000000001 894 L 265.3 894" class="a-default" data-animate="edge" style="--step: 12;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="api" data-composition-edge-to="front" data-composition-edge-id="estado" data-composition-points="534.9000000000001,658;265.3,658" d="M 534.9000000000001 658 L 265.3 658" class="a-default" data-animate="edge" style="--step: 12;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="400.1" y="884" class="t-muted" font-size="11" text-anchor="middle">estado del pago</text>
+          <text x="400.1" y="648" class="t-muted" font-size="11" text-anchor="middle">estado del pago</text>
         </g>
         </g>
 
         <g data-edge-from="front" data-edge-to="residente" data-edge-label="muestra resultado" data-edge-key="16" data-edge-id="muestra">
-          <path data-composition-edge-from="front" data-composition-edge-to="residente" data-composition-edge-id="muestra" data-composition-points="251.3,920;123.5,920" d="M 251.3 920 L 123.5 920" class="a-default" data-animate="edge" style="--step: 12;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="front" data-composition-edge-to="residente" data-composition-edge-id="muestra" data-composition-points="251.3,684;123.5,684" d="M 251.3 684 L 123.5 684" class="a-default" data-animate="edge" style="--step: 12;" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g>
-          <text x="187.4" y="910" class="t-muted" font-size="11" text-anchor="middle">muestra resultado</text>
+          <text x="187.4" y="674" class="t-muted" font-size="11" text-anchor="middle">muestra resultado</text>
         </g>
         </g>
 
@@ -1174,16 +1169,16 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
           <text x="62" y="147" class="t-muted" font-size="9" font-weight="600">Iniciar pago</text>
         </g>
         <g data-graph-role="segment-label" data-segment-id="1">
-          <rect x="56" y="422" width="102.4" height="18" rx="3" class="c-mask"/>
-          <text x="62" y="435" class="t-muted" font-size="9" font-weight="600">Checkout en Wompi</text>
+          <rect x="56" y="317" width="102.4" height="18" rx="3" class="c-mask"/>
+          <text x="62" y="330" class="t-muted" font-size="9" font-weight="600">Checkout en Wompi</text>
         </g>
         <g data-graph-role="segment-label" data-segment-id="2">
-          <rect x="56" y="508" width="107.60000000000001" height="18" rx="3" class="c-mask"/>
-          <text x="62" y="521" class="t-muted" font-size="9" font-weight="600">Webhook verificado</text>
+          <rect x="56" y="386" width="107.60000000000001" height="18" rx="3" class="c-mask"/>
+          <text x="62" y="399" class="t-muted" font-size="9" font-weight="600">Webhook verificado</text>
         </g>
         <g data-graph-role="segment-label" data-segment-id="3">
-          <rect x="56" y="792" width="60.800000000000004" height="18" rx="3" class="c-mask"/>
-          <text x="62" y="805" class="t-muted" font-size="9" font-weight="600">Resultado</text>
+          <rect x="56" y="556" width="60.800000000000004" height="18" rx="3" class="c-mask"/>
+          <text x="62" y="569" class="t-muted" font-size="9" font-weight="600">Resultado</text>
         </g>
 
         <!-- Participants -->
@@ -1262,26 +1257,26 @@ been cleared for every commercial, promotional, or redistributive use.</metadata
 
         <!-- Legend -->
         <g data-legend="">
-          <text x="40" y="956" class="t-primary" font-size="12" font-weight="650">Leyenda</text>
-          <g data-legend-semantic-kind="emphasis" data-legend-x="40" data-legend-baseline="976" data-legend-width="161">
-            <path d="M 40 973 L 74 973" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-            <text x="83" y="976" class="t-muted" font-size="10" font-weight="500">solicitud principal</text>
+          <text x="40" y="720" class="t-primary" font-size="12" font-weight="650">Leyenda</text>
+          <g data-legend-semantic-kind="emphasis" data-legend-x="40" data-legend-baseline="740" data-legend-width="161">
+            <path d="M 40 737 L 74 737" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+            <text x="83" y="740" class="t-muted" font-size="10" font-weight="500">solicitud principal</text>
           </g>
-          <g data-legend-semantic-kind="return" data-legend-x="223" data-legend-baseline="976" data-legend-width="99">
-            <path d="M 223 973 L 257 973" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-            <text x="266" y="976" class="t-muted" font-size="10" font-weight="500">respuesta</text>
+          <g data-legend-semantic-kind="return" data-legend-x="223" data-legend-baseline="740" data-legend-width="99">
+            <path d="M 223 737 L 257 737" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+            <text x="266" y="740" class="t-muted" font-size="10" font-weight="500">respuesta</text>
           </g>
-          <g data-legend-semantic-kind="security" data-legend-x="344" data-legend-baseline="976" data-legend-width="99">
-            <path d="M 344 973 L 378 973" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
-            <text x="387" y="976" class="t-muted" font-size="10" font-weight="500">seguridad</text>
+          <g data-legend-semantic-kind="security" data-legend-x="344" data-legend-baseline="740" data-legend-width="99">
+            <path d="M 344 737 L 378 737" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
+            <text x="387" y="740" class="t-muted" font-size="10" font-weight="500">seguridad</text>
           </g>
-          <g data-legend-semantic-kind="dashed" data-legend-x="465" data-legend-baseline="976" data-legend-width="136">
-            <path d="M 465 973 L 499 973" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-            <text x="508" y="976" class="t-muted" font-size="10" font-weight="500">traza asincrona</text>
+          <g data-legend-semantic-kind="dashed" data-legend-x="465" data-legend-baseline="740" data-legend-width="136">
+            <path d="M 465 737 L 499 737" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+            <text x="508" y="740" class="t-muted" font-size="10" font-weight="500">traza asíncrona</text>
           </g>
-          <g data-legend-semantic-kind="default" data-legend-x="623" data-legend-baseline="976" data-legend-width="87">
-            <path d="M 623 973 L 657 973" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-            <text x="666" y="976" class="t-muted" font-size="10" font-weight="500">mensaje</text>
+          <g data-legend-semantic-kind="default" data-legend-x="623" data-legend-baseline="740" data-legend-width="87">
+            <path d="M 623 737 L 657 737" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+            <text x="666" y="740" class="t-muted" font-size="10" font-weight="500">mensaje</text>
           </g>
         </g>
       </svg>
