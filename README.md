@@ -63,8 +63,8 @@ Cada caso de uso principal tiene su diagrama de secuencia, que muestra cómo lo 
 | Generar liquidación mensual | Administrador / Sistema | [4.3 Liquidaciones de administración](#43-liquidaciones-de-administración) |
 | Reservar zona común | Residente | [4.4 Reservar una zona común](#44-reservar-una-zona-común) |
 | Módulo de portería (ingreso de invitados) | Vigilante | [4.5 Ingreso de un invitado por portería](#45-ingreso-de-un-invitado-por-portería) |
-| Configurar zonas comunes | Administrador | [Zonas comunes](#otros-flujos) |
-| Enviar notificación · Consultar notificaciones | Administrador · Residente | [Notificaciones](#otros-flujos) |
+| Configurar zonas comunes | Administrador | [4.7 Administrar zonas comunes](#47-administrar-zonas-comunes) |
+| Enviar notificación · Consultar notificaciones | Administrador · Residente | [4.6 Notificaciones](#46-notificaciones) |
 
 Los demás casos de uso (recuperar contraseña, cancelar reserva, conciliar pagos, incidencias, reportes…) no tienen diagrama de secuencia propio.
 
@@ -121,21 +121,17 @@ Antes de guardar la reserva se valida la fecha, que la zona esté habilitada, el
 
 ![Secuencia: portería](Diagramas/Secuencia/porteria-invitados.svg)
 
-### Otros flujos
+### 4.6 Notificaciones
 
-<details>
-<summary>Zonas comunes (admin): crear, listar con caché y activar/inactivar</summary>
-
-![Secuencia: zonas comunes](Diagramas/Secuencia/zonas-comunes.svg)
-
-</details>
-
-<details>
-<summary>Notificaciones: el admin envía y el residente lista y marca como leída</summary>
+El administrador envía un aviso (a usuarios puntuales, a los residentes de un inmueble o a todos) y el residente lo lista y lo marca como leído.
 
 ![Secuencia: notificaciones](Diagramas/Secuencia/notificaciones.svg)
 
-</details>
+### 4.7 Administrar zonas comunes
+
+El administrador crea zonas, las lista (con caché) y las activa o inactiva. Cada cambio limpia la caché.
+
+![Secuencia: zonas comunes](Diagramas/Secuencia/zonas-comunes.svg)
 
 ---
 
