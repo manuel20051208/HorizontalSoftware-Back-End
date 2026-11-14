@@ -37,7 +37,7 @@ Al arrancar, Flyway crea las tablas y se crea un administrador semilla (`SEED_AD
 
 ### Clases
 
-![Diagrama de clases](Diagramas/Clases/DiagramaClasesSoftwareHorizontal.svg)
+![Diagrama de clases](Diagramas/Clases/DiagramaClasesSoftwareHorizontal.drawio.svg)
 
 ### Componentes
 

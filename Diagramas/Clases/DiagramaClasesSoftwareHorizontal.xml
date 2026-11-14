@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mxfile host="app.diagrams.net">
   <diagram name="Pagina-1" id="V8wEmshVYFbSh1J9g9kn">
-    <mxGraphModel dx="3012" dy="1653" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2500" pageHeight="1800" math="0" shadow="0">
+    <mxGraphModel dx="2695" dy="1479" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2500" pageHeight="1800" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-326" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#36393d;" value="Inmueble" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-326" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#36393d;swimlaneFillColor=default;" value="Inmueble" vertex="1">
           <mxGeometry height="280" width="330" x="1105" y="830" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-327" parent="JI9j9kkdny3l4FoRlyRp-326" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;div&gt;-&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;usuariosRelacionado:&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;List&amp;lt;Usuario&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;-&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;direccionInmueble: String&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;- parqueadero: Parqueadero&lt;/div&gt;&lt;div&gt;- zonaComunes : List&amp;lt;ZonaComun&amp;gt;&lt;/div&gt;&lt;div&gt;- liquidacion: Liquidacion&amp;nbsp;&lt;/div&gt;&lt;div&gt;- r&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;egistroPagos:&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;List&amp;lt;Pago&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;- isActive: Boolean&lt;/div&gt;&lt;div&gt;- notificaciones : List&amp;lt;&lt;span style=&quot;text-align: center;&quot;&gt;Notificacion&lt;/span&gt;&amp;gt;&lt;/div&gt;" vertex="1">
@@ -17,7 +17,7 @@
         <mxCell id="JI9j9kkdny3l4FoRlyRp-329" parent="JI9j9kkdny3l4FoRlyRp-326" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Inmueble(id: Long, direccionInmueble: String, parqueadero: Parqueadero, isActive: Boolean)&lt;br&gt;+ pagoAlDiaAdministracion(liquidacion : Liquidacion): boolean&lt;div&gt;+ mostrarUsuarios(List&amp;lt;Usuario&amp;gt;): List&amp;lt;String&amp;gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="103" width="330" y="177" as="geometry" />
         </mxCell>
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-330" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;" value="ReglaReserva" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-330" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;swimlaneFillColor=default;" value="ReglaReserva" vertex="1">
           <mxGeometry height="258" width="260" x="540" y="120" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-331" parent="JI9j9kkdny3l4FoRlyRp-330" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- id : Long&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: initial; background-color: transparent;&quot;&gt;- anticipacionMinimaHoras : Int&lt;/span&gt;&lt;/div&gt;&lt;div&gt;- duracionMaximaHoras : int&lt;/div&gt;&lt;div&gt;- horasAntelacionPenalidad : int&lt;/div&gt;&lt;div&gt;- TarifaPenalidad : BigDecimal&lt;/div&gt;&lt;div&gt;- admin : Administrador&lt;/div&gt;" vertex="1">
@@ -29,7 +29,7 @@
         <mxCell id="JI9j9kkdny3l4FoRlyRp-333" parent="JI9j9kkdny3l4FoRlyRp-330" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ ReglaReserva(id: Long, anticipacionMinimaHoras: int, duracionMaximaHoras: int, horasAntelacionPenalidad: int, tarifaPenalidad: BigDecimal, admin: Administrador)&lt;br&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;+actualizarReglas(nuevaAnticipacion : int, nuevaDuracion : int)&lt;/span&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="130" width="260" y="128" as="geometry" />
         </mxCell>
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-334" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;" value="Liquidacion" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-334" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;swimlaneFillColor=default;" value="Liquidacion" vertex="1">
           <mxGeometry height="358" width="310" x="1845" y="1040" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-335" parent="JI9j9kkdny3l4FoRlyRp-334" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- id : Long&lt;/div&gt;&lt;div&gt;- inmueble : Inmueble&lt;/div&gt;&lt;div&gt;- periodo : LocalDate&lt;/div&gt;&lt;div&gt;- fechaGeneracion : LocalDate&lt;/div&gt;&lt;div&gt;- fechaLimite : LocalDate&lt;/div&gt;&lt;div&gt;- cuotaAdministracion : BigDecimal&lt;/div&gt;&lt;div&gt;- valorServiciosComunes : BigDecimal&lt;/div&gt;&lt;div&gt;- valorMultas : BigDecimal&lt;/div&gt;&lt;div&gt;- total : BigDecimal&lt;/div&gt;&lt;div&gt;- estado : String&lt;/div&gt;" vertex="1">
@@ -41,7 +41,7 @@
         <mxCell id="JI9j9kkdny3l4FoRlyRp-337" parent="JI9j9kkdny3l4FoRlyRp-334" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Liquidacion(id: Long, inmueble: Inmueble, periodo: LocalDate, fechaLimite: LocalDate, cuotaAdministracion: BigDecimal, valorServiciosComunes: BigDecimal, valorMultas: BigDecimal)&lt;br&gt;+ generarLiquidacion(inmueble: Inmueble) : Liquidacion&lt;br&gt;+ calcularTotal() : BigDecimal&lt;br&gt;+ estaVencida() : Boolean&lt;br&gt;+ marcarEnMora()&lt;br&gt;+ marcarAlDia()" vertex="1">
           <mxGeometry height="173" width="310" y="185" as="geometry" />
         </mxCell>
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-338" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#36393d;" value="Notificacion" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-338" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#36393d;swimlaneFillColor=default;" value="Notificacion" vertex="1">
           <mxGeometry height="260" width="340" x="515" y="1000" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-339" parent="JI9j9kkdny3l4FoRlyRp-338" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br&gt;- usuarios : List&amp;lt;Usuario&amp;gt;&lt;br&gt;- mensaje : String&lt;br&gt;- tipoNotificacion : String&lt;br&gt;- fechaEnvio : LocalDateTime" vertex="1">
@@ -53,7 +53,7 @@
         <mxCell id="JI9j9kkdny3l4FoRlyRp-341" parent="JI9j9kkdny3l4FoRlyRp-338" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Notificacion(id: Long, usuarios: List&lt;Usuario&gt;, mensaje: String, tipoNotificacion: String, fechaEnvio: LocalDateTime)&lt;br&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;+ enviarNotificacion() : Boolean&lt;/span&gt;&lt;/div&gt;+ notificarReserva(reserva: ReservaZonaComun)&lt;br&gt;+ notificarPagoPendiente(inmueble: Inmueble)&lt;div&gt;+ notificarActualizacionDePago(&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;inmueble: Inmueble, usuarios : List&amp;lt;Usuario&amp;gt;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;+ notificarVisita(&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;inmueble: Inmueble&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="142" width="340" y="118" as="geometry" />
         </mxCell>
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-342" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;" value="Pago" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-342" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;swimlaneFillColor=default;" value="Pago" vertex="1">
           <mxGeometry height="320" width="310" x="915" y="1150" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-343" parent="JI9j9kkdny3l4FoRlyRp-342" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div style=&quot;&quot;&gt;- id : Long&lt;br/&gt;- inmueble : Inmueble&lt;br/&gt;- monto : BigDecimal&lt;br/&gt;- fechaPago : LocalDate&lt;br/&gt;- concepto : String&lt;br/&gt;- metodoPago : String&lt;br/&gt;- estado : String&lt;br/&gt;- referencia : String&lt;/div&gt;" vertex="1">
@@ -65,7 +65,7 @@
         <mxCell id="JI9j9kkdny3l4FoRlyRp-345" parent="JI9j9kkdny3l4FoRlyRp-342" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Pago(id: Long, inmueble: Inmueble, monto: BigDecimal, fechaPago: LocalDate, concepto: String, metodoPago: String, referencia: String)&lt;br&gt;+ registrarPago(inmueble : Inmueble) : Pago&lt;br&gt;+ validarMonto(liquidacion : Liquidacion) : Boolean&lt;br&gt;+ estaAprobado(pago : Pago) : Boolean&lt;br&gt;+ anularPago()&lt;br&gt;+ generarComprobante() : String&lt;div&gt;+ actualizarEstado(pago : Pago) Liquidacion&lt;/div&gt;" vertex="1">
           <mxGeometry height="162" width="310" y="158" as="geometry" />
         </mxCell>
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-346" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;" value="Rompimiento" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-346" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;swimlaneFillColor=default;" value="Rompimiento" vertex="1">
           <mxGeometry height="250" width="240" x="215" y="600" as="geometry">
             <mxRectangle height="30" width="120" x="370" y="360" as="alternateBounds" />
           </mxGeometry>
@@ -79,7 +79,7 @@
         <mxCell id="JI9j9kkdny3l4FoRlyRp-349" parent="JI9j9kkdny3l4FoRlyRp-346" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Rompimiento(id: Long, zonaComun: ZonaComun, reglaReserva: ReglaReserva, fechaAplicacion: LocalDate, observaciones: String)&lt;br&gt;+ aplicarRegla ()&lt;div&gt;+ inactivarRegla()&amp;nbsp;&lt;/div&gt;" vertex="1">
           <mxGeometry height="112" width="240" y="138" as="geometry" />
         </mxCell>
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-350" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;" value="ZonaComun" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-350" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;swimlaneFillColor=default;" value="ZonaComun" vertex="1">
           <mxGeometry height="230" width="250" x="575" y="609" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-351" parent="JI9j9kkdny3l4FoRlyRp-350" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- id : Long&lt;/div&gt;&lt;div&gt;- nombreZonaComun : String&lt;div&gt;- capacidad : int&lt;/div&gt;&lt;div&gt;&lt;div&gt;- horaInicio : LocalDateTime&lt;/div&gt;&lt;div&gt;- horaFin : LocalDateTime&lt;/div&gt;&lt;div&gt;- isActive: Boolean&lt;/div&gt;&lt;div&gt;- reglasAsignadas : List&amp;lt;&lt;span style=&quot;text-align: center; background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;Rompimiento&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
@@ -111,7 +111,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-358" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;" value="Usuario" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-358" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;swimlaneFillColor=default;" value="Usuario" vertex="1">
           <mxGeometry height="490" width="270" x="1595" y="190" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-359" parent="JI9j9kkdny3l4FoRlyRp-358" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- id: Long&lt;/div&gt;&lt;div&gt;- identificacion: Long&lt;/div&gt;&lt;div&gt;- nombreCompleto: String&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: initial;&quot;&gt;- fechaNacimiento: LocalDate&lt;/span&gt;&lt;/div&gt;&lt;div&gt;- correoElectronico: String&lt;/div&gt;&lt;div&gt;- contrasena: PasswordEncoder&lt;/div&gt;&lt;div&gt;- fechaCreacionCuenta: LocalDate&lt;/div&gt;&lt;div&gt;- tipoUsuario: String&lt;/div&gt;&lt;div&gt;- token: String&lt;/div&gt;&lt;div&gt;- active: Boolean&lt;/div&gt;&lt;div&gt;- notificacionLeida : Boolean&lt;/div&gt;&lt;div&gt;- preferenciasNotificacion : List&amp;lt;String&amp;gt;&lt;/div&gt;" vertex="1">
@@ -131,7 +131,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-364" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;" value="Administrador" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-364" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;swimlaneFillColor=default;" value="Administrador" vertex="1">
           <mxGeometry height="363" width="360" x="970" y="90" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-365" parent="JI9j9kkdny3l4FoRlyRp-364" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- inicioContrato: LocalDate&lt;/div&gt;&lt;div&gt;- venceContrato: LocalDate&amp;nbsp;&lt;/div&gt;" vertex="1">
@@ -154,7 +154,7 @@
         <mxCell id="JI9j9kkdny3l4FoRlyRp-370" edge="1" parent="1" source="JI9j9kkdny3l4FoRlyRp-371" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;endArrow=block;endFill=0;dashed=1;endSize=10;exitX=1;exitY=0.051672;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" target="JI9j9kkdny3l4FoRlyRp-398">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-371" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;" value="Residente" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-371" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;swimlaneFillColor=default;" value="Residente" vertex="1">
           <mxGeometry height="329" width="330" x="855" y="490" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-372" parent="JI9j9kkdny3l4FoRlyRp-371" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- inmueble: Inmueble&amp;nbsp;&lt;/div&gt;&lt;div&gt;- invitados: List&amp;lt;&lt;span style=&quot;text-align: center; background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;UsuarioAutorizado&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;- auto : Auto&lt;/span&gt;&lt;/div&gt;" vertex="1">
@@ -175,7 +175,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-376" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;" value="Vigilante" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-376" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;swimlaneFillColor=default;" value="Vigilante" vertex="1">
           <mxGeometry height="232" width="320" x="1945" y="290" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-377" parent="JI9j9kkdny3l4FoRlyRp-376" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- inicioContrato: LocalDate&lt;/div&gt;&lt;div&gt;- venceContrato: LocalDate&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/div&gt;" vertex="1">
@@ -212,7 +212,7 @@
         <mxCell id="JI9j9kkdny3l4FoRlyRp-384" edge="1" parent="1" source="JI9j9kkdny3l4FoRlyRp-385" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;dashed=1;endArrow=block;endFill=0;endSize=10;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.441176;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" target="JI9j9kkdny3l4FoRlyRp-398">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-385" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;" value="UsuarioAutorizado" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-385" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;swimlaneFillColor=default;" value="UsuarioAutorizado" vertex="1">
           <mxGeometry height="183" width="270" x="1285" y="560" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-386" parent="JI9j9kkdny3l4FoRlyRp-385" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- venceAutorizacion : LocalDate" vertex="1">
@@ -236,7 +236,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-391" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;" value="ReservaZonaComun" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-391" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;swimlaneFillColor=default;" value="ReservaZonaComun" vertex="1">
           <mxGeometry height="223" width="300" x="190" y="880" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-392" parent="JI9j9kkdny3l4FoRlyRp-391" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;- id : Long&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;- duenoReserva: Residente&lt;/span&gt;&lt;/div&gt;&lt;div&gt;- zonaComun: ZonaComun&lt;/div&gt;" vertex="1">
@@ -262,11 +262,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-397" edge="1" parent="1" source="JI9j9kkdny3l4FoRlyRp-371" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;endArrow=block;endFill=0;endSize=10;exitX=0.833333;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.573333;entryDx=0;entryDy=0;entryPerimeter=0;" target="JI9j9kkdny3l4FoRlyRp-358">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1130" y="448" />
-            </Array>
-          </mxGeometry>
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-398" parent="1" style="html=1;whiteSpace=wrap;fillColor=#ffcc99;strokeColor=#36393d;" value="&lt;span style=&quot;font-weight: 700;&quot;&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt; NoAdmin&lt;/span&gt;" vertex="1">
           <mxGeometry height="50" width="170" x="1345" y="482" as="geometry" />
@@ -288,10 +284,10 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-402" edge="1" parent="1" source="JI9j9kkdny3l4FoRlyRp-326" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;endArrow=diamondThin;endFill=0;endSize=15;exitX=1;exitY=0.607143;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.822222;entryDx=0;entryDy=0;entryPerimeter=0;" target="JI9j9kkdny3l4FoRlyRp-358">
-          <mxGeometry relative="1" as="geometry">
+          <mxGeometry relative="1" x="0.0708" as="geometry">
             <Array as="points">
               <mxPoint x="1905" y="1000" />
-              <mxPoint x="1905" y="560" />
+              <mxPoint x="1905" y="592.9" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -331,7 +327,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-411" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#E5CCFF;strokeColor=#000000;" value="Paqueadero" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-411" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#E5CCFF;strokeColor=#000000;swimlaneFillColor=default;" value="Paqueadero" vertex="1">
           <mxGeometry height="170" width="230" x="1285" y="1189" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-412" parent="JI9j9kkdny3l4FoRlyRp-411" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br/&gt;- inmueble : Inmueble&lt;br/&gt;- valorMensual : BigDecimal" vertex="1">
@@ -351,7 +347,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-417" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#E5CCFF;strokeColor=#000000;" value="Auto" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-417" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#E5CCFF;strokeColor=#000000;swimlaneFillColor=default;" value="Auto" vertex="1">
           <mxGeometry height="190" width="240" x="1545" y="770" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-418" parent="JI9j9kkdny3l4FoRlyRp-417" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;- id : Long&lt;/div&gt;&lt;div&gt;- dueno : Residente&lt;/div&gt;&lt;div&gt;- placa: Long&lt;br&gt;&lt;div&gt;- parqueadero: Parqueadero&lt;/div&gt;&lt;/div&gt;" vertex="1">
@@ -394,7 +390,7 @@
         <mxCell id="JI9j9kkdny3l4FoRlyRp-427" edge="1" parent="1" source="JI9j9kkdny3l4FoRlyRp-326" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;endSize=10;exitX=0;exitY=0.75;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.153846;entryDx=0;entryDy=0;entryPerimeter=0;" target="JI9j9kkdny3l4FoRlyRp-338">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="JI9j9kkdny3l4FoRlyRp-428" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;" value="PasarelaPago" vertex="1">
+        <mxCell id="JI9j9kkdny3l4FoRlyRp-428" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;swimlaneFillColor=default;" value="PasarelaPago" vertex="1">
           <mxGeometry height="270" width="400" x="1345" y="1379" as="geometry" />
         </mxCell>
         <mxCell id="JI9j9kkdny3l4FoRlyRp-429" parent="JI9j9kkdny3l4FoRlyRp-428" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br&gt;- nombrePasarela : String&lt;br&gt;- urlApi : String&lt;br&gt;- apiKey : String&lt;br&gt;- estado : String" vertex="1">
