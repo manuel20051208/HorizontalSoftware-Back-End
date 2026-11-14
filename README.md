@@ -45,8 +45,6 @@ Al arrancar, Flyway crea las tablas y se crea un administrador semilla (`SEED_AD
 
 ### Paquetes
 
-![Diagrama de paquetes](Diagramas/Paquetes/paquetes-backend.svg)
-
 <details>
 <summary><b>Para qué es cada paquete</b></summary>
 
@@ -67,17 +65,6 @@ Al arrancar, Flyway crea las tablas y se crea un administrador semilla (`SEED_AD
 | `model` | Dominio |
 | `dto/request`, `dto/response` | Entrada y salida de la API |
 | `exception` | Errores uniformes |
-
-</details>
-
-<details>
-<summary><b>Arquitectura general</b> (2)</summary>
-
-![Arquitectura del backend](Diagramas/Arquitectura/backend-horizontal.svg)
-
-**Versión v1**
-
-![Arquitectura del backend v1](Diagramas/Arquitectura/backend-v1.svg)
 
 </details>
 
@@ -271,7 +258,7 @@ Usa `postgres:16-alpine`: la v18 cambió la ruta de datos y rompe el volumen.
 <details>
 <summary>Editar los diagramas</summary>
 
-- **Secuencia, arquitectura y paquetes:** abre el `.html` de archify → **Export → SVG (claro)** y guárdalo al lado con el mismo nombre. Las fuentes están en [`Diagramas/_fuente`](Diagramas/_fuente).
+- **Secuencia:** se generan con `python Diagramas/_fuente/gen_secuencia_casos_uso.py`, que escribe el `.xml` en [`Diagramas/_fuente`](Diagramas/_fuente) y un `.svg` por diagrama en `Diagramas/Secuencia`.
 - **Casos de uso, clases y componentes:** abre el `.xml` / `.drawio.svg` en [draw.io](https://app.diagrams.net) → **Archivo → Exportar como → SVG**.
 
 </details>
