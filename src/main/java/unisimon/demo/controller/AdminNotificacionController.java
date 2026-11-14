@@ -1,6 +1,7 @@
 package unisimon.demo.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,13 +20,10 @@ import unisimon.demo.service.NotificacionService;
 /** Notificaciones enviadas por el administrador, su confirmacion de lectura y las incidencias de porteria. */
 @RestController
 @RequestMapping("/api/admin/notificaciones")
+@RequiredArgsConstructor
 public class AdminNotificacionController {
 
     private final NotificacionService notificaciones;
-
-    public AdminNotificacionController(NotificacionService notificaciones) {
-        this.notificaciones = notificaciones;
-    }
 
     @SoloAdministrador
     @PostMapping

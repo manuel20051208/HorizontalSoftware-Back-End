@@ -7,12 +7,12 @@ import unisimon.demo.repository.AutoRepository.AutoView;
 import unisimon.demo.repository.AutoRepository.DuenoView;
 import unisimon.demo.repository.InvitadoRepository.AnfitrionView;
 import unisimon.demo.repository.InvitadoRepository.InvitadoView;
+import lombok.RequiredArgsConstructor;
+import lombok.AccessLevel;
 
 /** Proyecciones de invitados y autos -> respuestas del API. "vigente" se pregunta al dominio. */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class InvitadoMapper {
-
-    private InvitadoMapper() {
-    }
 
     public static InvitadoResponses.Invitado invitado(InvitadoView v) {
         UsuarioAutorizado dominio = Hidratador.invitado(v);

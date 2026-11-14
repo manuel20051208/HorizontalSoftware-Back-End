@@ -1,6 +1,7 @@
 package unisimon.demo.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,13 +24,10 @@ import unisimon.demo.service.VigilanteService;
 /** Panel de porteria. */
 @RestController
 @RequestMapping("/api/vigilante")
+@RequiredArgsConstructor
 public class VigilanteController {
 
     private final VigilanteService vigilante;
-
-    public VigilanteController(VigilanteService vigilante) {
-        this.vigilante = vigilante;
-    }
 
     @SoloVigilante
     @GetMapping("/reservas")

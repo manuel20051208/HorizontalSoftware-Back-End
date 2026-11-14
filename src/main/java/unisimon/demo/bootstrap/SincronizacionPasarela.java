@@ -1,5 +1,6 @@
 package unisimon.demo.bootstrap;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -20,17 +21,13 @@ import java.util.List;
  * No detiene la aplicacion: el resto del sistema funciona y los pagos responden 409 hasta corregirlos.
  */
 @Component
+@RequiredArgsConstructor
 public class SincronizacionPasarela implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(SincronizacionPasarela.class);
 
     private final PasarelaProperties config;
     private final PasarelaPagoRepository pasarelas;
-
-    public SincronizacionPasarela(PasarelaProperties config, PasarelaPagoRepository pasarelas) {
-        this.config = config;
-        this.pasarelas = pasarelas;
-    }
 
     @Override
     @Transactional

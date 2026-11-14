@@ -8,6 +8,8 @@ import java.util.HexFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import lombok.AccessLevel;
 
 /**
  * Verificacion de la firma de los eventos (webhook) de Wompi.
@@ -15,10 +17,8 @@ import java.util.Map;
  * checksum = SHA-256( valores de signature.properties (en orden, leidos dentro de "data") + timestamp + secreto de eventos ).
  * Sin el secreto de eventos nadie puede fabricar un checksum valido.
  */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FirmaEventosWompi {
-
-    private FirmaEventosWompi() {
-    }
 
     public static boolean esValida(Map<String, Object> evento, String secretoEventos) {
         if (evento == null || secretoEventos == null || secretoEventos.isBlank()) {

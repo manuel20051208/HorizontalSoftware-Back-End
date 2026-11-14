@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -27,18 +28,12 @@ import java.util.List;
 
 /** Reglas de reserva: la validacion de valores la hace {@link ReglaReserva}, la activacion {@link Rompimiento}. */
 @Service
+@RequiredArgsConstructor
 public class ReglaReservaServiceImpl implements ReglaReservaService {
 
     private final ReglaReservaRepository reglas;
     private final RompimientoRepository rompimientos;
     private final ZonaComunRepository zonas;
-
-    public ReglaReservaServiceImpl(ReglaReservaRepository reglas, RompimientoRepository rompimientos,
-                                   ZonaComunRepository zonas) {
-        this.reglas = reglas;
-        this.rompimientos = rompimientos;
-        this.zonas = zonas;
-    }
 
     @Override
     @Transactional

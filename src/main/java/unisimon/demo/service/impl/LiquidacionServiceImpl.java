@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ import java.util.Set;
  * {@link Liquidacion}; aqui solo se orquesta y se persiste con UPDATE por columna.
  */
 @Service
+@RequiredArgsConstructor
 public class LiquidacionServiceImpl implements LiquidacionService {
 
     /** Dia del mes en que vence por defecto la administracion. */
@@ -42,13 +44,6 @@ public class LiquidacionServiceImpl implements LiquidacionService {
     private final LiquidacionRepository liquidaciones;
     private final InmuebleRepository inmuebles;
     private final ParqueaderoRepository parqueaderos;
-
-    public LiquidacionServiceImpl(LiquidacionRepository liquidaciones, InmuebleRepository inmuebles,
-                                  ParqueaderoRepository parqueaderos) {
-        this.liquidaciones = liquidaciones;
-        this.inmuebles = inmuebles;
-        this.parqueaderos = parqueaderos;
-    }
 
     @Override
     @Transactional

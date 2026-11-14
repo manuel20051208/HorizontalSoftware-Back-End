@@ -3,12 +3,12 @@ package unisimon.demo.dto.response;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /** Respuestas de la porteria. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class VigilanteResponses {
-
-    private VigilanteResponses() {
-    }
 
     /** horaInicio/horaFin: horario de la zona. reservaHasta: cuando termina la reserva que da el acceso. */
     public record ZonaPermitida(Long zonaComunId, String nombreZonaComun, LocalTime horaInicio, LocalTime horaFin,

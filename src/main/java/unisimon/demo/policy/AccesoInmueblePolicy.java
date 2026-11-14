@@ -1,5 +1,6 @@
 package unisimon.demo.policy;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import unisimon.demo.exception.ProhibidoException;
 import unisimon.demo.model.Usuario;
@@ -9,13 +10,10 @@ import unisimon.demo.security.UsuarioAutenticado;
 
 /** Regla: la informacion de un inmueble solo la ve el administrador o los residentes de ese inmueble. */
 @Component
+@RequiredArgsConstructor
 public class AccesoInmueblePolicy {
 
     private final ResidenteRepository residentes;
-
-    public AccesoInmueblePolicy(ResidenteRepository residentes) {
-        this.residentes = residentes;
-    }
 
     public void verificar(UsuarioAutenticado usuario, Long inmuebleId) {
         if (Usuario.ADMINISTRADOR.equals(usuario.rol())) {

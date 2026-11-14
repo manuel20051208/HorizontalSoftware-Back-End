@@ -1,5 +1,6 @@
 package unisimon.demo.bootstrap;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
  */
 @Component
 @ConditionalOnProperty(name = "app.seed.enabled", havingValue = "true")
+@RequiredArgsConstructor
 public class DatosIniciales implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DatosIniciales.class);
@@ -31,15 +33,6 @@ public class DatosIniciales implements ApplicationRunner {
     private final UsuarioPersistidor persistidor;
     private final PasswordEncoder codificador;
     private final Clock reloj;
-
-    public DatosIniciales(SeedProperties semilla, UsuarioRepository usuarios, UsuarioPersistidor persistidor,
-                          PasswordEncoder codificador, Clock reloj) {
-        this.semilla = semilla;
-        this.usuarios = usuarios;
-        this.persistidor = persistidor;
-        this.codificador = codificador;
-        this.reloj = reloj;
-    }
 
     /** La pasarela ya no se siembra aqui: la sincroniza {@link SincronizacionPasarela} con el .env en cada arranque. */
     @Override

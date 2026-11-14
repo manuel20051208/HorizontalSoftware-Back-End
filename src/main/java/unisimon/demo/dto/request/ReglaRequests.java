@@ -5,15 +5,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 /** Cuerpos de entrada de reglas de reserva. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ReglaRequests {
-
-    private ReglaRequests() {
-    }
 
     public record CrearRegla(@NotNull @PositiveOrZero Integer anticipacionMinimaHoras,
                              @NotNull @Positive Integer duracionMaximaHoras,

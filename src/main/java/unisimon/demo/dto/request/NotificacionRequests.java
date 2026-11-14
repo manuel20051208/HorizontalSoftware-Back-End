@@ -2,14 +2,14 @@ package unisimon.demo.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 /** Cuerpos de entrada de notificaciones. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class NotificacionRequests {
-
-    private NotificacionRequests() {
-    }
 
     /**
      * Destinatarios: usuarioIds, o inmuebleId (sus residentes activos). Si no se envia ninguno, la reciben

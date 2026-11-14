@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unisimon.demo.dto.request.NotificacionRequests;
@@ -38,6 +39,7 @@ import java.util.Objects;
 
 /** Porteria: consulta de reservas, verificacion de acceso a zonas e ingreso de invitados. */
 @Service
+@RequiredArgsConstructor
 public class VigilanteServiceImpl implements VigilanteService {
 
     private final ReservaZonaComunRepository reservas;
@@ -45,15 +47,6 @@ public class VigilanteServiceImpl implements VigilanteService {
     private final UsuarioRepository usuarios;
     private final NotificacionService notificaciones;
     private final Clock reloj;
-
-    public VigilanteServiceImpl(ReservaZonaComunRepository reservas, InvitadoRepository invitados,
-                                UsuarioRepository usuarios, NotificacionService notificaciones, Clock reloj) {
-        this.reservas = reservas;
-        this.invitados = invitados;
-        this.usuarios = usuarios;
-        this.notificaciones = notificaciones;
-        this.reloj = reloj;
-    }
 
     @Override
     @Transactional(readOnly = true)

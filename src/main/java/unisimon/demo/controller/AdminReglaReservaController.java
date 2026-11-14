@@ -1,6 +1,7 @@
 package unisimon.demo.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -22,13 +23,10 @@ import unisimon.demo.service.ReglaReservaService;
 /** Reglas de reserva y su aplicacion a zonas. */
 @RestController
 @RequestMapping("/api/admin")
+@RequiredArgsConstructor
 public class AdminReglaReservaController {
 
     private final ReglaReservaService reglas;
-
-    public AdminReglaReservaController(ReglaReservaService reglas) {
-        this.reglas = reglas;
-    }
 
     @SoloAdministrador
     @PostMapping("/reglas-reserva")

@@ -3,15 +3,15 @@ package unisimon.demo.dto.response;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /**
  * Respuestas sobre inmuebles. estadoPago: AL_DIA, POR_VENCER, VENCIDA o SIN_LIQUIDACION.
  * saldoPendiente = suma de todas las liquidaciones que el inmueble aun no ha pagado.
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class InmuebleResponses {
-
-    private InmuebleResponses() {
-    }
 
     public record Resumen(Long id, String direccionInmueble, Boolean isActive, String estadoPago,
                           BigDecimal saldoPendiente, LocalDate fechaLimitePendiente, BigDecimal valorParqueadero,

@@ -1,6 +1,7 @@
 package unisimon.demo.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,13 +27,10 @@ import java.time.LocalDateTime;
 /** Zonas comunes disponibles para el residente y sus reservas. */
 @RestController
 @RequestMapping("/api/residente")
+@RequiredArgsConstructor
 public class ResidenteReservaController {
 
     private final ReservaZonaComunService reservas;
-
-    public ResidenteReservaController(ReservaZonaComunService reservas) {
-        this.reservas = reservas;
-    }
 
     @SoloResidente
     @GetMapping("/zonas-comunes")

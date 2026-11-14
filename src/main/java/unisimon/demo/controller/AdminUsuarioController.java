@@ -1,6 +1,7 @@
 package unisimon.demo.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,13 +22,10 @@ import unisimon.demo.service.UsuarioGestionService;
 /** El administrador crea cuentas y autoriza o bloquea usuarios. */
 @RestController
 @RequestMapping("/api/admin/usuarios")
+@RequiredArgsConstructor
 public class AdminUsuarioController {
 
     private final UsuarioGestionService usuarios;
-
-    public AdminUsuarioController(UsuarioGestionService usuarios) {
-        this.usuarios = usuarios;
-    }
 
     @SoloAdministrador
     @PostMapping

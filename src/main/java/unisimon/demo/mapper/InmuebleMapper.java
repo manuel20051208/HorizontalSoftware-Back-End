@@ -5,15 +5,15 @@ import unisimon.demo.dto.response.LiquidacionResponses;
 import unisimon.demo.dto.response.UsuarioResponses;
 import unisimon.demo.dto.response.ZonaResponses;
 import unisimon.demo.repository.InmuebleRepository.InmuebleResumenView;
+import lombok.RequiredArgsConstructor;
+import lombok.AccessLevel;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 /** Proyecciones de inmuebles -> respuestas del API. El estado de pago lo decide EstadoPagoPolicy, no el mapper. */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class InmuebleMapper {
-
-    private InmuebleMapper() {
-    }
 
     public static InmuebleResponses.Resumen resumen(InmuebleResumenView v, String estadoPago) {
         return new InmuebleResponses.Resumen(v.getId(), v.getDireccionInmueble(), v.getIsActive(), estadoPago,

@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unisimon.demo.dto.request.NotificacionRequests;
@@ -36,6 +37,7 @@ import java.util.Optional;
  * necesarios y se guarda el resultado.
  */
 @Service
+@RequiredArgsConstructor
 public class NotificacionServiceImpl implements NotificacionService {
 
     static final String TIPO_GENERAL = "GENERAL";
@@ -45,16 +47,6 @@ public class NotificacionServiceImpl implements NotificacionService {
     private final InmuebleRepository inmuebles;
     private final LiquidacionRepository liquidaciones;
     private final ReservaZonaComunRepository reservas;
-
-    public NotificacionServiceImpl(NotificacionRepository notificaciones, UsuarioRepository usuarios,
-                                   InmuebleRepository inmuebles, LiquidacionRepository liquidaciones,
-                                   ReservaZonaComunRepository reservas) {
-        this.notificaciones = notificaciones;
-        this.usuarios = usuarios;
-        this.inmuebles = inmuebles;
-        this.liquidaciones = liquidaciones;
-        this.reservas = reservas;
-    }
 
     @Override
     @Transactional

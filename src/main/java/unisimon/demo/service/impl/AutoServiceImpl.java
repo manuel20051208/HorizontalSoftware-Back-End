@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unisimon.demo.dto.request.AutoRequests;
@@ -21,20 +22,13 @@ import unisimon.demo.service.AutoService;
 
 /** Autos de los residentes (uno por residente) y consulta de duenos. */
 @Service
+@RequiredArgsConstructor
 public class AutoServiceImpl implements AutoService {
 
     private final AutoRepository autos;
     private final ParqueaderoRepository parqueaderos;
     private final ResidenteRepository residentes;
     private final InmuebleRepository inmuebles;
-
-    public AutoServiceImpl(AutoRepository autos, ParqueaderoRepository parqueaderos, ResidenteRepository residentes,
-                           InmuebleRepository inmuebles) {
-        this.autos = autos;
-        this.parqueaderos = parqueaderos;
-        this.residentes = residentes;
-        this.inmuebles = inmuebles;
-    }
 
     @Override
     @Transactional

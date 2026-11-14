@@ -1,6 +1,7 @@
 package unisimon.demo.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,15 +21,11 @@ import unisimon.demo.service.NotificacionService;
 /** Notificaciones del usuario con sesion iniciada (campana del front-end). */
 @RestController
 @RequestMapping("/api/notificaciones")
+@RequiredArgsConstructor
 public class NotificacionController {
 
     private final NotificacionService notificaciones;
     private final CuentaService cuentas;
-
-    public NotificacionController(NotificacionService notificaciones, CuentaService cuentas) {
-        this.notificaciones = notificaciones;
-        this.cuentas = cuentas;
-    }
 
     @Autenticado
     @GetMapping

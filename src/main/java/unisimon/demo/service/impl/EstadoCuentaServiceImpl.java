@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unisimon.demo.dto.response.InmuebleResponses;
@@ -19,20 +20,13 @@ import unisimon.demo.service.EstadoCuentaService;
 
 /** Estado de cuenta del residente: saldo, estado de pago y paz y salvo. */
 @Service
+@RequiredArgsConstructor
 public class EstadoCuentaServiceImpl implements EstadoCuentaService {
 
     private final ResidenteRepository residentes;
     private final InmuebleRepository inmuebles;
     private final LiquidacionRepository liquidaciones;
     private final EstadoPagoPolicy estadoPago;
-
-    public EstadoCuentaServiceImpl(ResidenteRepository residentes, InmuebleRepository inmuebles,
-                                   LiquidacionRepository liquidaciones, EstadoPagoPolicy estadoPago) {
-        this.residentes = residentes;
-        this.inmuebles = inmuebles;
-        this.liquidaciones = liquidaciones;
-        this.estadoPago = estadoPago;
-    }
 
     @Override
     @Transactional(readOnly = true)

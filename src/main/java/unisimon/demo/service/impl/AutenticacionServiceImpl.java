@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import unisimon.demo.service.AutenticacionService;
  * rotar (cada refresh invalida el anterior) y revocar (cerrar sesion).
  */
 @Service
+@RequiredArgsConstructor
 public class AutenticacionServiceImpl implements AutenticacionService {
 
     private static final String CREDENCIALES_INVALIDAS = "Correo o contrasena incorrectos";
@@ -29,12 +31,6 @@ public class AutenticacionServiceImpl implements AutenticacionService {
     private final UsuarioRepository usuarios;
     private final PasswordEncoder codificador;
     private final TokenService tokens;
-
-    public AutenticacionServiceImpl(UsuarioRepository usuarios, PasswordEncoder codificador, TokenService tokens) {
-        this.usuarios = usuarios;
-        this.codificador = codificador;
-        this.tokens = tokens;
-    }
 
     @Override
     @Transactional

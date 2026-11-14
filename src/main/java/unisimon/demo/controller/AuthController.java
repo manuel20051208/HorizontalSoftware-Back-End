@@ -1,6 +1,7 @@
 package unisimon.demo.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,15 +24,11 @@ import java.util.Map;
 /** Sesion (OAuth2: access + refresh token) y cuenta del propio usuario. */
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AutenticacionService autenticacion;
     private final CuentaService cuentas;
-
-    public AuthController(AutenticacionService autenticacion, CuentaService cuentas) {
-        this.autenticacion = autenticacion;
-        this.cuentas = cuentas;
-    }
 
     @Publico
     @PostMapping("/login")

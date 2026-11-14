@@ -130,6 +130,168 @@ Al arrancar, Flyway crea las tablas y se crea un administrador semilla (`SEED_AD
 
 </details>
 
+### Diagramas de secuencia por caso de uso
+
+Un diagrama por caso de uso: los participantes son clases del diagrama de clases y los mensajes son sus operaciones, con los nombres y parámetros del diagrama. Se generan con `Diagramas/_fuente/gen_secuencia_casos_uso.py`.
+
+<details>
+<summary><b>Cuenta y sesión</b> (6)</summary>
+
+**Iniciar sesión**
+
+![Secuencia: Iniciar sesión](Diagramas/Secuencia/iniciar-sesion.svg)
+
+**Activar cuenta creada**
+
+![Secuencia: Activar cuenta creada](Diagramas/Secuencia/activar-cuenta-creada.svg)
+
+**Recuperar contraseña**
+
+![Secuencia: Recuperar contraseña](Diagramas/Secuencia/recuperar-contrasena.svg)
+
+**Cambiar contraseña**
+
+![Secuencia: Cambiar contraseña](Diagramas/Secuencia/cambiar-contrasena.svg)
+
+**Gestionar cuentas de usuario**
+
+![Secuencia: Gestionar cuentas de usuario](Diagramas/Secuencia/gestionar-cuentas-de-usuario.svg)
+
+**Configurar preferencias de notificación**
+
+![Secuencia: Configurar preferencias de notificación](Diagramas/Secuencia/configurar-preferencias-de-notificacion.svg)
+
+</details>
+
+<details>
+<summary><b>Configuración del conjunto</b> (4)</summary>
+
+**Configurar multas**
+
+![Secuencia: Configurar multas](Diagramas/Secuencia/configurar-multas.svg)
+
+**Configurar tarifas**
+
+![Secuencia: Configurar tarifas](Diagramas/Secuencia/configurar-tarifas.svg)
+
+**Configurar zonas comunes**
+
+![Secuencia: Configurar zonas comunes](Diagramas/Secuencia/configurar-zonas-comunes.svg)
+
+**Configurar reglas de reserva**
+
+![Secuencia: Configurar reglas de reserva](Diagramas/Secuencia/configurar-reglas-de-reserva.svg)
+
+</details>
+
+<details>
+<summary><b>Pagos y liquidaciones</b> (5)</summary>
+
+**Consultar estado de cuenta e historial de pagos**
+
+![Secuencia: Consultar estado de cuenta e historial de pagos](Diagramas/Secuencia/consultar-estado-de-cuenta-e-historial-de-pagos.svg)
+
+**Realizar pagos**
+
+![Secuencia: Realizar pagos](Diagramas/Secuencia/realizar-pagos.svg)
+
+**Conciliar pagos de administración**
+
+![Secuencia: Conciliar pagos de administración](Diagramas/Secuencia/conciliar-pagos-de-administracion.svg)
+
+**Generar liquidación mensual**
+
+![Secuencia: Generar liquidación mensual](Diagramas/Secuencia/generar-liquidacion-mensual.svg)
+
+**Reembolsar pago**
+
+![Secuencia: Reembolsar pago](Diagramas/Secuencia/reembolsar-pago.svg)
+
+</details>
+
+<details>
+<summary><b>Comunicados y notificaciones</b> (7)</summary>
+
+**Consultar comunicado oficial**
+
+![Secuencia: Consultar comunicado oficial](Diagramas/Secuencia/consultar-comunicado-oficial.svg)
+
+**Publicar comunicado oficial**
+
+![Secuencia: Publicar comunicado oficial](Diagramas/Secuencia/publicar-comunicado-oficial.svg)
+
+**Consultar confirmación de lectura**
+
+![Secuencia: Consultar confirmación de lectura](Diagramas/Secuencia/consultar-confirmacion-de-lectura.svg)
+
+**Consultar notificaciones**
+
+![Secuencia: Consultar notificaciones](Diagramas/Secuencia/consultar-notificaciones.svg)
+
+**Enviar notificación**
+
+![Secuencia: Enviar notificación](Diagramas/Secuencia/enviar-notificacion.svg)
+
+**Enviar notificaciones de vencimiento y mora**
+
+![Secuencia: Enviar notificaciones de vencimiento y mora](Diagramas/Secuencia/enviar-notificaciones-de-vencimiento-y-mora.svg)
+
+**Enviar recordatorio de reserva próxima**
+
+![Secuencia: Enviar recordatorio de reserva próxima](Diagramas/Secuencia/enviar-recordatorio-de-reserva-proxima.svg)
+
+</details>
+
+<details>
+<summary><b>Zonas comunes y reservas</b> (4)</summary>
+
+**Consultar calendario de disponibilidad**
+
+![Secuencia: Consultar calendario de disponibilidad](Diagramas/Secuencia/consultar-calendario-de-disponibilidad.svg)
+
+**Reservar zona común**
+
+![Secuencia: Reservar zona común](Diagramas/Secuencia/reservar-zona-comun.svg)
+
+**Cancelar reserva**
+
+![Secuencia: Cancelar reserva](Diagramas/Secuencia/cancelar-reserva.svg)
+
+**Verificar acceso a zona común**
+
+![Secuencia: Verificar acceso a zona común](Diagramas/Secuencia/verificar-acceso-a-zona-comun.svg)
+
+</details>
+
+<details>
+<summary><b>Portería, incidencias y reportes</b> (6)</summary>
+
+**Consultar dueño del carro**
+
+![Secuencia: Consultar dueño del carro](Diagramas/Secuencia/consultar-dueno-del-carro.svg)
+
+**Consultar relacionados al inmueble**
+
+![Secuencia: Consultar relacionados al inmueble](Diagramas/Secuencia/consultar-relacionados-al-inmueble.svg)
+
+**Consultar parqueaderos**
+
+![Secuencia: Consultar parqueaderos](Diagramas/Secuencia/consultar-parqueaderos.svg)
+
+**Registrar incidencia operativa**
+
+![Secuencia: Registrar incidencia operativa](Diagramas/Secuencia/registrar-incidencia-operativa.svg)
+
+**Consultar incidencias operativas**
+
+![Secuencia: Consultar incidencias operativas](Diagramas/Secuencia/consultar-incidencias-operativas.svg)
+
+**Generar reportes consolidados**
+
+![Secuencia: Generar reportes consolidados](Diagramas/Secuencia/generar-reportes-consolidados.svg)
+
+</details>
+
 ## Configuración (.env)
 
 | Variable | Uso |

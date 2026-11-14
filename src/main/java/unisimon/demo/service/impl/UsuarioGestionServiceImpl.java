@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ import java.util.Set;
 
 /** Altas, consulta y bloqueo de cuentas por el administrador. */
 @Service
+@RequiredArgsConstructor
 public class UsuarioGestionServiceImpl implements UsuarioGestionService {
 
     private static final Set<String> TIPOS = Set.of(Usuario.ADMINISTRADOR, Usuario.RESIDENTE, Usuario.VIGILANTE,
@@ -38,17 +40,6 @@ public class UsuarioGestionServiceImpl implements UsuarioGestionService {
     private final UsuarioPersistidor persistidor;
     private final PasswordEncoder codificador;
     private final PoliticaContrasena politica;
-
-    public UsuarioGestionServiceImpl(UsuarioRepository usuarios, InmuebleRepository inmuebles, UsuarioFactory fabrica,
-                                     UsuarioPersistidor persistidor, PasswordEncoder codificador,
-                                     PoliticaContrasena politica) {
-        this.usuarios = usuarios;
-        this.inmuebles = inmuebles;
-        this.fabrica = fabrica;
-        this.persistidor = persistidor;
-        this.codificador = codificador;
-        this.politica = politica;
-    }
 
     @Override
     @Transactional

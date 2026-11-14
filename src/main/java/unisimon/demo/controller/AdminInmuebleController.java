@@ -1,6 +1,7 @@
 package unisimon.demo.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +32,7 @@ import java.util.List;
 /** Inmuebles y todo lo que el administrador configura sobre uno de ellos. */
 @RestController
 @RequestMapping("/api/admin/inmuebles")
+@RequiredArgsConstructor
 public class AdminInmuebleController {
 
     private final InmuebleService inmuebles;
@@ -38,15 +40,6 @@ public class AdminInmuebleController {
     private final ZonaComunService zonas;
     private final PagoService pagos;
     private final NotificacionService notificaciones;
-
-    public AdminInmuebleController(InmuebleService inmuebles, LiquidacionService liquidaciones, ZonaComunService zonas,
-                                   PagoService pagos, NotificacionService notificaciones) {
-        this.inmuebles = inmuebles;
-        this.liquidaciones = liquidaciones;
-        this.zonas = zonas;
-        this.pagos = pagos;
-        this.notificaciones = notificaciones;
-    }
 
     @SoloAdministrador
     @PostMapping

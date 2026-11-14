@@ -7,15 +7,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
 
 /** Cuerpos de entrada de invitados. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class InvitadoRequests {
-
-    private InvitadoRequests() {
-    }
 
     /**
      * venceAutorizacion: ultimo dia que puede entrar; sin fecha = autorizacion permanente.

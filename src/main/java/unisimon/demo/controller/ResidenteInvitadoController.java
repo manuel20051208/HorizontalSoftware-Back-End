@@ -1,6 +1,7 @@
 package unisimon.demo.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -24,15 +25,11 @@ import unisimon.demo.service.InvitadoService;
 /** Invitados y auto del residente. */
 @RestController
 @RequestMapping("/api/residente")
+@RequiredArgsConstructor
 public class ResidenteInvitadoController {
 
     private final InvitadoService invitados;
     private final AutoService autos;
-
-    public ResidenteInvitadoController(InvitadoService invitados, AutoService autos) {
-        this.invitados = invitados;
-        this.autos = autos;
-    }
 
     @SoloResidente
     @GetMapping("/invitados")

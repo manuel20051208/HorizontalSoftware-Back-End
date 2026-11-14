@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unisimon.demo.bootstrap.PasarelaProperties;
@@ -39,6 +40,7 @@ import java.util.UUID;
 
 /** Pagos de administracion. Las reglas del pago (monto, estados, comprobante) viven en {@link Pago}. */
 @Service
+@RequiredArgsConstructor
 public class PagoServiceImpl implements PagoService {
 
     static final Set<String> METODOS_PASARELA = Set.of("PSE", "TARJETA", "NEQUI");
@@ -54,21 +56,6 @@ public class PagoServiceImpl implements PagoService {
     private final AccesoInmueblePolicy accesoInmueble;
     private final Clock reloj;
     private final PasarelaProperties configPasarela;
-
-    public PagoServiceImpl(PagoRepository pagos, LiquidacionRepository liquidaciones,
-                           PasarelaPagoRepository pasarelas, ResidenteRepository residentes,
-                           InmuebleRepository inmuebles, LiquidacionService liquidacionService,
-                           AccesoInmueblePolicy accesoInmueble, Clock reloj, PasarelaProperties configPasarela) {
-        this.configPasarela = configPasarela;
-        this.pagos = pagos;
-        this.liquidaciones = liquidaciones;
-        this.pasarelas = pasarelas;
-        this.residentes = residentes;
-        this.inmuebles = inmuebles;
-        this.liquidacionService = liquidacionService;
-        this.accesoInmueble = accesoInmueble;
-        this.reloj = reloj;
-    }
 
     @Override
     @Transactional

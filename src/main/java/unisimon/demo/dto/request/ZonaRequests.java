@@ -4,14 +4,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
 
 /** Cuerpos de entrada de zonas comunes. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ZonaRequests {
-
-    private ZonaRequests() {
-    }
 
     /** aplicarATodosLosInmuebles (opcional, por defecto true): asigna la zona nueva a todos los inmuebles. */
     public record CrearZona(@NotBlank @Size(max = 100) String nombreZonaComun,

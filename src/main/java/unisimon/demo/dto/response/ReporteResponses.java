@@ -3,12 +3,12 @@ package unisimon.demo.dto.response;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /** Respuestas de los reportes del administrador (Administrador.generarReportes). */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ReporteResponses {
-
-    private ReporteResponses() {
-    }
 
     /**
      * Una fila del reporte. estadoPago: AL_DIA, POR_VENCER, VENCIDA o SIN_LIQUIDACION.

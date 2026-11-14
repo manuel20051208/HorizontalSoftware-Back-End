@@ -24,6 +24,8 @@ import unisimon.demo.repository.UsuarioRepository.CredencialesView;
 import unisimon.demo.repository.UsuarioRepository.PreferenciasView;
 import unisimon.demo.repository.UsuarioRepository.UsuarioListaView;
 import unisimon.demo.repository.ZonaComunRepository.ZonaView;
+import lombok.RequiredArgsConstructor;
+import lombok.AccessLevel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,10 +37,8 @@ import java.util.Optional;
  * consultas nativas. Asi las reglas del diagrama (calcularTotal, estaVencida, validarHorario...) se ejecutan
  * en las clases del dominio y no se repiten en SQL ni en los servicios.
  */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Hidratador {
-
-    private Hidratador() {
-    }
 
     // ------------------------------------------------------------------ referencias (solo el id)
 

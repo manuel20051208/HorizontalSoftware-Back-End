@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,7 @@ import java.util.function.Function;
  * misma zona. Las reglas que solo dependen de la reserva viven en {@link ReservaZonaComun}.
  */
 @Service
+@RequiredArgsConstructor
 public class ReservaZonaComunServiceImpl implements ReservaZonaComunService {
 
     private final ReservaZonaComunRepository reservas;
@@ -55,19 +57,6 @@ public class ReservaZonaComunServiceImpl implements ReservaZonaComunService {
     private final NotificacionService notificaciones;
     private final ZonaComunService zonasComunes;
     private final Clock reloj;
-
-    public ReservaZonaComunServiceImpl(ReservaZonaComunRepository reservas, ZonaComunRepository zonas,
-                                       ResidenteRepository residentes, RompimientoRepository reglas,
-                                       NotificacionService notificaciones, ZonaComunService zonasComunes,
-                                       Clock reloj) {
-        this.reservas = reservas;
-        this.zonas = zonas;
-        this.residentes = residentes;
-        this.reglas = reglas;
-        this.notificaciones = notificaciones;
-        this.zonasComunes = zonasComunes;
-        this.reloj = reloj;
-    }
 
     @Override
     @Transactional

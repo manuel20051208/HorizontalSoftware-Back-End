@@ -1,6 +1,7 @@
 package unisimon.demo.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,13 +21,10 @@ import unisimon.demo.service.ZonaComunService;
 /** Zonas comunes (administracion). */
 @RestController
 @RequestMapping("/api/admin/zonas-comunes")
+@RequiredArgsConstructor
 public class AdminZonaComunController {
 
     private final ZonaComunService zonas;
-
-    public AdminZonaComunController(ZonaComunService zonas) {
-        this.zonas = zonas;
-    }
 
     @SoloAdministrador
     @PostMapping

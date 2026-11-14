@@ -3,14 +3,14 @@ package unisimon.demo.mapper;
 import unisimon.demo.dto.response.PagoResponses;
 import unisimon.demo.repository.PagoRepository.PagoView;
 import unisimon.demo.repository.PasarelaPagoRepository.PasarelaView;
+import lombok.RequiredArgsConstructor;
+import lombok.AccessLevel;
 
 /** Proyecciones de pagos y pasarela -> respuestas del API. */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PagoMapper {
 
     private static final int CARACTERES_VISIBLES = 4;
-
-    private PagoMapper() {
-    }
 
     public static PagoResponses.Pago de(PagoView v) {
         return new PagoResponses.Pago(v.getId(), v.getInmuebleId(), v.getDireccionInmueble(), v.getMonto(),

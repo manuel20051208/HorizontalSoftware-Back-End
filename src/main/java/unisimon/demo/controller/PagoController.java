@@ -1,5 +1,6 @@
 package unisimon.demo.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,15 +14,11 @@ import unisimon.demo.service.PasarelaPagoService;
 /** Consultas de un pago que comparten el administrador y el residente del inmueble. */
 @RestController
 @RequestMapping("/api/pagos")
+@RequiredArgsConstructor
 public class PagoController {
 
     private final PagoService pagos;
     private final PasarelaPagoService pasarela;
-
-    public PagoController(PagoService pagos, PasarelaPagoService pasarela) {
-        this.pagos = pagos;
-        this.pasarela = pasarela;
-    }
 
     @AdministradorOResidente
     @GetMapping("/{id}/comprobante")

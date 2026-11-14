@@ -2,12 +2,12 @@ package unisimon.demo.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /** Respuestas sobre notificaciones. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class NotificacionResponses {
-
-    private NotificacionResponses() {
-    }
 
     public record Notificacion(Long id, String mensaje, String tipoNotificacion, LocalDateTime fechaEnvio) {
     }

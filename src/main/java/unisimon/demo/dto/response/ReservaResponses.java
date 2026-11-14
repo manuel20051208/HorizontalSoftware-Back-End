@@ -1,12 +1,12 @@
 package unisimon.demo.dto.response;
 
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /** Respuestas sobre reservas de zonas comunes. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ReservaResponses {
-
-    private ReservaResponses() {
-    }
 
     /**
      * estado: PROGRAMADA (aun no empieza), EN_CURSO o FINALIZADA, calculado con la hora actual de Colombia.

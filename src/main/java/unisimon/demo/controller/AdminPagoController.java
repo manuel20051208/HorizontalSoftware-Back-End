@@ -1,6 +1,7 @@
 package unisimon.demo.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,15 +21,11 @@ import unisimon.demo.service.PasarelaPagoService;
 /** Pagos recibidos y configuracion de la pasarela. */
 @RestController
 @RequestMapping("/api/admin")
+@RequiredArgsConstructor
 public class AdminPagoController {
 
     private final PagoService pagos;
     private final PasarelaPagoService pasarela;
-
-    public AdminPagoController(PagoService pagos, PasarelaPagoService pasarela) {
-        this.pagos = pagos;
-        this.pasarela = pasarela;
-    }
 
     @SoloAdministrador
     @GetMapping("/pagos")

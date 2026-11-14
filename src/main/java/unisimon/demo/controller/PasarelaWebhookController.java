@@ -1,5 +1,6 @@
 package unisimon.demo.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,13 +19,10 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/pasarela")
+@RequiredArgsConstructor
 public class PasarelaWebhookController {
 
     private final PasarelaPagoService pasarela;
-
-    public PasarelaWebhookController(PasarelaPagoService pasarela) {
-        this.pasarela = pasarela;
-    }
 
     @Publico
     @PostMapping("/webhook")

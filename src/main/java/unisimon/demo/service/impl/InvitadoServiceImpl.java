@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ import java.util.Locale;
  * porque la tabla de usuarios la exige. El residente decide si esta activo.
  */
 @Service
+@RequiredArgsConstructor
 public class InvitadoServiceImpl implements InvitadoService {
 
     private final InvitadoRepository invitados;
@@ -43,18 +45,6 @@ public class InvitadoServiceImpl implements InvitadoService {
     private final PasswordEncoder codificador;
     private final GeneradorContrasena generador;
     private final Clock reloj;
-
-    public InvitadoServiceImpl(InvitadoRepository invitados, UsuarioRepository usuarios, ResidenteRepository residentes,
-                               UsuarioPersistidor persistidor, PasswordEncoder codificador,
-                               GeneradorContrasena generador, Clock reloj) {
-        this.invitados = invitados;
-        this.usuarios = usuarios;
-        this.residentes = residentes;
-        this.persistidor = persistidor;
-        this.codificador = codificador;
-        this.generador = generador;
-        this.reloj = reloj;
-    }
 
     @Override
     @Transactional

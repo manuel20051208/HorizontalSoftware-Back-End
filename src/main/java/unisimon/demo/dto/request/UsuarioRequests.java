@@ -6,14 +6,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 /** Cuerpos de entrada de la gestion de usuarios por el administrador. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class UsuarioRequests {
-
-    private UsuarioRequests() {
-    }
 
     /**
      * tipoUsuario: ADMINISTRADOR, RESIDENTE o VIGILANTE.

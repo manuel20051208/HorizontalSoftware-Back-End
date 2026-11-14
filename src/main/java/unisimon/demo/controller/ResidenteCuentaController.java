@@ -1,6 +1,7 @@
 package unisimon.demo.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,15 +23,11 @@ import unisimon.demo.service.PagoService;
 /** Estado de cuenta y pagos del residente. */
 @RestController
 @RequestMapping("/api/residente")
+@RequiredArgsConstructor
 public class ResidenteCuentaController {
 
     private final EstadoCuentaService estadoCuenta;
     private final PagoService pagos;
-
-    public ResidenteCuentaController(EstadoCuentaService estadoCuenta, PagoService pagos) {
-        this.estadoCuenta = estadoCuenta;
-        this.pagos = pagos;
-    }
 
     @SoloResidente
     @GetMapping("/mi-cuenta")

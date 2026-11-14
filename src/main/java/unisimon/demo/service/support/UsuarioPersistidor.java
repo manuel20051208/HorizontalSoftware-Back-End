@@ -1,5 +1,6 @@
 package unisimon.demo.service.support;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import unisimon.demo.model.Administrador;
 import unisimon.demo.model.Residente;
@@ -10,13 +11,10 @@ import unisimon.demo.repository.UsuarioRepository;
 
 /** Elige el INSERT nativo que corresponde al tipo de usuario. Evita repetir este switch en los servicios. */
 @Component
+@RequiredArgsConstructor
 public class UsuarioPersistidor {
 
     private final UsuarioRepository usuarios;
-
-    public UsuarioPersistidor(UsuarioRepository usuarios) {
-        this.usuarios = usuarios;
-    }
 
     /** Devuelve el id generado. */
     public Long insertar(Usuario usuario) {

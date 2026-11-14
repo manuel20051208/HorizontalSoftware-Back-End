@@ -5,14 +5,14 @@ import unisimon.demo.dto.response.ZonaResponses;
 import unisimon.demo.repository.ReglaReservaRepository.ReglaView;
 import unisimon.demo.repository.RompimientoRepository.RompimientoView;
 import unisimon.demo.repository.ZonaComunRepository.ZonaView;
+import lombok.RequiredArgsConstructor;
+import lombok.AccessLevel;
 
 import java.util.List;
 
 /** Proyecciones de zonas, reglas y rompimientos -> respuestas del API. */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ZonaMapper {
-
-    private ZonaMapper() {
-    }
 
     public static ZonaResponses.Zona zona(ZonaView v) {
         return new ZonaResponses.Zona(v.getId(), v.getNombreZonaComun(), v.getCapacidad(), v.getHoraInicio(),

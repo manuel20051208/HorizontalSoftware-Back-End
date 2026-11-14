@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -39,6 +40,7 @@ import java.util.Set;
 
 /** Configuracion de la pasarela y procesamiento de sus avisos (webhook). */
 @Service
+@RequiredArgsConstructor
 public class PasarelaPagoServiceImpl implements PasarelaPagoService {
 
     private static final Logger log = LoggerFactory.getLogger(PasarelaPagoServiceImpl.class);
@@ -54,20 +56,6 @@ public class PasarelaPagoServiceImpl implements PasarelaPagoService {
     private final AccesoInmueblePolicy accesoInmueble;
     private final PasarelaProperties config;
     private final ClienteWompi clienteWompi;
-
-    public PasarelaPagoServiceImpl(PasarelaPagoRepository pasarelas, PagoRepository pagos, PagoService pagoService,
-                                   LiquidacionService liquidacionService, NotificacionService notificaciones,
-                                   AccesoInmueblePolicy accesoInmueble, PasarelaProperties config,
-                                   ClienteWompi clienteWompi) {
-        this.config = config;
-        this.clienteWompi = clienteWompi;
-        this.pasarelas = pasarelas;
-        this.pagos = pagos;
-        this.pagoService = pagoService;
-        this.liquidacionService = liquidacionService;
-        this.notificaciones = notificaciones;
-        this.accesoInmueble = accesoInmueble;
-    }
 
     @Override
     @Transactional(readOnly = true)

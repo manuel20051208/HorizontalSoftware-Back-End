@@ -3,14 +3,14 @@ package unisimon.demo.mapper;
 import unisimon.demo.dto.response.ReservaResponses;
 import unisimon.demo.model.ReservaZonaComun;
 import unisimon.demo.repository.ReservaZonaComunRepository.ReservaView;
+import lombok.RequiredArgsConstructor;
+import lombok.AccessLevel;
 
 import java.time.LocalDateTime;
 
 /** ReservaView -> respuesta. El estado lo decide el dominio ({@link ReservaZonaComun#estado}). */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ReservaMapper {
-
-    private ReservaMapper() {
-    }
 
     public static ReservaResponses.Reserva de(ReservaView v, LocalDateTime ahora) {
         ReservaZonaComun reserva = new ReservaZonaComun(v.getId(), null, null, v.getFechaHoraInicio(),

@@ -2,12 +2,12 @@ package unisimon.demo.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /** Cuerpos de entrada de /api/auth. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class AuthRequests {
-
-    private AuthRequests() {
-    }
 
     public record Login(@NotBlank @Email String correo, @NotBlank String contrasena) {
     }

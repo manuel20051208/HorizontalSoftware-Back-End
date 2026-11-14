@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -23,15 +24,11 @@ import java.util.List;
 
 /** Zonas comunes. Activar/desactivar lo decide la entidad {@link ZonaComun}; aqui solo se orquesta y se guarda. */
 @Service
+@RequiredArgsConstructor
 public class ZonaComunServiceImpl implements ZonaComunService {
 
     private final ZonaComunRepository zonas;
     private final InmuebleRepository inmuebles;
-
-    public ZonaComunServiceImpl(ZonaComunRepository zonas, InmuebleRepository inmuebles) {
-        this.zonas = zonas;
-        this.inmuebles = inmuebles;
-    }
 
     @Override
     @Transactional

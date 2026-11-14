@@ -1,5 +1,6 @@
 package unisimon.demo.policy;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
  * </ul>
  */
 @Component
+@RequiredArgsConstructor
 public class EstadoPagoPolicy {
 
     public static final String SIN_LIQUIDACION = "SIN_LIQUIDACION";
@@ -24,10 +26,6 @@ public class EstadoPagoPolicy {
     public static final String POR_VENCER = "POR_VENCER";
 
     private final Clock reloj;
-
-    public EstadoPagoPolicy(Clock reloj) {
-        this.reloj = reloj;
-    }
 
     public String calcular(long totalLiquidaciones, BigDecimal saldoPendiente, LocalDate fechaLimitePendiente,
                            boolean tieneMora) {

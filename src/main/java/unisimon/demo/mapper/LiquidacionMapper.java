@@ -3,12 +3,12 @@ package unisimon.demo.mapper;
 import unisimon.demo.dto.response.LiquidacionResponses;
 import unisimon.demo.model.Liquidacion;
 import unisimon.demo.repository.LiquidacionRepository.LiquidacionView;
+import lombok.RequiredArgsConstructor;
+import lombok.AccessLevel;
 
 /** LiquidacionView -> respuesta. "vencida" se pregunta al dominio (Liquidacion.estaVencida). */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class LiquidacionMapper {
-
-    private LiquidacionMapper() {
-    }
 
     public static LiquidacionResponses.Liquidacion de(LiquidacionView v) {
         Liquidacion dominio = Hidratador.liquidacion(v);

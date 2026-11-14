@@ -5,15 +5,15 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 /** Cuerpos de entrada de inmuebles, tarifas y multas. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class InmuebleRequests {
-
-    private InmuebleRequests() {
-    }
 
     /** direccionInmueble con formato TORRE-APTO, por ejemplo "A-302". valorParqueadero es opcional. */
     public record CrearInmueble(@NotBlank @Size(max = 100) String direccionInmueble,

@@ -1,14 +1,14 @@
 package unisimon.demo.dto.request;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 /** Cuerpos de entrada de reservas. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ReservaRequests {
-
-    private ReservaRequests() {
-    }
 
     /**
      * Intervalo en el que se quiere usar la zona, en hora de Colombia ({@code yyyy-MM-ddTHH:mm}).

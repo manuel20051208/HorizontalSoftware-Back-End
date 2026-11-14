@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ import java.util.Optional;
 
 /** Alta y consulta de inmuebles. El estado de pago lo decide {@link EstadoPagoPolicy}. */
 @Service
+@RequiredArgsConstructor
 public class InmuebleServiceImpl implements InmuebleService {
 
     private final InmuebleRepository inmuebles;
@@ -42,17 +44,6 @@ public class InmuebleServiceImpl implements InmuebleService {
     private final ZonaComunRepository zonas;
     private final LiquidacionRepository liquidaciones;
     private final EstadoPagoPolicy estadoPago;
-
-    public InmuebleServiceImpl(InmuebleRepository inmuebles, ParqueaderoRepository parqueaderos,
-                               UsuarioRepository usuarios, ZonaComunRepository zonas,
-                               LiquidacionRepository liquidaciones, EstadoPagoPolicy estadoPago) {
-        this.inmuebles = inmuebles;
-        this.parqueaderos = parqueaderos;
-        this.usuarios = usuarios;
-        this.zonas = zonas;
-        this.liquidaciones = liquidaciones;
-        this.estadoPago = estadoPago;
-    }
 
     @Override
     @Transactional

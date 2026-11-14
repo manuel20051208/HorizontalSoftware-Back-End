@@ -1,5 +1,6 @@
 package unisimon.demo.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,15 +17,11 @@ import unisimon.demo.service.InvitadoService;
 /** Consultas cruzadas que usan el administrador y la porteria. */
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class ConsultaController {
 
     private final InvitadoService invitados;
     private final AutoService autos;
-
-    public ConsultaController(InvitadoService invitados, AutoService autos) {
-        this.invitados = invitados;
-        this.autos = autos;
-    }
 
     @AdministradorOVigilante
     @GetMapping("/invitados/{id}/residentes")

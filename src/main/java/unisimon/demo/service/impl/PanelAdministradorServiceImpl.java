@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unisimon.demo.dto.response.InmuebleResponses;
@@ -23,20 +24,13 @@ import java.util.stream.Collectors;
 
 /** Totales del panel: cuenta inmuebles por estado de pago y suma lo que falta por cobrar y lo recaudado en el mes. */
 @Service
+@RequiredArgsConstructor
 public class PanelAdministradorServiceImpl implements PanelAdministradorService {
 
     private final InmuebleRepository inmuebles;
     private final PagoRepository pagos;
     private final EstadoPagoPolicy estadoPago;
     private final Clock reloj;
-
-    public PanelAdministradorServiceImpl(InmuebleRepository inmuebles, PagoRepository pagos,
-                                         EstadoPagoPolicy estadoPago, Clock reloj) {
-        this.inmuebles = inmuebles;
-        this.pagos = pagos;
-        this.estadoPago = estadoPago;
-        this.reloj = reloj;
-    }
 
     @Override
     @Transactional(readOnly = true)

@@ -2,12 +2,12 @@ package unisimon.demo.dto.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /** Respuestas sobre pagos y pasarela. estado del pago: PENDIENTE, APROBADO, RECHAZADO, ANULADO, REEMBOLSADO. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PagoResponses {
-
-    private PagoResponses() {
-    }
 
     public record Pago(Long id, Long inmuebleId, String direccionInmueble, BigDecimal monto, LocalDate fechaPago,
                        String concepto, String metodoPago, String estado, String referencia) {

@@ -5,12 +5,12 @@ import unisimon.demo.dto.response.UsuarioResponses;
 import unisimon.demo.repository.UsuarioRepository.CredencialesView;
 import unisimon.demo.repository.UsuarioRepository.UsuarioListaView;
 import unisimon.demo.security.ParTokens;
+import lombok.RequiredArgsConstructor;
+import lombok.AccessLevel;
 
 /** Proyecciones de usuarios -> respuestas del API. */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class UsuarioMapper {
-
-    private UsuarioMapper() {
-    }
 
     public static UsuarioResponses.Usuario de(CredencialesView u) {
         return new UsuarioResponses.Usuario(u.getId(), u.getIdentificacion(), u.getNombreCompleto(),

@@ -1,9 +1,13 @@
 package unisimon.demo.cache;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * Nombres (ID) de los caches de la aplicacion. Toda anotacion {@code @Cacheable}/{@code @CacheEvict} usa estas
  * constantes, nunca el texto suelto: asi un cache se renombra en un solo sitio y no hay nombres mal escritos.
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class NombresCache {
 
     /** Listado de inmuebles con su estado de pago y valor de parqueadero (plano de torres). */
@@ -25,6 +29,4 @@ public final class NombresCache {
     public static final String[] TODOS = {INMUEBLES, ZONAS_COMUNES, ZONAS_POR_INMUEBLE, REGLAS_RESERVA,
             PASARELA_PAGO};
 
-    private NombresCache() {
-    }
 }

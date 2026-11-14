@@ -4,14 +4,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 /** Cuerpos de entrada de pagos y de la pasarela. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PagoRequests {
-
-    private PagoRequests() {
-    }
 
     /** metodoPago: PSE, TARJETA o NEQUI. El valor lo calcula el servidor (saldo pendiente), no el cliente. */
     public record IniciarPago(@NotBlank String metodoPago) {

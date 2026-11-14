@@ -1,6 +1,7 @@
 package unisimon.demo.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,15 +28,11 @@ import java.time.LocalDate;
 /** Liquidaciones mensuales y resumen del panel del administrador. */
 @RestController
 @RequestMapping("/api/admin")
+@RequiredArgsConstructor
 public class AdminLiquidacionController {
 
     private final LiquidacionService liquidaciones;
     private final PanelAdministradorService panel;
-
-    public AdminLiquidacionController(LiquidacionService liquidaciones, PanelAdministradorService panel) {
-        this.liquidaciones = liquidaciones;
-        this.panel = panel;
-    }
 
     @SoloAdministrador
     @GetMapping("/resumen")

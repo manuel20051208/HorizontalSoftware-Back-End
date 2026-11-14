@@ -1,5 +1,6 @@
 package unisimon.demo.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import java.time.LocalDate;
 
 /** Activacion de cuenta y manejo de contrasenas por parte del propio usuario. */
 @Service
+@RequiredArgsConstructor
 public class CuentaServiceImpl implements CuentaService {
 
     /** Dias, desde que el administrador crea la cuenta, durante los cuales el usuario puede activarla solo. */
@@ -36,16 +38,6 @@ public class CuentaServiceImpl implements CuentaService {
     private final GeneradorContrasena generador;
     private final CorreoSender correo;
     private final Clock reloj;
-
-    public CuentaServiceImpl(UsuarioRepository usuarios, PasswordEncoder codificador, PoliticaContrasena politica,
-                             GeneradorContrasena generador, CorreoSender correo, Clock reloj) {
-        this.usuarios = usuarios;
-        this.codificador = codificador;
-        this.politica = politica;
-        this.generador = generador;
-        this.correo = correo;
-        this.reloj = reloj;
-    }
 
     @Override
     @Transactional

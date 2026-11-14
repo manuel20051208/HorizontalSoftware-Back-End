@@ -3,12 +3,12 @@ package unisimon.demo.dto.response;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /** Respuestas sobre liquidaciones. */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class LiquidacionResponses {
-
-    private LiquidacionResponses() {
-    }
 
     public record Liquidacion(Long id, Long inmuebleId, String direccionInmueble, LocalDate periodo,
                               LocalDate fechaGeneracion, LocalDate fechaLimite, BigDecimal cuotaAdministracion,
