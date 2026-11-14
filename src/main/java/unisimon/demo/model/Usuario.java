@@ -25,8 +25,8 @@ import java.util.Locale;
 /**
  * Usuario (diagrama de clases). Clase padre de Administrador, Residente, Vigilante y UsuarioAutorizado.
  * <p>
- * {@code contrasena} es del tipo PasswordEncoder del diagrama: aqui se guarda SIEMPRE la contrasena ya
- * codificada (BCrypt); nunca el texto plano.
+ * {@code contrasena} es String, como en el diagrama: aqui se guarda SIEMPRE la contrasena ya codificada
+ * (BCrypt); nunca el texto plano.
  * <p>
  * Todas las operaciones del diagrama estan aqui con su firma. Deciden con los datos que ya trae el objeto;
  * leer y guardar en la base de datos lo hace la capa de servicios, antes y despues de llamarlas.
@@ -67,7 +67,7 @@ public class Usuario {
     @Column(nullable = false, unique = true)
     private String correoElectronico;
 
-    /** Contrasena codificada (PasswordEncoder). */
+    /** Contrasena codificada (BCrypt). */
     @Column(nullable = false)
     private String contrasena;
 
@@ -116,7 +116,7 @@ public class Usuario {
     }
 
     /**
-     * iniciarSesion(correo : String, contrasena : PasswordEncoder) : usuario.
+     * iniciarSesion(correo : String, contrasena : String) : usuario.
      * Devuelve este usuario si la cuenta esta activa y las credenciales son las suyas; si no, null.
      */
     public Usuario iniciarSesion(String correo, String contrasena) {
@@ -136,7 +136,7 @@ public class Usuario {
     }
 
     /**
-     * activarCuenta(correo : String, contrasena : PasswordEncoder) : Boolean.
+     * activarCuenta(correo : String, contrasena : String) : Boolean.
      * Activa la cuenta si las credenciales son correctas y aun estaba inactiva; si no, devuelve false.
      */
     public Boolean activarCuenta(String correo, String contrasena) {

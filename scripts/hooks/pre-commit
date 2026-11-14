@@ -1,0 +1,8 @@
+#!/bin/sh
+# Deja en fondo claro los .svg de Diagramas/ que se van a commitear (draw.io los exporta adaptativos y en
+# modo oscuro se ven negros). Activar una vez por clon:  git config core.hooksPath scripts/hooks
+svgs=$(git diff --cached --name-only --diff-filter=ACM -- 'Diagramas/*.svg' 'Diagramas/**/*.svg')
+[ -z "$svgs" ] && exit 0
+PY=$(command -v python3 || command -v python || command -v py) || { echo "pre-commit: no hay python para fondo_claro.py" >&2; exit 0; }
+echo "$svgs" | while IFS= read -r f; do "$PY" -I Diagramas/_fuente/fondo_claro.py "$f" >/dev/null && git add -- "$f"; done
+exit 0

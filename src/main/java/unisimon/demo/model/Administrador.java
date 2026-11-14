@@ -174,8 +174,6 @@ public class Administrador extends Usuario {
         exigirVigente();
     }
 
-    // ------------------------------------------------------------------ apoyo (no son operaciones del diagrama)
-
     private void exigirVigente() {
         if (!isActive() || !contratoVigente()) {
             throw new IllegalStateException("El administrador no esta activo o su contrato no esta vigente");
