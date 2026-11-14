@@ -1,6 +1,7 @@
 package unisimon.demo.model;
 
 import java.time.LocalDateTime;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Transient;
 import org.hibernate.annotations.DynamicUpdate;
 import jakarta.persistence.DiscriminatorValue;
@@ -45,7 +46,7 @@ public class Residente extends Usuario implements NoAdmin {
     private List<UsuarioAutorizado> invitados = new ArrayList<>();
 
     /** Lado inverso: el dueno de la relacion es {@link Auto#getDueno()}. */
-    @OneToOne(mappedBy = "dueno", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "dueno", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Auto auto;
 
     /** Contexto (no es atributo del diagrama ni se guarda): las reservas de este residente. */

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1789" height="1045" viewBox="0 0 1789 1045">
+<title>Diagrama de secuencia: Reservar zona común</title>
+<defs><marker id="cerrada" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#000000"/></marker><marker id="abierta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#000000" stroke-width="1.2"/></marker></defs>
+<rect width="1789" height="1045" fill="#ffffff"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#000000" text-anchor="start" font-weight="bold"><tspan x="22" y="27">Diagrama de secuencia: Reservar zona común</tspan></text>
+<circle cx="110" cy="68" r="8" fill="#ffcc99" stroke="#36393d" stroke-width="1.2"/><path d="M110,76 V96 M96,84 H124 M110,96 L96,116 M110,96 L124,116" fill="none" stroke="#36393d" stroke-width="1.2"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="110" y="129">Residente</tspan></text>
+<polyline points="110,156 110,985" fill="none" stroke="#666666" stroke-width="1" stroke-dasharray="6 4"/>
+<line x1="380" y1="100" x2="380" y2="985" stroke="#666666" stroke-dasharray="6 4"/><rect x="305" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="380" y="81">:Residente</tspan></text>
+<line x1="650" y1="100" x2="650" y2="985" stroke="#666666" stroke-dasharray="6 4"/><rect x="575" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="650" y="81">:ReservaZonaComun</tspan></text>
+<line x1="920" y1="100" x2="920" y2="985" stroke="#666666" stroke-dasharray="6 4"/><rect x="845" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="920" y="81">:Inmueble</tspan></text>
+<line x1="1190" y1="100" x2="1190" y2="985" stroke="#666666" stroke-dasharray="6 4"/><rect x="1115" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="1190" y="81">:Liquidacion</tspan></text>
+<line x1="1460" y1="100" x2="1460" y2="985" stroke="#666666" stroke-dasharray="6 4"/><rect x="1385" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="1460" y="81">:Notificacion</tspan></text>
+<rect x="75" y="665" width="1654" height="276" fill="none" stroke="#36393d"/><path d="M75,687 H120 L130,677 V665" fill="#ffffff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-weight="bold"><tspan x="81" y="678">alt</tspan></text>
+<polyline points="75,862 1729,862" fill="none" stroke="#36393d" stroke-width="1" stroke-dasharray="6 4"/>
+<rect x="645" y="224" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="645" y="298" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="645" y="372" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="1185" y="520" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="915" y="483" width="10" height="123" fill="#ffffff" stroke="#000000"/>
+<rect x="645" y="446" width="10" height="197" fill="#ffffff" stroke="#000000"/>
+<rect x="1460" y="744" width="10" height="32" fill="#ffffff" stroke="#000000"/>
+<rect x="1455" y="716" width="10" height="95" fill="#ffffff" stroke="#000000"/>
+<rect x="375" y="187" width="10" height="738" fill="#ffffff" stroke="#000000"/>
+<polyline points="115,193 375,193" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="245" y="183">reservarZonaComun(id)</tspan></text>
+<polyline points="385,230 645,230" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="220">mostrarZonasComunes()</tspan></text>
+<polyline points="645,267 385,267" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="257">List&lt;ZonaComun&gt;</tspan></text>
+<polyline points="385,304 645,304" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="294">verificarDisponibilidad(hora)</tspan></text>
+<polyline points="645,341 385,341" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="331">Boolean</tspan></text>
+<polyline points="385,378 645,378" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="368">validarHorario(hora)</tspan></text>
+<polyline points="645,415 385,415" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="405">Boolean</tspan></text>
+<polyline points="385,452 645,452" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="442">estaHabilitado(duenoReserva)</tspan></text>
+<polyline points="655,489 915,489" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="785" y="479">pagoAlDiaAdministracion(liquidacion)</tspan></text>
+<polyline points="925,526 1185,526" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="1055" y="516">estaVencida()</tspan></text>
+<polyline points="1185,563 925,563" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="1055" y="553">Boolean</tspan></text>
+<polyline points="915,600 655,600" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="785" y="590">boolean</tspan></text>
+<polyline points="645,637 385,637" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="627">Boolean</tspan></text>
+<polyline points="385,722 1455,722" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="920" y="712">notificarReserva(reserva)</tspan></text>
+<polyline points="1470,748 1508,748 1508,772 1470,772" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<polyline points="1455,805 385,805" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<polyline points="375,842 115,842" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="245" y="832">ZonaComun reservada</tspan></text>
+<polyline points="375,919 115,919" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="245" y="909">error: reserva rechazada</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start"><tspan x="1516" y="757">enviarNotificacion() : Boolean</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-style="italic"><tspan x="139" y="679">[zona disponible, horario válido y residente habilitado]</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-style="italic"><tspan x="85" y="876">[alguna condición no se cumple]</tspan></text>
+</svg>

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1088" viewBox="0 0 1080 1088">
+<title>Diagrama de secuencia: Gestionar cuentas de usuario</title>
+<defs><marker id="cerrada" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#000000"/></marker><marker id="abierta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#000000" stroke-width="1.2"/></marker></defs>
+<rect width="1080" height="1088" fill="#ffffff"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#000000" text-anchor="start" font-weight="bold"><tspan x="22" y="27">Diagrama de secuencia: Gestionar cuentas de usuario</tspan></text>
+<circle cx="110" cy="68" r="8" fill="#ffcc99" stroke="#36393d" stroke-width="1.2"/><path d="M110,76 V96 M96,84 H124 M110,96 L96,116 M110,96 L124,116" fill="none" stroke="#36393d" stroke-width="1.2"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="110" y="129">Administrador</tspan></text>
+<polyline points="110,156 110,1028" fill="none" stroke="#666666" stroke-width="1" stroke-dasharray="6 4"/>
+<line x1="380" y1="100" x2="380" y2="1028" stroke="#666666" stroke-dasharray="6 4"/><rect x="305" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="380" y="81">:Administrador</tspan></text>
+<line x1="650" y1="100" x2="650" y2="1028" stroke="#666666" stroke-dasharray="6 4"/><rect x="575" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="650" y="81">:Usuario</tspan></text>
+<line x1="920" y1="100" x2="920" y2="1028" stroke="#666666" stroke-dasharray="6 4"/><rect x="845" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="920" y="81">:Residente</tspan></text>
+<rect x="75" y="377" width="610" height="205" fill="none" stroke="#36393d"/><path d="M75,399 H120 L130,389 V377" fill="#ffffff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-weight="bold"><tspan x="81" y="390">opt</tspan></text>
+<rect x="345" y="695" width="610" height="230" fill="none" stroke="#36393d"/><path d="M345,717 H390 L400,707 V695" fill="#ffffff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-weight="bold"><tspan x="351" y="708">alt</tspan></text>
+<polyline points="345,809 955,809" fill="none" stroke="#36393d" stroke-width="1" stroke-dasharray="6 4"/>
+<rect x="75" y="610" width="895" height="374" fill="none" stroke="#36393d"/><path d="M75,632 H120 L130,622 V610" fill="#ffffff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-weight="bold"><tspan x="81" y="623">opt</tspan></text>
+<rect x="645" y="269" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="375" y="187" width="10" height="168" fill="#ffffff" stroke="#000000"/>
+<rect x="645" y="480" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="375" y="443" width="10" height="123" fill="#ffffff" stroke="#000000"/>
+<rect x="915" y="746" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="915" y="860" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="375" y="661" width="10" height="307" fill="#ffffff" stroke="#000000"/>
+<polyline points="115,193 375,193" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="245" y="183">gestionarCuentaUsuario()</tspan></text>
+<polyline points="385,275 645,275" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="220">Usuario(id, identificacion,</tspan><tspan x="515" y="235">nombreCompleto, fechaNacimiento,</tspan><tspan x="515" y="250">correoElectronico, contrasena,</tspan><tspan x="515" y="265">tipoUsuario)</tspan></text>
+<polyline points="645,312 385,312" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="302">cuenta creada</tspan></text>
+<polyline points="375,349 115,349" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="245" y="339">cuenta de usuario</tspan></text>
+<polyline points="115,449 375,449" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="245" y="424">modificarActive(identificacion,</tspan><tspan x="245" y="439">idToken)</tspan></text>
+<polyline points="385,486 645,486" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="476">isActive()</tspan></text>
+<polyline points="645,523 385,523" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="513">Boolean</tspan></text>
+<polyline points="375,560 115,560" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="245" y="550">NoAdmin</tspan></text>
+<polyline points="115,667 375,667" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="245" y="657">gestionarCuentaUsuario()</tspan></text>
+<polyline points="385,752 915,752" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="742">cambiarEstadoInvitado(invitado, id)</tspan></text>
+<polyline points="915,789 385,789" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="779">Boolean</tspan></text>
+<polyline points="385,866 915,866" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="856">cambiarEstadoInvitados(invitados)</tspan></text>
+<polyline points="915,903 385,903" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="893">Boolean</tspan></text>
+<polyline points="375,962 115,962" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="245" y="952">estado de los invitados</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-style="italic"><tspan x="139" y="391">[activar o desactivar una cuenta existente]</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-style="italic"><tspan x="409" y="709">[un invitado]</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-style="italic"><tspan x="355" y="823">[varios invitados]</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-style="italic"><tspan x="139" y="624">[activar o desactivar invitados de un residente]</tspan></text>
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="552" viewBox="0 0 1080 552">
+<title>Diagrama de secuencia: Consultar confirmación de lectura</title>
+<defs><marker id="cerrada" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#000000"/></marker><marker id="abierta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#000000" stroke-width="1.2"/></marker></defs>
+<rect width="1080" height="552" fill="#ffffff"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#000000" text-anchor="start" font-weight="bold"><tspan x="22" y="27">Diagrama de secuencia: Consultar confirmación de lectura</tspan></text>
+<circle cx="110" cy="68" r="8" fill="#ffcc99" stroke="#36393d" stroke-width="1.2"/><path d="M110,76 V96 M96,84 H124 M110,96 L96,116 M110,96 L124,116" fill="none" stroke="#36393d" stroke-width="1.2"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="110" y="129">Administrador</tspan></text>
+<polyline points="110,156 110,492" fill="none" stroke="#666666" stroke-width="1" stroke-dasharray="6 4"/>
+<line x1="380" y1="100" x2="380" y2="492" stroke="#666666" stroke-dasharray="6 4"/><rect x="305" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="380" y="81">:Administrador</tspan></text>
+<line x1="650" y1="100" x2="650" y2="492" stroke="#666666" stroke-dasharray="6 4"/><rect x="575" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="650" y="81">:Notificacion</tspan></text>
+<line x1="920" y1="100" x2="920" y2="492" stroke="#666666" stroke-dasharray="6 4"/><rect x="845" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="920" y="81">:Usuario</tspan></text>
+<rect x="345" y="295" width="610" height="116" fill="none" stroke="#36393d"/><path d="M345,317 H390 L400,307 V295" fill="#ffffff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-weight="bold"><tspan x="351" y="308">loop</tspan></text>
+<rect x="645" y="224" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="915" y="346" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="375" y="187" width="10" height="267" fill="#ffffff" stroke="#000000"/>
+<polyline points="115,193 375,193" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="245" y="183">consultarConfirmacionLectura</tspan></text>
+<polyline points="385,230 645,230" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="220">usuarios</tspan></text>
+<polyline points="645,267 385,267" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="257">List&lt;Usuario&gt;</tspan></text>
+<polyline points="385,352 915,352" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="342">notificacionLeida</tspan></text>
+<polyline points="915,389 385,389" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="379">Boolean</tspan></text>
+<polyline points="375,448 115,448" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="245" y="438">lectura de cada destinatario</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-style="italic"><tspan x="409" y="309">[por cada destinatario de la notificación]</tspan></text>
+</svg>

@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1620" height="1567" viewBox="0 0 1620 1567">
+<title>Diagrama de secuencia: Realizar pagos</title>
+<defs><marker id="cerrada" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#000000"/></marker><marker id="abierta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#000000" stroke-width="1.2"/></marker></defs>
+<rect width="1620" height="1567" fill="#ffffff"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#000000" text-anchor="start" font-weight="bold"><tspan x="22" y="27">Diagrama de secuencia: Realizar pagos</tspan></text>
+<circle cx="110" cy="68" r="8" fill="#ffcc99" stroke="#36393d" stroke-width="1.2"/><path d="M110,76 V96 M96,84 H124 M110,96 L96,116 M110,96 L124,116" fill="none" stroke="#36393d" stroke-width="1.2"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="110" y="129">Residente</tspan></text>
+<polyline points="110,156 110,1507" fill="none" stroke="#666666" stroke-width="1" stroke-dasharray="6 4"/>
+<line x1="380" y1="100" x2="380" y2="1507" stroke="#666666" stroke-dasharray="6 4"/><rect x="305" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="380" y="81">:Pago</tspan></text>
+<line x1="650" y1="100" x2="650" y2="1507" stroke="#666666" stroke-dasharray="6 4"/><rect x="575" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="650" y="81">:Liquidacion</tspan></text>
+<line x1="920" y1="100" x2="920" y2="1507" stroke="#666666" stroke-dasharray="6 4"/><rect x="845" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="920" y="81">:PasarelaPago</tspan></text>
+<line x1="1190" y1="100" x2="1190" y2="1507" stroke="#666666" stroke-dasharray="6 4"/><rect x="1115" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="1190" y="81">:Notificacion</tspan></text>
+<line x1="1460" y1="100" x2="1460" y2="1507" stroke="#666666" stroke-dasharray="6 4"/><rect x="1385" y="60" width="150" height="40" fill="#cce5ff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#000000" text-anchor="middle" font-weight="bold"><tspan x="1460" y="81">:Inmueble</tspan></text>
+<rect x="345" y="657" width="1150" height="633" fill="none" stroke="#36393d"/><path d="M345,679 H390 L400,669 V657" fill="#ffffff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-weight="bold"><tspan x="351" y="670">alt</tspan></text>
+<polyline points="345,1174 1495,1174" fill="none" stroke="#36393d" stroke-width="1" stroke-dasharray="6 4"/>
+<rect x="75" y="341" width="1435" height="1122" fill="none" stroke="#36393d"/><path d="M75,363 H120 L130,353 V341" fill="#ffffff" stroke="#36393d"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-weight="bold"><tspan x="81" y="354">alt</tspan></text>
+<polyline points="75,1384 1510,1384" fill="none" stroke="#36393d" stroke-width="1" stroke-dasharray="6 4"/>
+<rect x="645" y="224" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="380" y="289" width="10" height="32" fill="#ffffff" stroke="#000000"/>
+<rect x="915" y="392" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="375" y="187" width="10" height="291" fill="#ffffff" stroke="#000000"/>
+<rect x="920" y="531" width="10" height="32" fill="#ffffff" stroke="#000000"/>
+<rect x="375" y="586" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="645" y="745" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="375" y="708" width="10" height="123" fill="#ffffff" stroke="#000000"/>
+<rect x="375" y="856" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="920" y="921" width="10" height="32" fill="#ffffff" stroke="#000000"/>
+<rect x="1455" y="1028" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="1190" y="1093" width="10" height="32" fill="#ffffff" stroke="#000000"/>
+<rect x="1185" y="991" width="10" height="169" fill="#ffffff" stroke="#000000"/>
+<rect x="375" y="1225" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<rect x="915" y="1321" width="10" height="49" fill="#ffffff" stroke="#000000"/>
+<polyline points="115,193 375,193" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="245" y="183">registrarPago(inmueble)</tspan></text>
+<polyline points="385,230 645,230" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="220">calcularTotal()</tspan></text>
+<polyline points="645,267 385,267" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="257">BigDecimal</tspan></text>
+<polyline points="390,293 428,293 428,317 390,317" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<polyline points="385,398 915,398" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="388">iniciarTransaccion(pago)</tspan></text>
+<polyline points="915,435 385,435" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="425">String (URL del checkout)</tspan></text>
+<polyline points="375,472 115,472" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="245" y="462">Pago PENDIENTE y URL del checkout</tspan></text>
+<polyline points="115,509 915,509" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="499">paga en la pasarela (PSE, tarjeta o Nequi)</tspan></text>
+<polyline points="930,535 968,535 968,559 930,559" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<polyline points="915,592 385,592" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="582">estaAprobado(pago)</tspan></text>
+<polyline points="385,629 915,629" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="619">Boolean</tspan></text>
+<polyline points="915,714 385,714" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="704">actualizarEstado(pago)</tspan></text>
+<polyline points="385,751 645,751" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="741">marcarAlDia()</tspan></text>
+<polyline points="645,788 385,788" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<polyline points="385,825 915,825" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="815">Liquidacion</tspan></text>
+<polyline points="915,862 385,862" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="852">generarComprobante()</tspan></text>
+<polyline points="385,899 915,899" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="889">String</tspan></text>
+<polyline points="930,925 968,925 968,949 930,949" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<polyline points="925,997 1185,997" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="1055" y="972">notificarActualizacionDePago(inmueble,</tspan><tspan x="1055" y="987">usuarios)</tspan></text>
+<polyline points="1195,1034 1455,1034" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="1325" y="1024">mostrarUsuarios(List&lt;Usuario&gt;)</tspan></text>
+<polyline points="1455,1071 1195,1071" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="1325" y="1061">List&lt;String&gt;</tspan></text>
+<polyline points="1200,1097 1238,1097 1238,1121 1200,1121" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<polyline points="1185,1154 925,1154" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<polyline points="915,1231 385,1231" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="1221">anularPago()</tspan></text>
+<polyline points="385,1268 915,1268" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="650" y="1258">estado = ANULADO</tspan></text>
+<polyline points="115,1327 915,1327" fill="none" stroke="#000000" stroke-width="1" marker-end="url(#cerrada)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="1317">consultarEstado(referencia)</tspan></text>
+<polyline points="915,1364 115,1364" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="515" y="1354">String</tspan></text>
+<polyline points="375,1441 115,1441" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#abierta)"/>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="middle"><tspan x="245" y="1431">error: el monto no coincide con la liquidación</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start"><tspan x="436" y="302">validarMonto(liquidacion) : Boolean</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start"><tspan x="976" y="544">confirmarTransaccion(referencia) : Boolean</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start"><tspan x="976" y="934">notificarResultado(pago)</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start"><tspan x="1246" y="1106">enviarNotificacion() : Boolean</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-style="italic"><tspan x="409" y="671">[transacción aprobada]</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-style="italic"><tspan x="355" y="1188">[transacción rechazada]</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-style="italic"><tspan x="139" y="355">[monto válido]</tspan></text>
+<text font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#000000" text-anchor="start" font-style="italic"><tspan x="85" y="1398">[monto inválido]</tspan></text>
+</svg>

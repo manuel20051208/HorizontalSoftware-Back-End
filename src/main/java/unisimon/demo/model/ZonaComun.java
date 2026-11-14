@@ -1,7 +1,6 @@
 package unisimon.demo.model;
 
 import org.hibernate.annotations.DynamicUpdate;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -44,7 +43,7 @@ public class ZonaComun {
     @Column(nullable = false)
     private Boolean isActive = true;
 
-    @OneToMany(mappedBy = "zonaComun", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "zonaComun")
     private List<Rompimiento> reglasAsignadas = new ArrayList<>();
 
     public ZonaComun(Long id, String nombreZonaComun, int capacidad, LocalTime horaInicio, LocalTime horaFin) {

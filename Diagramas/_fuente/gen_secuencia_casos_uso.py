@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Genera Diagramas/Secuencia/secuencia-casos-de-uso.xml (draw.io / diagrams.net):
-un diagrama de secuencia por caso de uso, una pagina por diagrama.
+Genera un diagrama de secuencia por caso de uso:
+  - Diagramas/_fuente/secuencia-casos-de-uso.xml  (draw.io / diagrams.net, una pagina por diagrama; es la fuente)
+  - Diagramas/Secuencia/<caso-de-uso>.svg          (un SVG por diagrama, dibujado desde ese mismo XML)
 
 Regla: los participantes son clases del diagrama de clases y los mensajes son SUS operaciones, con los
 nombres y parametros tal como estan en el diagrama de clases. Los casos de uso son los del diagrama de
@@ -12,9 +13,13 @@ Uso:  python Diagramas/_fuente/gen_secuencia_casos_uso.py
 import html
 import math
 import os
+import re
+import unicodedata
+import xml.etree.ElementTree as ET
 
 RAIZ = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-SALIDA = os.path.join(RAIZ, "Diagramas", "Secuencia", "secuencia-casos-de-uso.xml")
+SALIDA = os.path.join(RAIZ, "Diagramas", "_fuente", "secuencia-casos-de-uso.xml")
+CARPETA_SVG = os.path.join(RAIZ, "Diagramas", "Secuencia")
 
 ESPACIO = 270          # distancia entre lifelines
 ANCHO_CAJA = 150       # ancho del encabezado de cada lifeline
@@ -287,7 +292,7 @@ def notificar(d, de, tipo_llamada, inmueble=True):
     """de -> Notificacion.<tipo_llamada>; la notificacion toma los usuarios del Inmueble y se envia."""
     d.llamar(de, "not", tipo_llamada)
     if inmueble:
-        d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List)", "List")
+        d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
     d.propio("not", "enviarNotificacion()", "Boolean")
     d.retornar("not", de, "")
 
@@ -407,7 +412,7 @@ d.retornar("pag", "pas", "Liquidacion")
 d.llamar_y_retornar("pas", "pag", "generarComprobante()", "String")
 d.propio("pas", "notificarResultado(pago)")
 d.llamar("pas", "not", "notificarActualizacionDePago(inmueble, usuarios)")
-d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List)", "List")
+d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
 d.propio("not", "enviarNotificacion()", "Boolean")
 d.retornar("not", "pas", "")
 d.sino("transacción rechazada")
@@ -431,7 +436,7 @@ d.llamar("adm", "pag", "actualizarEstado(pago)")
 d.llamar_y_retornar("pag", "liq", "marcarAlDia()", "")
 d.retornar("pag", "adm", "Liquidacion")
 d.llamar("adm", "not", "notificarActualizacionDePago(inmueble, usuarios)")
-d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List)", "List")
+d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
 d.propio("not", "enviarNotificacion()", "Boolean")
 d.retornar("not", "adm", "")
 d.retornar("adm", "act", "Pago", cerrar=False)
@@ -460,7 +465,7 @@ d.llamar_y_retornar("act", "usr", "marcarNotificacionLeida(inmueble, id)", "noti
 
 d = nuevo("Publicar comunicado oficial",
           [ADMIN, o("inm", "Inmueble"), o("not", "Notificacion")])
-d.llamar_y_retornar("act", "inm", "mostrarUsuarios(List)", "List<Usuario>")
+d.llamar_y_retornar("act", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
 d.llamar_y_retornar("act", "not", "Notificacion(id, usuarios, mensaje, tipoNotificacion, fechaEnvio)",
                     "notificación")
 d.llamar("act", "not", "enviarNotificacion()")
@@ -485,7 +490,7 @@ d = nuevo("Consultar calendario de disponibilidad",
            o("rez", "ReservaZonaComun")])
 d.abrir("alt", "actor = Residente")
 d.llamar("act", "res", "verReservas(id)")
-d.llamar_y_retornar("res", "rez", "mostrarZonasComunes()", "List")
+d.llamar_y_retornar("res", "rez", "mostrarZonasComunes()", "List<ZonaComun>")
 d.abrir("loop", "por cada zona común")
 d.llamar_y_retornar("res", "rez", "verificarDisponibilidad(hora)", "Boolean")
 d.llamar_y_retornar("res", "rez", "validarHorario(hora)", "Boolean")
@@ -493,19 +498,19 @@ d.cerrar()
 d.retornar("res", "act", "List<ReservaZonaComun>")
 d.sino("actor = Vigilante")
 d.llamar("act", "vig", "consultarReservas()")
-d.llamar_y_retornar("vig", "rez", "mostrarZonasComunes()", "List")
+d.llamar_y_retornar("vig", "rez", "mostrarZonasComunes()", "List<ZonaComun>")
 d.abrir("loop", "por cada zona común")
 d.llamar_y_retornar("vig", "rez", "verificarDisponibilidad(hora)", "Boolean")
 d.llamar_y_retornar("vig", "rez", "validarHorario(hora)", "Boolean")
 d.cerrar()
-d.retornar("vig", "act", "List")
+d.retornar("vig", "act", "List<ZonaComun>")
 d.cerrar()
 
 d = nuevo("Reservar zona común",
           [RESI, o("res", "Residente"), o("rez", "ReservaZonaComun"), o("inm", "Inmueble"),
            o("liq", "Liquidacion"), o("not", "Notificacion")])
 d.llamar("act", "res", "reservarZonaComun(id)")
-d.llamar_y_retornar("res", "rez", "mostrarZonasComunes()", "List")
+d.llamar_y_retornar("res", "rez", "mostrarZonasComunes()", "List<ZonaComun>")
 d.llamar_y_retornar("res", "rez", "verificarDisponibilidad(hora)", "Boolean")
 d.llamar_y_retornar("res", "rez", "validarHorario(hora)", "Boolean")
 d.llamar("res", "rez", "estaHabilitado(duenoReserva)")
@@ -543,13 +548,13 @@ d.retornar("vig", "act", "false", cerrar=False)
 d.sino("cuenta activa")
 d.propio("vig", "existeInvitado(identificacion)", "Boolean")
 d.abrir("opt", "la persona es un invitado")
-d.llamar_y_retornar("vig", "ua", "buscarRelacionResidente()", "List")
+d.llamar_y_retornar("vig", "ua", "buscarRelacionResidente()", "List<Residente>")
 d.cerrar()
 d.llamar_y_retornar("vig", "rez", "validarHorario(hora)", "Boolean")
 d.abrir("alt", "reserva en curso")
 d.abrir("opt", "la persona es un invitado")
 d.llamar("vig", "not", "notificarVisita(inmueble)")
-d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List)", "List")
+d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
 d.propio("not", "enviarNotificacion()", "Boolean")
 d.retornar("not", "vig", "")
 d.cerrar()
@@ -591,7 +596,7 @@ d.retornar("inm", "act", "boolean")
 d.abrir("opt", "liquidación vencida y sin pagar")
 d.llamar_y_retornar("act", "liq", "marcarEnMora()", "estado = EN_MORA")
 d.llamar("act", "not", "notificarPagoPendiente(inmueble)")
-d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List)", "List")
+d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
 d.propio("not", "enviarNotificacion()", "Boolean")
 d.retornar("not", "act", "")
 d.cerrar()
@@ -627,7 +632,7 @@ d.llamar_y_retornar("pas", "pag", "estaAprobado(pago)", "Boolean")
 d.abrir("alt", "pago aprobado")
 d.propio("pas", "notificarResultado(pago)")
 d.llamar("pas", "not", "notificarActualizacionDePago(inmueble, usuarios)")
-d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List)", "List")
+d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
 d.propio("not", "enviarNotificacion()", "Boolean")
 d.retornar("not", "pas", "")
 d.retornar("pas", "act", "true", cerrar=False)
@@ -637,14 +642,14 @@ d.cerrar()
 
 d = nuevo("Consultar dueño del carro", [TRES, o("aut", "Auto"), o("inm", "Inmueble")])
 d.llamar("act", "aut", "consultarDuenos(inmueble, id)")
-d.llamar_y_retornar("aut", "inm", "mostrarUsuarios(List)", "List")
+d.llamar_y_retornar("aut", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
 d.retornar("aut", "act", "List<Residente>")
 
 d = nuevo("Consultar relacionados al inmueble",
           [TRES, o("inm", "Inmueble"), o("ua", "UsuarioAutorizado")])
-d.llamar_y_retornar("act", "inm", "mostrarUsuarios(List)", "List<Usuario>")
+d.llamar_y_retornar("act", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
 d.abrir("loop", "por cada usuario autorizado (invitado) del inmueble")
-d.llamar_y_retornar("act", "ua", "buscarRelacionResidente()", "List")
+d.llamar_y_retornar("act", "ua", "buscarRelacionResidente()", "List<Residente>")
 d.cerrar()
 
 d = nuevo("Consultar parqueaderos", [TRES, o("inm", "Inmueble"), o("paq", "Paqueadero")])
@@ -699,12 +704,139 @@ d.retornar("usr", "act", "error: cuenta inactiva")
 d.cerrar()
 
 
+# =========================================================================================================
+#  SVG: se dibuja desde las mismas celdas mxCell del XML de draw.io
+# =========================================================================================================
+def _estilo(texto):
+    d = {}
+    for par in (texto or "").split(";"):
+        if "=" in par:
+            k, v = par.split("=", 1)
+            d[k] = v
+    return d
+
+
+def _lineas(valor):
+    """Valor HTML de draw.io -> (lineas de texto plano, si viene en negrita)."""
+    negrita = "<b>" in valor
+    limpio = re.sub(r"</?b>", "", valor)
+    return [html.unescape(x) for x in re.split(r"<br\s*/?>", limpio)], negrita
+
+
+def _texto_svg(x, y, lineas, tam, ancla="start", negrita=False, cursiva=False, color="#000000"):
+    """Un <text> con una <tspan> por linea; y es el borde superior del bloque."""
+    atr = (f'font-family="Helvetica, Arial, sans-serif" font-size="{tam}" fill="{color}" text-anchor="{ancla}"'
+           + (' font-weight="bold"' if negrita else "") + (' font-style="italic"' if cursiva else ""))
+    paso = tam + 4
+    tsp = "".join(f'<tspan x="{x:g}" y="{y + tam + i * paso - 2:g}">{esc(x_)}</tspan>'
+                  for i, x_ in enumerate(lineas))
+    return f"<text {atr}>{tsp}</text>"
+
+
+def svg_de(d):
+    """SVG (cadena) del diagrama d, a partir de su XML de draw.io."""
+    modelo = ET.fromstring(d.xml()).find("mxGraphModel")
+    ancho, alto = int(float(modelo.get("pageWidth"))), int(float(modelo.get("pageHeight")))
+    partes = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{ancho}" height="{alto}" viewBox="0 0 {ancho} {alto}">',
+        f"<title>{esc(d.titulo)}</title>",
+        '<defs>'
+        '<marker id="cerrada" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" '
+        'orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#000000"/></marker>'
+        '<marker id="abierta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" '
+        'orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#000000" stroke-width="1.2"/>'
+        '</marker></defs>',
+        f'<rect width="{ancho}" height="{alto}" fill="#ffffff"/>',
+    ]
+    for c in modelo.iter("mxCell"):
+        st = _estilo(c.get("style"))
+        g = c.find("mxGeometry")
+        valor = c.get("value") or ""
+        if g is None:
+            continue
+        if c.get("edge") == "1":
+            pts = {p.get("as"): p for p in g.findall("mxPoint")}
+            a, b = pts["sourcePoint"], pts["targetPoint"]
+            ruta = [(float(a.get("x")), float(a.get("y")))]
+            arr = g.find("Array")
+            if arr is not None:
+                ruta += [(float(p.get("x")), float(p.get("y"))) for p in arr.findall("mxPoint")]
+            ruta.append((float(b.get("x")), float(b.get("y"))))
+            punteada = st.get("dashed") == "1"
+            sin_flecha = st.get("endArrow") == "none"
+            color = st.get("strokeColor", "#000000")
+            tipo = "abierta" if st.get("endFill") == "0" else "cerrada"
+            marca = "" if sin_flecha else f' marker-end="url(#{tipo})"'
+            puntos = " ".join(f"{px:g},{py:g}" for px, py in ruta)
+            partes.append(f'<polyline points="{puntos}" fill="none" stroke="{color}" stroke-width="1"'
+                          + (' stroke-dasharray="6 4"' if punteada else "") + marca + "/>")
+            if valor:  # etiqueta centrada, apoyada encima de la linea
+                lineas, _ = _lineas(valor)
+                cx = (ruta[0][0] + ruta[-1][0]) / 2
+                partes.append(_texto_svg(cx, ruta[0][1] - 4 - 15 * len(lineas), lineas, 11, "middle"))
+            continue
+        x, y = float(g.get("x")), float(g.get("y"))
+        w, h = float(g.get("width")), float(g.get("height"))
+        forma = st.get("shape", "")
+        if forma == "umlActor":
+            cx = x + w / 2
+            partes.append(
+                f'<circle cx="{cx:g}" cy="{y + 8:g}" r="8" fill="{st.get("fillColor", "#ffffff")}" '
+                f'stroke="#36393d" stroke-width="1.2"/>'
+                f'<path d="M{cx:g},{y + 16:g} V{y + 36:g} M{cx - 14:g},{y + 24:g} H{cx + 14:g} '
+                f'M{cx:g},{y + 36:g} L{cx - 14:g},{y + h:g} M{cx:g},{y + 36:g} L{cx + 14:g},{y + h:g}" '
+                f'fill="none" stroke="#36393d" stroke-width="1.2"/>')
+            lineas, actual = [], ""
+            for pal in html.unescape(valor).split(" "):
+                if actual and len(actual) + len(pal) + 1 > 14:
+                    lineas.append(actual)
+                    actual = pal
+                else:
+                    actual = (actual + " " + pal).strip()
+            lineas.append(actual)
+            partes.append(_texto_svg(cx, y + h + 4, lineas, 11, "middle", negrita=True))
+        elif forma == "umlLifeline":
+            cx = x + w / 2
+            partes.append(
+                f'<line x1="{cx:g}" y1="{y + 40:g}" x2="{cx:g}" y2="{y + h:g}" stroke="#666666" '
+                f'stroke-dasharray="6 4"/>'
+                f'<rect x="{x:g}" y="{y:g}" width="{w:g}" height="40" fill="{st["fillColor"]}" '
+                f'stroke="{st["strokeColor"]}"/>')
+            partes.append(_texto_svg(cx, y + 11, [html.unescape(valor)], 12, "middle", negrita=True))
+        elif forma == "umlFrame":
+            partes.append(
+                f'<rect x="{x:g}" y="{y:g}" width="{w:g}" height="{h:g}" fill="none" stroke="#36393d"/>'
+                f'<path d="M{x:g},{y + 22:g} H{x + 45:g} L{x + 55:g},{y + 12:g} V{y:g}" fill="#ffffff" '
+                f'stroke="#36393d"/>')
+            partes.append(_texto_svg(x + 6, y + 4, [html.unescape(valor)], 11, negrita=True))
+        elif "orthogonalPerimeter" in st.get("perimeter", ""):  # barra de activacion
+            partes.append(f'<rect x="{x:g}" y="{y:g}" width="{w:g}" height="{h:g}" fill="#ffffff" stroke="#000000"/>')
+        elif (c.get("style") or "").startswith("text;"):
+            lineas, neg = _lineas(valor)
+            partes.append(_texto_svg(x + 2, y + 2, lineas, int(st.get("fontSize", "11")),
+                                     negrita=neg or st.get("fontStyle") == "1",
+                                     cursiva=st.get("fontStyle") == "2", color=st.get("fontColor", "#000000")))
+    partes.append("</svg>")
+    return "\n".join(partes) + "\n"
+
+
+def nombre_archivo(nombre):
+    base = unicodedata.normalize("NFD", nombre.lower())
+    base = "".join(ch for ch in base if unicodedata.category(ch) != "Mn")
+    return re.sub(r"[^a-z0-9]+", "-", base).strip("-")
+
+
 def main():
     cuerpo = "".join(d.xml() for d in diagramas)
     os.makedirs(os.path.dirname(SALIDA), exist_ok=True)
     with open(SALIDA, "w", encoding="utf-8") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<mxfile host="app.diagrams.net">\n' + cuerpo + "</mxfile>\n")
-    print(f"{len(diagramas)} diagramas -> {SALIDA}")
+    os.makedirs(CARPETA_SVG, exist_ok=True)
+    for d in diagramas:
+        with open(os.path.join(CARPETA_SVG, nombre_archivo(d.nombre) + ".svg"), "w", encoding="utf-8") as f:
+            f.write(svg_de(d))
+    print(f"{len(diagramas)} diagramas (xml) -> {SALIDA}")
+    print(f"{len(diagramas)} svg -> {CARPETA_SVG}")
 
 
 if __name__ == "__main__":

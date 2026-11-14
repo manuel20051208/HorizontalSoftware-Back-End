@@ -44,7 +44,7 @@ public class Inmueble {
     private Long id;
 
     /** List&lt;Usuario&gt; como en el diagrama; en la base son los residentes e invitados de este inmueble. */
-    @OneToMany(mappedBy = "inmueble", targetEntity = Residente.class)
+    @OneToMany(mappedBy = "inmueble", targetEntity = Residente.class, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Usuario> usuariosRelacionado = new ArrayList<>();
 
     @Column(nullable = false, unique = true)
@@ -59,11 +59,11 @@ public class Inmueble {
             inverseJoinColumns = @JoinColumn(name = "zona_comun_id"))
     private List<ZonaComun> zonaComunes = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "liquidacion_actual_id")
     private Liquidacion liquidacion;
 
-    @OneToMany(mappedBy = "inmueble")
+    @OneToMany(mappedBy = "inmueble", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pago> registroPagos = new ArrayList<>();
 
     @Column(nullable = false)
