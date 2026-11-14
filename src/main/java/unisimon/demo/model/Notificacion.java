@@ -22,7 +22,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Notificacion para uno o varios usuarios. Tipos: GENERAL, RESERVA, PAGO_PENDIENTE, PAGO_ACTUALIZADO, VISITA.
+ * Notificacion para uno o varios usuarios. Tipos: GENERAL, RESERVA, PAGO_PENDIENTE, PAGO_ACTUALIZADO, VISITA,
+ * INCIDENCIA (incidencia operativa que registra la porteria para la administracion).
  * Los metodos notificarX arman destinatarios y mensaje y luego llaman a {@link #enviarNotificacion()};
  * guardarla en la base de datos lo hace la capa de servicios.
  */
@@ -33,6 +34,9 @@ import java.util.Locale;
 @Setter
 @NoArgsConstructor
 public class Notificacion {
+
+    /** Incidencia operativa registrada por un vigilante. */
+    public static final String INCIDENCIA = "INCIDENCIA";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

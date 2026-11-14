@@ -21,7 +21,7 @@ import java.time.LocalDate;
 /**
  * Liquidacion mensual de la administracion de un inmueble.
  * Estados: PENDIENTE (recien generada), AL_DIA (pagada) y EN_MORA (vencida sin pagar).
- * generarLiquidacion(inmueble) esta en la capa de servicios.
+ * generarLiquidacion(inmueble) deja lista la liquidacion; comprobar duplicados y guardarla es del servicio.
  */
 @Entity
 @DynamicUpdate
@@ -34,6 +34,9 @@ public class Liquidacion {
     public static final String PENDIENTE = "PENDIENTE";
     public static final String AL_DIA = "AL_DIA";
     public static final String EN_MORA = "EN_MORA";
+
+    /** Dia del mes en que vence la liquidacion cuando no se indica fecha limite. */
+    public static final int DIA_LIMITE_POR_DEFECTO = 10;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,6 +85,28 @@ public class Liquidacion {
 
     private static BigDecimal nz(BigDecimal v) {
         return v == null ? BigDecimal.ZERO : v;
+    }
+
+    /**
+     * generarLiquidacion(inmueble : Inmueble) : Liquidacion.
+     * Genera esta liquidacion para el inmueble: el periodo queda en el dia 1 del mes (el mes actual si no se
+     * indico), la fecha limite por defecto es el dia 10, nace PENDIENTE con su total calculado y pasa a ser la
+     * liquidacion vigente del inmueble.
+     */
+    public Liquidacion generarLiquidacion(Inmueble inmueble) {
+        if (inmueble == null || !Boolean.TRUE.equals(inmueble.getIsActive())) {
+            throw new IllegalStateException("Solo se generan liquidaciones de un inmueble activo");
+        }
+        this.inmueble = inmueble;
+        this.periodo = (periodo != null ? periodo : LocalDate.now()).withDayOfMonth(1);
+        this.fechaGeneracion = LocalDate.now();
+        if (fechaLimite == null) {
+            this.fechaLimite = periodo.withDayOfMonth(DIA_LIMITE_POR_DEFECTO);
+        }
+        this.estado = PENDIENTE;
+        calcularTotal();
+        inmueble.setLiquidacion(this);
+        return this;
     }
 
     /** calcularTotal() : BigDecimal = cuota + servicios comunes + multas (y lo deja guardado en total). */

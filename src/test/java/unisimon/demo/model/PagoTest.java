@@ -20,7 +20,7 @@ class PagoTest {
     }
 
     private Pago pago(BigDecimal monto) {
-        return new Pago(9L, inmueble(), null, monto, LocalDate.of(2026, 11, 8), "Administracion A-302", "PSE",
+        return new Pago(9L, inmueble(), monto, LocalDate.of(2026, 11, 8), "Administracion A-302", "PSE",
                 "PAGO-9-ABC");
     }
 
@@ -28,7 +28,8 @@ class PagoTest {
     @DisplayName("el pago nace PENDIENTE y con la pasarela que se le indique")
     void constructor() {
         PasarelaPago pasarela = new PasarelaPago(1L, "Wompi", "https://x", "key");
-        Pago p = new Pago(1L, inmueble(), pasarela, BigDecimal.TEN, null, "c", "PSE", null);
+        Pago p = new Pago(1L, inmueble(), BigDecimal.TEN, null, "c", "PSE", null);
+        p.setPasarela(pasarela);
 
         assertThat(p.getEstado()).isEqualTo(Pago.PENDIENTE);
         assertThat(p.getPasarela()).isSameAs(pasarela);

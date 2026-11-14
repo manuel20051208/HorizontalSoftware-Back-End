@@ -35,8 +35,9 @@ public class ReglaReserva {
 
     private int horasAntelacionPenalidad;
 
-    @Column(nullable = false)
-    private BigDecimal tarifaPenalidad = BigDecimal.ZERO;
+    /** Con mayuscula inicial, como esta escrito en el diagrama de clases. */
+    @Column(name = "tarifa_penalidad", nullable = false)
+    private BigDecimal TarifaPenalidad = BigDecimal.ZERO;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id")
@@ -48,7 +49,7 @@ public class ReglaReserva {
         this.anticipacionMinimaHoras = anticipacionMinimaHoras;
         this.duracionMaximaHoras = duracionMaximaHoras;
         this.horasAntelacionPenalidad = horasAntelacionPenalidad;
-        this.tarifaPenalidad = tarifaPenalidad == null ? BigDecimal.ZERO : tarifaPenalidad;
+        this.TarifaPenalidad = tarifaPenalidad == null ? BigDecimal.ZERO : tarifaPenalidad;
         this.admin = admin;
     }
 

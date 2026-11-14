@@ -17,7 +17,7 @@ class PasarelaPagoTest {
     }
 
     private Pago pago(Long id, BigDecimal monto) {
-        return new Pago(id, new Inmueble(1L, "A-302", null, true), null, monto, null, "c", "PSE", null);
+        return new Pago(id, new Inmueble(1L, "A-302", null, true), monto, null, "c", "PSE", null);
     }
 
     @Test

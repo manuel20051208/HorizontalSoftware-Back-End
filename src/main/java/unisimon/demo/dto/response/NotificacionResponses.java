@@ -12,6 +12,10 @@ public final class NotificacionResponses {
     public record Notificacion(Long id, String mensaje, String tipoNotificacion, LocalDateTime fechaEnvio) {
     }
 
+    /** Tipos de notificacion que el usuario quiere recibir; vacia = los recibe todos. */
+    public record Preferencias(List<String> preferenciasNotificacion) {
+    }
+
     public record Destinatario(Long usuarioId, String nombreCompleto) {
     }
 

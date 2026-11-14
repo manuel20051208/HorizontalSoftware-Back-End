@@ -87,6 +87,20 @@ public interface PagoRepository extends Repository<Pago, Long> {
     BigDecimal sumarPorEstadoEntre(@Param("estado") String estado, @Param("desde") LocalDate desde,
                                    @Param("hasta") LocalDate hasta);
 
+    /** Total pagado por cada inmueble en pagos de ese estado. */
+    interface TotalInmuebleView {
+        Long getInmuebleId();
+
+        BigDecimal getTotal();
+    }
+
+    @Query(value = """
+            SELECT p.inmueble_id AS "inmuebleId", COALESCE(SUM(p.monto), 0) AS "total"
+            FROM pagos p WHERE p.estado = :estado
+            GROUP BY p.inmueble_id
+            """, nativeQuery = true)
+    List<TotalInmuebleView> sumarPorInmueble(@Param("estado") String estado);
+
     // ------------------------------------------------------------------ cambios por columna
 
     @Modifying

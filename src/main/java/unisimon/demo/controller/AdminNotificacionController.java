@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import unisimon.demo.dto.request.NotificacionRequests;
+import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.NotificacionResponses;
+import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.security.annotation.SoloAdministrador;
 import unisimon.demo.service.NotificacionService;
 
-/** Notificaciones enviadas por el administrador y su confirmacion de lectura. */
+/** Notificaciones enviadas por el administrador, su confirmacion de lectura y las incidencias de porteria. */
 @RestController
 @RequestMapping("/api/admin/notificaciones")
 public class AdminNotificacionController {
@@ -36,5 +38,11 @@ public class AdminNotificacionController {
     @GetMapping("/{id}/lectura")
     public NotificacionResponses.Lectura lectura(@PathVariable Long id) {
         return notificaciones.consultarConfirmacionLectura(id);
+    }
+
+    @SoloAdministrador
+    @GetMapping("/incidencias")
+    public Pagina<NotificacionResponses.Notificacion> incidencias(SolicitudPagina pagina) {
+        return notificaciones.consultarIncidencias(pagina);
     }
 }

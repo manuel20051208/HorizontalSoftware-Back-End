@@ -95,7 +95,7 @@ public class PagoServiceImpl implements PagoService {
         }
 
         // El valor lo fija el servidor (saldo pendiente), nunca el cliente.
-        Pago pago = new Pago(null, Hidratador.referenciaInmueble(residente.getInmuebleId()), null, saldo, null,
+        Pago pago = new Pago(null, Hidratador.referenciaInmueble(residente.getInmuebleId()), saldo, null,
                 "Administracion " + residente.getDireccionInmueble(), metodo, null);
         pago.setId(pagos.insertar(pago));
         PasarelaPago pasarela = Hidratador.pasarela(vistaPasarela);
@@ -122,7 +122,7 @@ public class PagoServiceImpl implements PagoService {
         String referencia = s.referencia() == null || s.referencia().isBlank()
                 ? "CONC-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase(Locale.ROOT)
                 : s.referencia().trim();
-        Pago pago = new Pago(null, Hidratador.referenciaInmueble(inmuebleId), null, s.monto(),
+        Pago pago = new Pago(null, Hidratador.referenciaInmueble(inmuebleId), s.monto(),
                 LocalDate.now(reloj), "Conciliacion de administracion", s.metodoPago().trim().toUpperCase(Locale.ROOT),
                 referencia);
         if (!pago.validarMonto(saldo)) {

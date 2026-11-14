@@ -2,16 +2,24 @@ package unisimon.demo.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import unisimon.demo.dto.request.NotificacionRequests;
 import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.InvitadoResponses;
+import unisimon.demo.dto.response.NotificacionResponses;
 import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReservaResponses;
 import unisimon.demo.dto.response.VigilanteResponses;
+import unisimon.demo.exception.ConflictoException;
+import unisimon.demo.exception.NoAutenticadoException;
+import unisimon.demo.exception.ProhibidoException;
 import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.mapper.Hidratador;
 import unisimon.demo.mapper.InvitadoMapper;
 import unisimon.demo.mapper.ReservaMapper;
+import unisimon.demo.model.Notificacion;
+import unisimon.demo.model.Usuario;
 import unisimon.demo.model.UsuarioAutorizado;
+import unisimon.demo.model.Vigilante;
 import unisimon.demo.policy.EstadoReservaPolicy;
 import unisimon.demo.repository.InvitadoRepository;
 import unisimon.demo.repository.InvitadoRepository.AnfitrionView;
@@ -19,6 +27,7 @@ import unisimon.demo.repository.InvitadoRepository.InvitadoView;
 import unisimon.demo.repository.ReservaZonaComunRepository;
 import unisimon.demo.repository.UsuarioRepository;
 import unisimon.demo.repository.UsuarioRepository.CredencialesView;
+import unisimon.demo.repository.UsuarioRepository.UsuarioListaView;
 import unisimon.demo.service.NotificacionService;
 import unisimon.demo.service.VigilanteService;
 
@@ -119,6 +128,26 @@ public class VigilanteServiceImpl implements VigilanteService {
                 })
                 .toList();
         return new VigilanteResponses.Ingreso(true, "Ingreso permitido", vista.getNombreCompleto(), avisados);
+    }
+
+    @Override
+    @Transactional
+    public NotificacionResponses.Notificacion registrarIncidencia(Long vigilanteId, String descripcion) {
+        CredencialesView vigilante = usuarios.buscarCredencialesPorId(vigilanteId)
+                .orElseThrow(() -> new NoAutenticadoException("Sesion invalida"));
+        if (!(Hidratador.usuario(vigilante) instanceof Vigilante dominio)) {
+            throw new ProhibidoException("Solo un vigilante registra incidencias");
+        }
+        dominio.registrarIncidencia(descripcion);                    // Vigilante.registrarIncidencia(descripcion)
+        List<Long> administradores = usuarios.listar(Usuario.ADMINISTRADOR, true).stream()
+                .map(UsuarioListaView::getId).toList();
+        if (administradores.isEmpty()) {
+            throw new ConflictoException("No hay un administrador activo que reciba la incidencia");
+        }
+        // Notificacion(id, usuarios, mensaje, tipoNotificacion = INCIDENCIA, fechaEnvio) + enviarNotificacion()
+        String mensaje = "Incidencia reportada por " + vigilante.getNombreCompleto() + ": " + descripcion.trim();
+        return notificaciones.enviarNotificacion(
+                new NotificacionRequests.Enviar(mensaje, Notificacion.INCIDENCIA, administradores, null));
     }
 
     private static VigilanteResponses.Acceso denegar(CredencialesView persona, String motivo) {

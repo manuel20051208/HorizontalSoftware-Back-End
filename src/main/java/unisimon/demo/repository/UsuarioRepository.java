@@ -68,6 +68,14 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
         LocalDate getVenceAutorizacion();
     }
 
+    /** Lo necesario para Usuario.configurarPreferencias: si la cuenta esta activa y sus preferencias actuales. */
+    interface PreferenciasView {
+        Boolean getActive();
+
+        /** Tipos separados por coma; vacio si no ha configurado ninguno. */
+        String getPreferencias();
+    }
+
     String SELECT_CREDENCIALES = """
             SELECT u.id AS "id", u.identificacion AS "identificacion", u.nombre_completo AS "nombreCompleto",
                    u.correo_electronico AS "correoElectronico", u.contrasena AS "contrasena",
@@ -127,6 +135,20 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
 
     @Query(value = SELECT_LISTA + "WHERE u.inmueble_id = :inmuebleId ORDER BY u.nombre_completo", nativeQuery = true)
     List<UsuarioListaView> listarPorInmueble(@Param("inmuebleId") Long inmuebleId);
+
+    @Query(value = """
+            SELECT u.active AS "active", array_to_string(u.preferencias_notificacion, ',') AS "preferencias"
+            FROM usuarios u WHERE u.id = :id
+            """, nativeQuery = true)
+    Optional<PreferenciasView> buscarPreferencias(@Param("id") Long id);
+
+    /** De los usuarios dados, los que quieren recibir ese tipo de notificacion (sin preferencias = todos). */
+    @Query(value = """
+            SELECT u.id FROM usuarios u
+            WHERE u.id IN (:ids)
+              AND (cardinality(u.preferencias_notificacion) = 0 OR :tipo = ANY (u.preferencias_notificacion))
+            """, nativeQuery = true)
+    List<Long> filtrarPorPreferencia(@Param("ids") List<Long> ids, @Param("tipo") String tipo);
 
     // ------------------------------------------------------------------ altas (INSERT ... RETURNING id)
 
@@ -191,6 +213,14 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
     @Modifying
     @Query(value = "UPDATE usuarios SET notificacion_leida = :leida WHERE id = :id", nativeQuery = true)
     int actualizarNotificacionLeida(@Param("id") Long id, @Param("leida") boolean leida);
+
+    /** preferencias: tipos separados por coma ("" deja la lista vacia). */
+    @Modifying
+    @Query(value = """
+            UPDATE usuarios SET preferencias_notificacion = CAST(string_to_array(:preferencias, ',') AS VARCHAR(30)[])
+            WHERE id = :id
+            """, nativeQuery = true)
+    int actualizarPreferencias(@Param("id") Long id, @Param("preferencias") String preferencias);
 
     @Modifying
     @Query(value = "UPDATE usuarios SET notificacion_leida = FALSE WHERE id IN (:ids)", nativeQuery = true)

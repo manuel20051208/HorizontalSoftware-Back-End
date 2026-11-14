@@ -1,6 +1,7 @@
 package unisimon.demo.service;
 
 import unisimon.demo.dto.request.SolicitudPagina;
+import unisimon.demo.dto.response.NotificacionResponses;
 import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReservaResponses;
 import unisimon.demo.dto.response.VigilanteResponses;
@@ -19,4 +20,10 @@ public interface VigilanteService {
 
     /** Registra el ingreso de un invitado vigente y avisa a los residentes que lo autorizaron. */
     VigilanteResponses.Ingreso registrarIngreso(Long identificacion);
+
+    /**
+     * Vigilante.registrarIncidencia(descripcion): deja la incidencia operativa como una notificacion de tipo
+     * INCIDENCIA para los administradores activos.
+     */
+    NotificacionResponses.Notificacion registrarIncidencia(Long vigilanteId, String descripcion);
 }

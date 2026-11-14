@@ -43,8 +43,9 @@ public class Inmueble {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "inmueble")
-    private List<Residente> usuariosRelacionado = new ArrayList<>();
+    /** List&lt;Usuario&gt; como en el diagrama; en la base son los residentes e invitados de este inmueble. */
+    @OneToMany(mappedBy = "inmueble", targetEntity = Residente.class)
+    private List<Usuario> usuariosRelacionado = new ArrayList<>();
 
     @Column(nullable = false, unique = true)
     private String direccionInmueble;
@@ -92,8 +93,8 @@ public class Inmueble {
     }
 
     /** mostrarUsuarios(List&lt;Usuario&gt;) : List&lt;String&gt; -> nombres; sin argumento usa usuariosRelacionado. */
-    public List<String> mostrarUsuarios(List<? extends Usuario> usuarios) {
-        List<? extends Usuario> origen = usuarios != null ? usuarios : usuariosRelacionado;
+    public List<String> mostrarUsuarios(List<Usuario> usuarios) {
+        List<Usuario> origen = usuarios != null ? usuarios : usuariosRelacionado;
         return origen.stream().map(Usuario::getNombreCompleto).toList();
     }
 
@@ -101,7 +102,6 @@ public class Inmueble {
     public List<Usuario> residentesActivos() {
         return usuariosRelacionado.stream()
                 .filter(r -> !(r instanceof UsuarioAutorizado) && r.isActive())
-                .map(r -> (Usuario) r)
                 .toList();
     }
 }

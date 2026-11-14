@@ -20,4 +20,12 @@ public final class NotificacionRequests {
                          List<Long> usuarioIds,
                          Long inmuebleId) {
     }
+
+    /** Vigilante.registrarIncidencia(descripcion): lo que paso en porteria. */
+    public record Incidencia(@NotBlank @Size(max = 300) String descripcion) {
+    }
+
+    /** Usuario.configurarPreferencias(tipoNotificacion): el tipo que se activa o desactiva. */
+    public record Preferencia(@NotBlank @Size(max = 30) String tipoNotificacion) {
+    }
 }

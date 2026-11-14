@@ -1,5 +1,9 @@
 package unisimon.demo.model;
 
+import lombok.AccessLevel;
+import java.util.List;
+import java.util.ArrayList;
+import jakarta.persistence.Transient;
 import org.hibernate.annotations.DynamicUpdate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +26,8 @@ import java.util.UUID;
  * Pasarela de pagos (Wompi). {@code urlApi} es la URL del checkout y {@code apiKey} la llave publica del comercio.
  * Estados: ACTIVA / INACTIVA.
  * <p>
- * confirmarTransaccion, consultarEstado y notificarResultado necesitan base de datos y estan en la capa de servicios.
+ * confirmarTransaccion, consultarEstado y notificarResultado trabajan sobre los pagos que el servicio deja en
+ * {@code pagos}; preguntarle a Wompi y guardar en la base de datos lo hace la capa de servicios.
  */
 @Entity
 @DynamicUpdate
@@ -51,6 +56,18 @@ public class PasarelaPago {
     @Column(nullable = false)
     private String estado = ACTIVA;
 
+    /**
+     * Contexto (no es atributo del diagrama ni se guarda): el secreto de integridad con el que se firma el
+     * checkout. Viene de la configuracion, no tiene getter y nunca toca la base de datos ni las respuestas.
+     */
+    @Transient
+    @Getter(AccessLevel.NONE)
+    private String secretoIntegridad;
+
+    /** Contexto (no es atributo del diagrama ni se guarda): los pagos procesados por esta pasarela. */
+    @Transient
+    private List<Pago> pagos = new ArrayList<>();
+
     public PasarelaPago(Long id, String nombrePasarela, String urlApi, String apiKey) {
         this.id = id;
         this.nombrePasarela = nombrePasarela;
@@ -64,9 +81,14 @@ public class PasarelaPago {
      * Asigna la referencia al pago (si no la tiene), lo deja asociado a esta pasarela y devuelve la URL
      * del checkout firmada (signature:integrity) a la que debe ir el residente.
      * <p>
-     * {@code secretoIntegridad} llega por parametro y no se guarda en la entidad: nunca toca la base de datos
-     * ni las respuestas. Solo sale de aqui su hash, que no permite recuperarlo.
+     * Firma con el {@code secretoIntegridad} que el servicio dejo en la pasarela; de aqui solo sale su hash,
+     * que no permite recuperarlo.
      */
+    public String iniciarTransaccion(Pago pago) {
+        return iniciarTransaccion(pago, secretoIntegridad, null);
+    }
+
+    /** Variante con el secreto por parametro (no se guarda en la entidad). */
     public String iniciarTransaccion(Pago pago, String secretoIntegridad) {
         return iniciarTransaccion(pago, secretoIntegridad, null);
     }
@@ -112,6 +134,42 @@ public class PasarelaPago {
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA-256 no disponible", e);
         }
+    }
+
+    /**
+     * confirmarTransaccion(referencia : String) : Boolean -> la transaccion con esa referencia quedo aprobada.
+     */
+    public Boolean confirmarTransaccion(String referencia) {
+        Pago pago = buscarPago(referencia);
+        return pago != null && pago.estaAprobado(pago);
+    }
+
+    /** consultarEstado(referencia : String) : String -> estado del pago con esa referencia; null si no existe. */
+    public String consultarEstado(String referencia) {
+        Pago pago = buscarPago(referencia);
+        return pago == null ? null : pago.getEstado();
+    }
+
+    /**
+     * notificarResultado(pago : Pago): avisa el resultado del pago a los residentes activos de su inmueble
+     * (Notificacion.notificarActualizacionDePago) y deja la notificacion en el inmueble.
+     */
+    public void notificarResultado(Pago pago) {
+        if (pago == null || pago.getInmueble() == null) {
+            throw new IllegalArgumentException("El pago debe ser de un inmueble");
+        }
+        Inmueble inmueble = pago.getInmueble();
+        Notificacion notificacion = new Notificacion();
+        notificacion.notificarActualizacionDePago(inmueble, inmueble.residentesActivos());
+        if (notificacion.getFechaEnvio() != null) {
+            inmueble.getNotificaciones().add(notificacion);
+        }
+    }
+
+    private Pago buscarPago(String referencia) {
+        return referencia == null ? null : pagos.stream()
+                .filter(p -> referencia.equals(p.getReferencia()))
+                .findFirst().orElse(null);
     }
 
     /** reembolsar(pago : Pago) : Boolean -> solo se reembolsa un pago aprobado. */

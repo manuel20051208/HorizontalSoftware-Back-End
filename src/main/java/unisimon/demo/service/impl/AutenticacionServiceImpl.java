@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import unisimon.demo.dto.response.AuthResponses;
 import unisimon.demo.exception.NoAutenticadoException;
 import unisimon.demo.exception.ProhibidoException;
+import unisimon.demo.mapper.Hidratador;
 import unisimon.demo.mapper.UsuarioMapper;
 import unisimon.demo.model.Usuario;
 import unisimon.demo.repository.UsuarioRepository;
@@ -42,6 +43,10 @@ public class AutenticacionServiceImpl implements AutenticacionService {
                 .filter(u -> codificador.matches(contrasena, u.getContrasena()))
                 .orElseThrow(() -> new NoAutenticadoException(CREDENCIALES_INVALIDAS));
         validarPuedeIniciarSesion(usuario);
+        // Usuario.iniciarSesion(correo, contrasena): cuenta activa y credenciales propias (ya verificadas arriba).
+        if (Hidratador.usuario(usuario).iniciarSesion(correo, usuario.getContrasena()) == null) {
+            throw new NoAutenticadoException(CREDENCIALES_INVALIDAS);
+        }
         return abrirSesion(usuario);
     }
 

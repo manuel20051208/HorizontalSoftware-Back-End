@@ -33,4 +33,7 @@ public interface NotificacionService {
 
     /** Administrador.consultarConfirmacionLectura(): quienes ya leyeron una notificacion. */
     NotificacionResponses.Lectura consultarConfirmacionLectura(Long notificacionId);
+
+    /** Administrador.consultarIncidencias(): las incidencias operativas registradas por la porteria. */
+    Pagina<NotificacionResponses.Notificacion> consultarIncidencias(SolicitudPagina pagina);
 }

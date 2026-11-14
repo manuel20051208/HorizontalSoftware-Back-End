@@ -1,5 +1,6 @@
 package unisimon.demo.service;
 
+import unisimon.demo.dto.response.NotificacionResponses;
 import unisimon.demo.dto.response.UsuarioResponses;
 
 /** Operaciones de cuenta que hace el propio usuario sobre su contrasena y su activacion. */
@@ -16,4 +17,10 @@ public interface CuentaService {
 
     /** Usuario.cambiarContrasena(...): cambia la contrasena verificando la actual y cierra las sesiones abiertas. */
     void cambiarContrasena(Long usuarioId, String contrasenaActual, String contrasenaNueva);
+
+    /** Usuario.preferenciasNotificacion del usuario con sesion iniciada. */
+    NotificacionResponses.Preferencias consultarPreferencias(Long usuarioId);
+
+    /** Usuario.configurarPreferencias(tipoNotificacion): activa o desactiva ese tipo; exige cuenta activa. */
+    NotificacionResponses.Preferencias configurarPreferencias(Long usuarioId, String tipoNotificacion);
 }

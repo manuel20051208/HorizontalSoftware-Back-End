@@ -102,7 +102,7 @@ class HerenciaUsuarioTest {
         u.cerrarSesion();
         assertThat(u.getToken()).isNull();
 
-        u.marcarNotificacionLeida();
+        u.marcarNotificacionLeida(null, u.getId());
         assertThat(u.getNotificacionLeida()).isTrue();
     }
 }

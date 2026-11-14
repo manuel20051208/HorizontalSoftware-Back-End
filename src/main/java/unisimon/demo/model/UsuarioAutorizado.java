@@ -1,5 +1,6 @@
 package unisimon.demo.model;
 
+import java.util.List;
 import org.hibernate.annotations.DynamicUpdate;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 /**
  * UsuarioAutorizado: invitado de un residente. Segun el diagrama hereda de Residente
  * (y por tanto de Usuario) e implementa NoAdmin.
- * Operacion del diagrama: buscarRelacionResidente() -> capa de servicios.
+ * buscarRelacionResidente() recorre los residentes de su inmueble, que el servicio deja cargados.
  */
 @Entity
 @DynamicUpdate
@@ -37,5 +38,19 @@ public class UsuarioAutorizado extends Residente implements NoAdmin {
     /** La autorizacion vale hasta el dia de vencimiento, inclusive. Sin fecha = permanente. */
     public boolean autorizacionVigente() {
         return venceAutorizacion == null || !LocalDate.now().isAfter(venceAutorizacion);
+    }
+
+    /**
+     * buscarRelacionResidente() : List&lt;Residente&gt; -> los residentes de su inmueble que lo tienen como invitado.
+     */
+    public List<Residente> buscarRelacionResidente() {
+        if (getInmueble() == null) {
+            return List.of();
+        }
+        return getInmueble().getUsuariosRelacionado().stream()
+                .filter(u -> u instanceof Residente && !(u instanceof UsuarioAutorizado))
+                .map(u -> (Residente) u)
+                .filter(r -> r.tieneInvitado(this))
+                .toList();
     }
 }

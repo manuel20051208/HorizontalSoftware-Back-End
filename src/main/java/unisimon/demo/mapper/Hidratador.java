@@ -10,6 +10,7 @@ import unisimon.demo.model.Residente;
 import unisimon.demo.model.Rompimiento;
 import unisimon.demo.model.Usuario;
 import unisimon.demo.model.UsuarioAutorizado;
+import unisimon.demo.model.Vigilante;
 import unisimon.demo.model.ZonaComun;
 import unisimon.demo.repository.InmuebleRepository.InmuebleBasicoView;
 import unisimon.demo.repository.InvitadoRepository.InvitadoView;
@@ -19,9 +20,13 @@ import unisimon.demo.repository.PasarelaPagoRepository.PasarelaView;
 import unisimon.demo.repository.ReglaReservaRepository.ReglaView;
 import unisimon.demo.repository.ResidenteRepository.ContextoResidenteView;
 import unisimon.demo.repository.RompimientoRepository.RompimientoView;
+import unisimon.demo.repository.UsuarioRepository.CredencialesView;
+import unisimon.demo.repository.UsuarioRepository.PreferenciasView;
 import unisimon.demo.repository.UsuarioRepository.UsuarioListaView;
 import unisimon.demo.repository.ZonaComunRepository.ZonaView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +51,44 @@ public final class Hidratador {
     public static Usuario referenciaUsuario(Long id) {
         Usuario usuario = new Usuario();
         usuario.setId(id);
+        return usuario;
+    }
+
+    /**
+     * Usuario de su tipo (Administrador, Residente, Vigilante o UsuarioAutorizado) con sus credenciales, para
+     * ejecutar las operaciones de cuenta del diagrama. Un residente lleva la referencia de su inmueble.
+     */
+    public static Usuario usuario(CredencialesView v) {
+        String tipo = v.getTipoUsuario() == null ? "" : v.getTipoUsuario();
+        Usuario usuario = switch (tipo) {
+            case Usuario.ADMINISTRADOR -> new Administrador();
+            case Usuario.VIGILANTE -> new Vigilante();
+            case Usuario.USUARIO_AUTORIZADO -> new UsuarioAutorizado();
+            case Usuario.RESIDENTE -> new Residente();
+            default -> new Usuario();
+        };
+        usuario.setId(v.getId());
+        usuario.setIdentificacion(v.getIdentificacion());
+        usuario.setNombreCompleto(v.getNombreCompleto());
+        usuario.setCorreoElectronico(v.getCorreoElectronico());
+        usuario.setContrasena(v.getContrasena());
+        usuario.setTipoUsuario(v.getTipoUsuario());
+        usuario.setToken(v.getToken());
+        usuario.setActive(Boolean.TRUE.equals(v.getActive()));
+        usuario.setNotificacionLeida(Boolean.TRUE.equals(v.getNotificacionLeida()));
+        if (usuario instanceof Residente residente && v.getInmuebleId() != null) {
+            residente.setInmueble(referenciaInmueble(v.getInmuebleId()));
+        }
+        return usuario;
+    }
+
+    /** Usuario con lo que necesita configurarPreferencias: si esta activo y sus preferencias actuales. */
+    public static Usuario usuarioConPreferencias(Long id, PreferenciasView v) {
+        Usuario usuario = referenciaUsuario(id);
+        usuario.setActive(Boolean.TRUE.equals(v.getActive()));
+        String preferencias = v.getPreferencias();
+        usuario.setPreferenciasNotificacion(preferencias == null || preferencias.isBlank()
+                ? new ArrayList<>() : new ArrayList<>(Arrays.asList(preferencias.split(","))));
         return usuario;
     }
 
@@ -89,7 +132,7 @@ public final class Hidratador {
         Inmueble inmueble = referenciaInmueble(v.getInmuebleId());
         inmueble.setDireccionInmueble(v.getDireccionInmueble());
         liquidacionVigente.map(Hidratador::liquidacion).ifPresent(inmueble::setLiquidacion);
-        Pago pago = new Pago(v.getId(), inmueble, null, v.getMonto(), v.getFechaPago(), v.getConcepto(),
+        Pago pago = new Pago(v.getId(), inmueble, v.getMonto(), v.getFechaPago(), v.getConcepto(),
                 v.getMetodoPago(), v.getReferencia());
         pago.setEstado(v.getEstado());
         return pago;

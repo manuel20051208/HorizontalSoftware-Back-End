@@ -1,5 +1,7 @@
 package unisimon.demo.model;
 
+import java.util.List;
+import java.time.LocalTime;
 import org.hibernate.annotations.DynamicUpdate;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,7 +22,7 @@ import java.time.LocalDateTime;
  * Reserva de una zona comun por un residente durante el intervalo [fechaHoraInicio, fechaHoraFin).
  * <p>
  * El estado no se guarda: se calcula comparando el intervalo con la hora actual ({@link #estado}).
- * Contar el cupo y los solapes necesita la base de datos, asi que eso vive en la capa de servicios.
+ * Contar el cupo y los solapes con otras reservas necesita la base de datos: eso lo hace la capa de servicios.
  */
 @Entity
 @DynamicUpdate
@@ -79,7 +81,29 @@ public class ReservaZonaComun {
         return fechaHoraInicio != null && fechaHoraFin != null && fechaHoraFin.isAfter(fechaHoraInicio);
     }
 
-    /** validarHorario(): el intervalo completo cabe en una apertura de la zona. */
+    /** mostrarZonasComunes() : List&lt;ZonaComun&gt; -> las zonas activas asignadas al inmueble del dueno. */
+    public List<ZonaComun> mostrarZonasComunes() {
+        Inmueble inmueble = duenoReserva == null ? null : duenoReserva.getInmueble();
+        if (inmueble == null) {
+            return List.of();
+        }
+        return inmueble.getZonaComunes().stream().filter(z -> Boolean.TRUE.equals(z.getIsActive())).toList();
+    }
+
+    /**
+     * verificarDisponibilidad(hora : LocalTime) : Boolean.
+     * La zona esta activa y abierta a esa hora. (El cupo frente a otras reservas lo cuenta el servicio.)
+     */
+    public Boolean verificarDisponibilidad(LocalTime hora) {
+        return zonaComun != null && Boolean.TRUE.equals(zonaComun.getIsActive()) && validarHorario(hora);
+    }
+
+    /** validarHorario(hora : LocalTime) : Boolean -> la hora cae dentro del horario de la zona. */
+    public Boolean validarHorario(LocalTime hora) {
+        return zonaComun != null && zonaComun.horarioIncluye(hora);
+    }
+
+    /** Variante para el intervalo de la reserva: cabe completo en una apertura de la zona. */
     public Boolean validarHorario() {
         return zonaComun != null && zonaComun.horarioCubre(fechaHoraInicio, fechaHoraFin);
     }

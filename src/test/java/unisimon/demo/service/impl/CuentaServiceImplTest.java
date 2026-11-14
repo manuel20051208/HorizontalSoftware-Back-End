@@ -58,7 +58,7 @@ class CuentaServiceImplTest {
     private CredencialesView usuario(String tipo, boolean activo, LocalDate creacion) {
         return Proyecciones.de(CredencialesView.class, "id", 1L, "nombreCompleto", "Santiago",
                 "correoElectronico", "s@mail.com", "contrasena", "hash", "tipoUsuario", tipo, "active", activo,
-                "fechaCreacionCuenta", creacion, "notificacionLeida", false);
+                "fechaCreacionCuenta", creacion, "notificacionLeida", false, "inmuebleId", 5L);
     }
 
     @Test
@@ -175,5 +175,35 @@ class CuentaServiceImplTest {
 
         assertThat(servicio.consultarCuenta(1L).nombreCompleto()).isEqualTo("Santiago");
         assertThatThrownBy(() -> servicio.consultarCuenta(99L)).isInstanceOf(NoAutenticadoException.class);
+    }
+
+    private UsuarioRepository.PreferenciasView preferencias(boolean activo, String tipos) {
+        return Proyecciones.de(UsuarioRepository.PreferenciasView.class, "active", activo, "preferencias", tipos);
+    }
+
+    @Test
+    @DisplayName("configurarPreferencias agrega el tipo que no estaba y quita el que ya estaba")
+    void configurarPreferencias() {
+        when(usuarios.buscarPreferencias(1L)).thenReturn(Optional.of(preferencias(true, "RESERVA")));
+
+        assertThat(servicio.configurarPreferencias(1L, "visita").preferenciasNotificacion())
+                .containsExactly("RESERVA", "VISITA");
+        verify(usuarios).actualizarPreferencias(1L, "RESERVA,VISITA");
+
+        assertThat(servicio.configurarPreferencias(1L, "RESERVA").preferenciasNotificacion()).isEmpty();
+        verify(usuarios).actualizarPreferencias(1L, "");
+    }
+
+    @Test
+    @DisplayName("configurarPreferencias rechaza la cuenta inactiva; consultarPreferencias devuelve las guardadas")
+    void preferenciasCuentaInactiva() {
+        when(usuarios.buscarPreferencias(1L)).thenReturn(Optional.of(preferencias(false, "")));
+        when(usuarios.buscarPreferencias(2L)).thenReturn(Optional.of(preferencias(true, "PAGO_PENDIENTE,VISITA")));
+
+        assertThatThrownBy(() -> servicio.configurarPreferencias(1L, "RESERVA"))
+                .isInstanceOf(IllegalStateException.class);
+        verify(usuarios, never()).actualizarPreferencias(eq(1L), anyString());
+        assertThat(servicio.consultarPreferencias(2L).preferenciasNotificacion())
+                .containsExactly("PAGO_PENDIENTE", "VISITA");
     }
 }

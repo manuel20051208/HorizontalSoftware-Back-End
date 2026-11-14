@@ -7,12 +7,14 @@ import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.NotificacionResponses;
 import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.exception.ConflictoException;
+import unisimon.demo.exception.NoAutenticadoException;
 import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.mapper.Hidratador;
 import unisimon.demo.mapper.NotificacionMapper;
 import unisimon.demo.model.Inmueble;
 import unisimon.demo.model.Notificacion;
 import unisimon.demo.model.ReservaZonaComun;
+import unisimon.demo.model.Residente;
 import unisimon.demo.model.Usuario;
 import unisimon.demo.model.ZonaComun;
 import unisimon.demo.repository.InmuebleRepository;
@@ -130,7 +132,11 @@ public class NotificacionServiceImpl implements NotificacionService {
     @Override
     @Transactional
     public void marcarNotificacionLeida(Long usuarioId) {
-        usuarios.actualizarNotificacionLeida(usuarioId, true);
+        Usuario usuario = usuarios.buscarCredencialesPorId(usuarioId).map(Hidratador::usuario)
+                .orElseThrow(() -> new NoAutenticadoException("Sesion invalida"));
+        Inmueble inmueble = usuario instanceof Residente residente ? residente.getInmueble() : null;
+        usuario.marcarNotificacionLeida(inmueble, usuarioId);        // Usuario.marcarNotificacionLeida(inmueble, id)
+        usuarios.actualizarNotificacionLeida(usuarioId, usuario.getNotificacionLeida());
     }
 
     @Override
@@ -142,15 +148,33 @@ public class NotificacionServiceImpl implements NotificacionService {
         return NotificacionMapper.lectura(notificacionId, notificaciones.listarLectura(notificacionId));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Pagina<NotificacionResponses.Notificacion> consultarIncidencias(SolicitudPagina pagina) {
+        List<NotificacionResponses.Notificacion> filas = notificaciones.listarPorTipo(Notificacion.INCIDENCIA,
+                pagina.limite(), pagina.desplazamiento()).stream().map(NotificacionMapper::de).toList();
+        return Pagina.de(filas, notificaciones.contarPorTipo(Notificacion.INCIDENCIA), pagina);
+    }
+
     // ------------------------------------------------------------------ internos
 
-    /** Entrega la notificacion (dominio) y la guarda. Vacio si no tiene destinatarios. */
+    /**
+     * Entrega la notificacion (dominio) y la guarda. Vacio si no tiene destinatarios.
+     * Respeta Usuario.preferenciasNotificacion: solo la reciben quienes aceptan ese tipo. Las incidencias de
+     * porteria son operativas y le llegan siempre a la administracion.
+     */
     private Optional<NotificacionResponses.Notificacion> enviar(Notificacion notificacion, Long inmuebleId) {
         if (!Boolean.TRUE.equals(notificacion.enviarNotificacion())) {
             return Optional.empty();
         }
-        Long id = notificaciones.insertar(notificacion);
         List<Long> destinatarios = notificacion.getUsuarios().stream().map(Usuario::getId).distinct().toList();
+        if (!Notificacion.INCIDENCIA.equals(notificacion.getTipoNotificacion())) {
+            destinatarios = usuarios.filtrarPorPreferencia(destinatarios, notificacion.getTipoNotificacion());
+            if (destinatarios.isEmpty()) {
+                return Optional.empty();
+            }
+        }
+        Long id = notificaciones.insertar(notificacion);
         notificaciones.agregarDestinatarios(id, destinatarios);
         usuarios.marcarNoLeida(destinatarios);
         if (inmuebleId != null) {

@@ -68,6 +68,19 @@ public interface NotificacionRepository extends Repository<Notificacion, Long> {
     long contarDeUsuario(@Param("usuarioId") Long usuarioId);
 
     @Query(value = """
+            SELECT n.id AS "id", n.mensaje AS "mensaje", n.tipo_notificacion AS "tipoNotificacion",
+                   n.fecha_envio AS "fechaEnvio"
+            FROM notificaciones n
+            WHERE n.tipo_notificacion = :tipo
+            ORDER BY n.fecha_envio DESC, n.id DESC
+            """ + SqlPaginacion.LIMITE_DESPLAZAMIENTO, nativeQuery = true)
+    List<NotificacionView> listarPorTipo(@Param("tipo") String tipo,
+                                         @Param("limite") int limite, @Param("desplazamiento") long desplazamiento);
+
+    @Query(value = "SELECT COUNT(*) FROM notificaciones WHERE tipo_notificacion = :tipo", nativeQuery = true)
+    long contarPorTipo(@Param("tipo") String tipo);
+
+    @Query(value = """
             SELECT u.id AS "usuarioId", u.nombre_completo AS "nombreCompleto", u.notificacion_leida AS "leida"
             FROM notificacion_usuarios nu
             JOIN usuarios u ON u.id = nu.usuario_id

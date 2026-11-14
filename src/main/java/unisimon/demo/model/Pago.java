@@ -23,7 +23,9 @@ import java.util.Locale;
  * Pago de la administracion de un inmueble, procesado por una {@link PasarelaPago}.
  * Estados: PENDIENTE, APROBADO, RECHAZADO, ANULADO y REEMBOLSADO.
  * <p>
- * registrarPago(inmueble) y la parte de actualizarEstado(pago) que recorre liquidaciones estan en la capa de servicios.
+ * La parte de actualizarEstado(pago) que recorre las liquidaciones anteriores esta en la capa de servicios.
+ * {@code pasarela} no esta en el constructor del diagrama: se asigna con setPasarela (lo hace
+ * PasarelaPago.iniciarTransaccion).
  */
 @Entity
 @DynamicUpdate
@@ -66,17 +68,39 @@ public class Pago {
     @Column(unique = true)
     private String referencia;
 
-    public Pago(Long id, Inmueble inmueble, PasarelaPago pasarela, BigDecimal monto, LocalDate fechaPago,
-                String concepto, String metodoPago, String referencia) {
+    public Pago(Long id, Inmueble inmueble, BigDecimal monto, LocalDate fechaPago, String concepto,
+                String metodoPago, String referencia) {
         this.id = id;
         this.inmueble = inmueble;
-        this.pasarela = pasarela;
         this.monto = monto;
         this.fechaPago = fechaPago;
         this.concepto = concepto;
         this.metodoPago = metodoPago;
         this.referencia = referencia;
         this.estado = PENDIENTE;
+    }
+
+    /**
+     * registrarPago(inmueble : Inmueble) : Pago.
+     * Registra este pago en el inmueble: queda PENDIENTE, con la fecha de hoy si no traia, y entra en el
+     * registro de pagos del inmueble.
+     */
+    public Pago registrarPago(Inmueble inmueble) {
+        if (inmueble == null) {
+            throw new IllegalArgumentException("El pago debe ser de un inmueble");
+        }
+        if (monto == null || monto.signum() <= 0) {
+            throw new IllegalArgumentException("El monto del pago debe ser mayor que cero");
+        }
+        this.inmueble = inmueble;
+        this.estado = PENDIENTE;
+        if (fechaPago == null) {
+            this.fechaPago = LocalDate.now();
+        }
+        if (!inmueble.getRegistroPagos().contains(this)) {
+            inmueble.getRegistroPagos().add(this);
+        }
+        return this;
     }
 
     /** validarMonto(liquidacion : Liquidacion) : Boolean -> el monto es exactamente el total de la liquidacion. */

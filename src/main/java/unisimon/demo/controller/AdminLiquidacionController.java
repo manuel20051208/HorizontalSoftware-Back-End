@@ -19,6 +19,7 @@ import unisimon.demo.dto.response.LiquidacionResponses;
 import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.security.annotation.SoloAdministrador;
 import unisimon.demo.service.LiquidacionService;
+import unisimon.demo.dto.response.ReporteResponses;
 import unisimon.demo.service.PanelAdministradorService;
 
 import java.time.LocalDate;
@@ -41,6 +42,12 @@ public class AdminLiquidacionController {
     public InmuebleResponses.ResumenAdmin resumen(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodo) {
         return panel.resumen(periodo);
+    }
+
+    @SoloAdministrador
+    @GetMapping("/reportes")
+    public ReporteResponses.Consolidado reportes() {
+        return panel.generarReportes();
     }
 
     @SoloAdministrador
