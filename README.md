@@ -83,55 +83,6 @@ Al arrancar, Flyway crea las tablas y se crea un administrador semilla (`SEED_AD
 
 ### Diagramas de secuencia
 
-<details>
-<summary><b>Sesión y pagos</b> (4)</summary>
-
-**Sesión con refresh token rotativo**
-
-![Secuencia: sesión JWT](Diagramas/Secuencia/sesion-jwt.svg)
-
-**Pago de administración con Wompi**
-
-![Secuencia: pago con Wompi](Diagramas/Secuencia/pago-wompi-v1.svg)
-
-**Pago con Wompi, vista de servicios**
-
-![Secuencia: pago con Wompi, vista de servicios](Diagramas/Secuencia/pagos-wompi.svg)
-
-**Liquidaciones de administración**
-
-![Secuencia: liquidaciones](Diagramas/Secuencia/liquidaciones.svg)
-
-</details>
-
-<details>
-<summary><b>Zonas comunes</b> (2)</summary>
-
-**Reservar una zona común**
-
-![Secuencia: reservas](Diagramas/Secuencia/reservas.svg)
-
-**Administrar zonas comunes**
-
-![Secuencia: zonas comunes](Diagramas/Secuencia/zonas-comunes.svg)
-
-</details>
-
-<details>
-<summary><b>Portería y notificaciones</b> (2)</summary>
-
-**Ingreso de un invitado por portería**
-
-![Secuencia: portería](Diagramas/Secuencia/porteria-invitados.svg)
-
-**Notificaciones**
-
-![Secuencia: notificaciones](Diagramas/Secuencia/notificaciones.svg)
-
-</details>
-
-### Diagramas de secuencia por caso de uso
-
 Un diagrama por caso de uso: los participantes son clases del diagrama de clases y los mensajes son sus operaciones, con los nombres y parámetros del diagrama. Se generan con `Diagramas/_fuente/gen_secuencia_casos_uso.py`.
 
 <details>
