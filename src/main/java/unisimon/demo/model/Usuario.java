@@ -115,11 +115,8 @@ public class Usuario {
         this.token = null;
     }
 
-    /**
-     * iniciarSesion(correo : String, contrasena : String) : usuario.
-     * Devuelve este usuario si la cuenta esta activa y las credenciales son las suyas; si no, null.
-     */
     public Usuario iniciarSesion(String correo, String contrasena) {
+        // cuanta activa y credenciales correctas
         return isActive() && credencialesCorrectas(correo, contrasena) ? this : null;
     }
 

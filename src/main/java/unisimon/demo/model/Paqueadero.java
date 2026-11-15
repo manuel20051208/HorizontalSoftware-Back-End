@@ -16,14 +16,14 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
-/** Parqueadero (en el diagrama aparece como "Paqueadero"). Pertenece a un unico inmueble. */
+/** Paqueadero (con ese nombre, como en el diagrama de clases). Pertenece a un unico inmueble. */
 @Entity
 @DynamicUpdate
 @Table(name = "parqueaderos")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Parqueadero {
+public class Paqueadero {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +36,7 @@ public class Parqueadero {
     @Column(nullable = false)
     private BigDecimal valorMensual = BigDecimal.ZERO;
 
-    public Parqueadero(Long id, Inmueble inmueble, BigDecimal valorMensual) {
+    public Paqueadero(Long id, Inmueble inmueble, BigDecimal valorMensual) {
         this.id = id;
         this.inmueble = inmueble;
         this.valorMensual = valorMensual == null ? BigDecimal.ZERO : valorMensual;

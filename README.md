@@ -54,7 +54,7 @@ Al arrancar, Flyway crea las tablas y se crea un administrador semilla (`SEED_AD
 | `scheduler` | Tareas programadas (mora) |
 | `config` | Seguridad, CORS y cache |
 | `security` | JWT, usuario autenticado y anotaciones de rol |
-| `service` / `service/impl` / `service/support` | Reglas de negocio |
+| `service` / `service/impl` / `service/support` | Casos de uso: leen con los repositorios, piden al modelo que decida, guardan y notifican (transacciones y cache) |
 | `policy`, `factory` | Reglas de estado y acceso, creación de usuarios |
 | `mapper` | Vistas SQL a objetos de respuesta |
 | `cache` | Nombres de las caches |
@@ -62,7 +62,7 @@ Al arrancar, Flyway crea las tablas y se crea un administrador semilla (`SEED_AD
 | `mail` | Correo (por ahora al log) |
 | `bootstrap` | Admin semilla y pasarela desde el `.env` |
 | `repository` | SQL nativo con Spring Data |
-| `model` | Dominio |
+| `model` | Dominio: las clases del diagrama de clases con sus reglas de negocio |
 | `dto/request`, `dto/response` | Entrada y salida de la API |
 | `exception` | Errores uniformes |
 
@@ -70,7 +70,7 @@ Al arrancar, Flyway crea las tablas y se crea un administrador semilla (`SEED_AD
 
 ### Diagramas de secuencia
 
-Un diagrama por caso de uso: los participantes son clases del diagrama de clases y los mensajes son sus operaciones, con los nombres y parámetros del diagrama. Se generan con `Diagramas/_fuente/gen_secuencia_casos_uso.py`.
+Un diagrama por caso de uso: los participantes son clases del diagrama de clases y los mensajes son sus operaciones, con los nombres y parámetros del diagrama. Entre todos usan cada operación del diagrama de clases. Las flechas están conectadas a sus barras de activación y líneas de vida, y los fragmentos `alt`/`opt`/`loop` van al frente. Fuente: [`Diagramas/_fuente/secuencia-casos-de-uso.xml`](Diagramas/_fuente/secuencia-casos-de-uso.xml); cómo editarlos y regenerarlos en «Editar los diagramas», más abajo.
 
 <details>
 <summary><b>Cuenta y sesión</b> (6)</summary>
@@ -258,8 +258,9 @@ Usa `postgres:16-alpine`: la v18 cambió la ruta de datos y rompe el volumen.
 <details>
 <summary>Editar los diagramas</summary>
 
-- **Secuencia:** se generan con `python Diagramas/_fuente/gen_secuencia_casos_uso.py`, que escribe el `.xml` en [`Diagramas/_fuente`](Diagramas/_fuente) y un `.svg` por diagrama en `Diagramas/Secuencia`.
-- **Casos de uso, clases y componentes:** abre el `.xml` / `.drawio.svg` en [draw.io](https://app.diagrams.net) → **Archivo → Exportar como → SVG**.
+- **Secuencia:** la fuente es [`Diagramas/_fuente/secuencia-casos-de-uso.xml`](Diagramas/_fuente/secuencia-casos-de-uso.xml) (una página por caso de uso; se edita en draw.io). `python Diagramas/_fuente/exportar_secuencia_svg.py` exporta cada página a `Diagramas/Secuencia/<caso>.svg` con el visor oficial de draw.io (necesita internet); cada SVG se puede abrir y editar en draw.io. `python Diagramas/_fuente/conectar_secuencia.py` deja todas las flechas conectadas a sus barras y líneas de vida y trae los fragmentos `alt`/`opt`/`loop` al frente. `gen_secuencia_casos_uso.py --regenerar-xml` rehace el XML desde cero (se pierden los retoques hechos a mano).
+- **Clases:** la fuente es [`Diagramas/Clases/DiagramaClasesSoftwareHorizontal.xml`](Diagramas/Clases/DiagramaClasesSoftwareHorizontal.xml). `python Diagramas/_fuente/gen_diagrama_clases.py` lo reorganiza en rejilla sin flechas cruzadas ni encima de las clases (mismo contenido), y `python Diagramas/_fuente/exportar_drawio_svg.py Diagramas/Clases/DiagramaClasesSoftwareHorizontal.xml Diagramas/Clases/DiagramaClasesSoftwareHorizontal.drawio.svg` regenera la imagen (editable en draw.io).
+- **Casos de uso y componentes:** abre el `.xml` / `.drawio.svg` en [draw.io](https://app.diagrams.net) → **Archivo → Exportar como → SVG**.
 - **Fondo claro:** draw.io exporta SVG que se ven oscuros en modo oscuro. `python Diagramas/_fuente/fondo_claro.py` los deja siempre claros; el hook `scripts/hooks/pre-commit` lo corre solo al commitear (se activa una vez con `git config core.hooksPath scripts/hooks`).
 
 </details>

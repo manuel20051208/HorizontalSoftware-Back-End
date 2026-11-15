@@ -4,13 +4,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
-import unisimon.demo.model.Parqueadero;
+import unisimon.demo.model.Paqueadero;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
-/** Parqueadero de un inmueble (a lo sumo uno). SQL nativo. */
-public interface ParqueaderoRepository extends Repository<Parqueadero, Long> {
+/** Paqueadero de un inmueble (a lo sumo uno). SQL nativo. */
+public interface ParqueaderoRepository extends Repository<Paqueadero, Long> {
 
     interface ParqueaderoView {
         Long getId();

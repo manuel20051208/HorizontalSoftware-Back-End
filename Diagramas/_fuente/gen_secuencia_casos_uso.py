@@ -8,14 +8,20 @@ Regla: los participantes son clases del diagrama de clases y los mensajes son SU
 nombres y parametros tal como estan en el diagrama de clases. Los casos de uso son los del diagrama de
 casos de uso (Diagramas/UML).
 
-Uso:  python Diagramas/_fuente/gen_secuencia_casos_uso.py
+Uso:  python Diagramas/_fuente/gen_secuencia_casos_uso.py                  (solo los SVG)
+      python Diagramas/_fuente/gen_secuencia_casos_uso.py --regenerar-xml  (tambien el XML; descarta los
+                                                                            retoques hechos a mano en draw.io)
 """
 import html
 import math
 import os
 import re
 import unicodedata
+import sys
 import xml.etree.ElementTree as ET
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from conectar_secuencia import conectar_xml  # noqa: E402
 
 RAIZ = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SALIDA = os.path.join(RAIZ, "Diagramas", "_fuente", "secuencia-casos-de-uso.xml")
@@ -32,7 +38,19 @@ BORDE = "#36393d"
 
 
 def esc(s):
+    """Escapa una cadena para ponerla en un atributo XML."""
     return html.escape(s, quote=True)
+
+
+def etiqueta_html(lineas):
+    """Texto de una etiqueta html=1 de draw.io: una linea (str) o varias (lista), separadas con <br>.
+
+    draw.io trata el valor como HTML, asi que el texto se escapa PRIMERO como HTML y luego, con esc(), para el
+    XML. Sin este paso 'List<Usuario>' llega a draw.io como la etiqueta <Usuario> y solo se dibuja 'List'.
+    """
+    if isinstance(lineas, str):
+        lineas = [lineas]
+    return "<br>".join(html.escape(linea, quote=False) for linea in lineas)
 
 
 def envolver(texto, ancho_px):
@@ -99,15 +117,19 @@ class Diagrama:
         lineas = envolver(etiqueta, ancho)
         h = 15 * len(lineas)
         y = self.y + h + 8
+        # la punta toca el borde de la barra de activacion (5 px a cada lado del eje); el actor no tiene barra,
+        # asi que su punta va sobre su linea
+        da = 0 if self.parts[a]["tipo"] == "actor" else 5
+        db = 0 if self.parts[b]["tipo"] == "actor" else 5
         if xb > xa:
-            sx, tx = xa + 5, xb - 5
+            sx, tx = xa + da, xb - db
         else:
-            sx, tx = xa - 5, xb + 5
+            sx, tx = xa - da, xb + db
         estilo = ("html=1;verticalAlign=bottom;rounded=0;fontSize=11;strokeColor=#000000;"
                   + ("dashed=1;endArrow=open;endFill=0;endSize=8;" if retorno
                      else "endArrow=block;endFill=1;endSize=8;"))
         self.celdas_msg.append(
-            f'<mxCell id="{self._id("m")}" value="{esc("<br>".join(lineas))}" style="{estilo}" '
+            f'<mxCell id="{self._id("m")}" value="{esc(etiqueta_html(lineas))}" style="{estilo}" '
             f'edge="1" parent="1"><mxGeometry relative="1" as="geometry">'
             f'<mxPoint x="{sx}" y="{y}" as="sourcePoint"/><mxPoint x="{tx}" y="{y}" as="targetPoint"/>'
             f'</mxGeometry></mxCell>')
@@ -151,7 +173,7 @@ class Diagrama:
             f'<mxPoint x="{x1}" y="{y}" as="sourcePoint"/><mxPoint x="{x1}" y="{y + alto}" as="targetPoint"/>'
             f'<Array as="points"><mxPoint x="{x1 + 38}" y="{y}"/><mxPoint x="{x1 + 38}" y="{y + alto}"/>'
             f'</Array></mxGeometry></mxCell>')
-        self._texto(x1 + 44, y - 2, ancho_txt, alto + 4, "<br>".join(lineas), "left")
+        self._texto(x1 + 44, y - 2, ancho_txt, alto + 4, etiqueta_html(lineas), "left")
         self._activacion(a, y - 4, y + alto + 4, desplazo=5)
         self._tocar(cx - 25, x1 + 44 + min(ancho_txt, int(max(len(l) for l in lineas) * CHAR)) + 15)
         self.y = y + alto + 10
@@ -164,6 +186,7 @@ class Diagrama:
             f'<mxGeometry x="{x}" y="{y1}" width="10" height="{max(14, y2 - y1)}" as="geometry"/></mxCell>')
 
     def _texto(self, x, y, w, h, valor, align="left", estilo_extra=""):
+        """valor ya es HTML (ver etiqueta_html)."""
         self.celdas_txt.append(
             f'<mxCell id="{self._id("t")}" value="{esc(valor)}" style="text;html=1;align={align};'
             f'verticalAlign=top;whiteSpace=wrap;overflow=hidden;fontSize=11;{estilo_extra}" '
@@ -191,12 +214,12 @@ class Diagrama:
         top, bottom = f["top"], self.y
         ancho = x2 - x1
         self.celdas_frames.append(
-            f'<mxCell id="{self._id("f")}" value="{esc(f["tipo"])}" style="shape=umlFrame;whiteSpace=wrap;'
+            f'<mxCell id="{self._id("f")}" value="{esc(etiqueta_html(f["tipo"]))}" style="shape=umlFrame;whiteSpace=wrap;'
             f'html=1;pointerEvents=0;fillColor=none;strokeColor=#36393d;fontStyle=1;fontSize=11;width=55;'
             f'height=22;" vertex="1" parent="1"><mxGeometry x="{x1}" y="{top}" width="{ancho}" '
             f'height="{bottom - top}" as="geometry"/></mxCell>')
         self.celdas_txt.append(
-            f'<mxCell id="{self._id("g")}" value="{esc("[" + f["cond"] + "]")}" style="text;html=1;align=left;'
+            f'<mxCell id="{self._id("g")}" value="{esc(etiqueta_html("[" + f["cond"] + "]"))}" style="text;html=1;align=left;'
             f'verticalAlign=top;whiteSpace=wrap;fontSize=11;fontStyle=2;" vertex="1" parent="1">'
             f'<mxGeometry x="{x1 + 62}" y="{top + 3}" width="{max(120, ancho - 70)}" height="22" '
             f'as="geometry"/></mxCell>')
@@ -207,7 +230,7 @@ class Diagrama:
                 f'<mxPoint x="{x1}" y="{ry}" as="sourcePoint"/><mxPoint x="{x2}" y="{ry}" as="targetPoint"/>'
                 f'</mxGeometry></mxCell>')
             self.celdas_txt.append(
-                f'<mxCell id="{self._id("g")}" value="{esc("[" + cond + "]")}" style="text;html=1;align=left;'
+                f'<mxCell id="{self._id("g")}" value="{esc(etiqueta_html("[" + cond + "]"))}" style="text;html=1;align=left;'
                 f'verticalAlign=top;whiteSpace=wrap;fontSize=11;fontStyle=2;" vertex="1" parent="1">'
                 f'<mxGeometry x="{x1 + 8}" y="{ry + 3}" width="{max(120, ancho - 20)}" height="22" '
                 f'as="geometry"/></mxCell>')
@@ -220,16 +243,24 @@ class Diagrama:
 
     # ------------------------------------------------------------ salida XML
     def xml(self):
+        """XML final para draw.io: mensajes conectados a barras/lineas de vida y fragmentos al frente."""
+        texto, avisos, _ = conectar_xml(self._xml_crudo())
+        for a in avisos:
+            print("AVISO", a)
+        return "  " + texto.strip() + "\n"
+
+    def _xml_crudo(self):
+        """Celdas con coordenadas absolutas (lo que se dibuja en el SVG)."""
         fin = self.y + 30
         celdas = ['<mxCell id="0"/>', '<mxCell id="1" parent="0"/>']
         # titulo
         celdas.append(
-            f'<mxCell id="titulo" value="{esc("<b>" + self.titulo + "</b>")}" style="text;html=1;align=left;'
+            f'<mxCell id="titulo" value="{esc("<b>" + etiqueta_html(self.titulo) + "</b>")}" style="text;html=1;align=left;'
             f'verticalAlign=top;whiteSpace=wrap;fontSize=15;" vertex="1" parent="1">'
             f'<mxGeometry x="20" y="12" width="{max(500, self.max_x - 40)}" height="26" as="geometry"/></mxCell>')
         if self.nota:
             celdas.append(
-                f'<mxCell id="nota" value="{esc(self.nota)}" style="text;html=1;align=left;verticalAlign=top;'
+                f'<mxCell id="nota" value="{esc(etiqueta_html(self.nota))}" style="text;html=1;align=left;verticalAlign=top;'
                 f'whiteSpace=wrap;fontSize=11;fontColor=#555555;" vertex="1" parent="1">'
                 f'<mxGeometry x="20" y="34" width="{max(500, self.max_x - 40)}" height="18" as="geometry"/></mxCell>')
         # lifelines
@@ -238,7 +269,7 @@ class Diagrama:
             cx = p["cx"]
             if p["tipo"] == "actor":
                 celdas.append(
-                    f'<mxCell id="L-{pid}" value="{esc(p["etiqueta"])}" style="shape=umlActor;'
+                    f'<mxCell id="L-{pid}" value="{esc(etiqueta_html(p["etiqueta"]))}" style="shape=umlActor;'
                     f'verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontStyle=1;'
                     f'fontSize=11;whiteSpace=wrap;fillColor=#ffcc99;strokeColor=#36393d;" vertex="1" parent="1">'
                     f'<mxGeometry x="{cx - 14}" y="{TOP}" width="28" height="56" as="geometry"/></mxCell>')
@@ -249,13 +280,13 @@ class Diagrama:
                     f'</mxGeometry></mxCell>')
             else:
                 celdas.append(
-                    f'<mxCell id="L-{pid}" value="{esc(p["etiqueta"])}" style="shape=umlLifeline;'
+                    f'<mxCell id="L-{pid}" value="{esc(etiqueta_html(p["etiqueta"]))}" style="shape=umlLifeline;'
                     f'perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;dropTarget=0;'
                     f'collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;'
                     f'fillColor={AZUL};strokeColor={BORDE};fontStyle=1;fontSize=12;" vertex="1" parent="1">'
                     f'<mxGeometry x="{cx - ANCHO_CAJA // 2}" y="{TOP}" width="{ANCHO_CAJA}" '
                     f'height="{fin - TOP}" as="geometry"/></mxCell>')
-        celdas += self.celdas_frames + self.celdas_act + self.celdas_msg + self.celdas_txt
+        celdas += self.celdas_act + self.celdas_msg + self.celdas_txt + self.celdas_frames   # fragmentos al frente
         ancho = self.max_x + 40
         cuerpo = "\n        ".join(celdas)
         return (f'  <diagram name="{esc(self.nombre)}" id="{esc(self.nombre.lower().replace(" ", "-"))}">\n'
@@ -288,28 +319,44 @@ def nuevo(nombre, participantes, nota=None):
     return d
 
 
-def notificar(d, de, tipo_llamada, inmueble=True):
-    """de -> Notificacion.<tipo_llamada>; la notificacion toma los usuarios del Inmueble y se envia."""
-    d.llamar(de, "not", tipo_llamada)
-    if inmueble:
-        d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
+def enviar(d, de, llamada, destinatarios_del_inmueble=True, apoyo=None):
+    """de -> Notificacion.<llamada>: toma los destinatarios del inmueble (residentesActivos) y se envia."""
+    d.llamar(de, "not", llamada)
+    if destinatarios_del_inmueble:
+        d.llamar_y_retornar("not", "inm", "residentesActivos()", "List<Usuario>")
+    if apoyo:
+        d.propio("not", *apoyo)
     d.propio("not", "enviarNotificacion()", "Boolean")
     d.retornar("not", de, "")
 
 
-# ---------------------------------------------------------------- Modulo transversal
+def marcar_leida(d):
+    """actor -> Usuario.marcarNotificacionLeida(inmueble, id)."""
+    d.llamar("act", "usr", "marcarNotificacionLeida(inmueble, id)")
+    d.propio("usr", "esEste(id)", "boolean")
+    d.propio("usr", "perteneceA(inmueble)", "boolean")
+    d.retornar("usr", "act", "")
+
+
+# Regla de todos los diagramas: cada flecha es una llamada que el codigo del modelo hace de verdad
+# (src/main/java/unisimon/demo/model), con el nombre y los parametros del diagrama de clases, y cada retorno es el
+# tipo de retorno de esa operacion (vacio si es void). Lo que orquesta la aplicacion sale del actor.
+
+# ---------------------------------------------------------------- Cuenta y sesion
 d = nuevo("Iniciar sesión", [TRES, o("usr", "Usuario")])
 d.llamar("act", "usr", "iniciarSesion(correo, contrasena)")
 d.propio("usr", "isActive()", "Boolean")
+d.propio("usr", "credencialesCorrectas(correo, contrasena)", "boolean")
 d.abrir("alt", "cuenta activa y credenciales correctas")
-d.retornar("usr", "act", "usuario", cerrar=False)
+d.retornar("usr", "act", "Usuario", cerrar=False)
 d.sino("cuenta inactiva o credenciales incorrectas")
-d.retornar("usr", "act", "error: no autenticado")
+d.retornar("usr", "act", "null")
 d.cerrar()
 
 d = nuevo("Activar cuenta creada", [TRES, o("usr", "Usuario")])
 d.llamar("act", "usr", "activarCuenta(correo, contrasena)")
 d.propio("usr", "isActive()", "Boolean")
+d.propio("usr", "credencialesCorrectas(correo, contrasena)", "boolean")
 d.abrir("alt", "credenciales correctas y cuenta aún inactiva")
 d.retornar("usr", "act", "true", cerrar=False)
 d.sino("credenciales incorrectas o cuenta ya activa")
@@ -319,155 +366,145 @@ d.cerrar()
 d = nuevo("Recuperar contraseña", [TRES, o("usr", "Usuario")])
 d.llamar("act", "usr", "recuperarContrasena()")
 d.propio("usr", "cerrarSesion()")
-d.retornar("usr", "act", "confirmación de envío")
+d.retornar("usr", "act", "")
 
-# ---------------------------------------------------------------- Actores y configuracion base
-d = nuevo("Gestionar cuentas de usuario",
-          [ADMIN, o("adm", "Administrador"), o("usr", "Usuario"), o("res", "Residente")])
+d = nuevo("Gestionar cuentas de usuario", [ADMIN, o("adm", "Administrador"), o("usr", "Usuario")])
 d.llamar("act", "adm", "gestionarCuentaUsuario()")
-d.llamar_y_retornar("adm", "usr", "Usuario(id, identificacion, nombreCompleto, fechaNacimiento, "
-                    "correoElectronico, contrasena, tipoUsuario)", "cuenta creada")
-d.retornar("adm", "act", "cuenta de usuario")
+d.propio("adm", "exigirVigente()")
+d.retornar("adm", "act", "")
 d.abrir("opt", "activar o desactivar una cuenta existente")
 d.llamar("act", "adm", "modificarActive(identificacion, idToken)")
+d.propio("adm", "exigirAutoridad(adminId)")
 d.llamar_y_retornar("adm", "usr", "isActive()", "Boolean")
+d.abrir("opt", "la cuenta queda inactiva")
+d.llamar_y_retornar("adm", "usr", "cerrarSesion()", "")
+d.cerrar()
 d.retornar("adm", "act", "NoAdmin")
 d.cerrar()
-d.abrir("opt", "activar o desactivar invitados de un residente")
-d.llamar("act", "adm", "gestionarCuentaUsuario()")
-d.abrir("alt", "un invitado")
-d.llamar_y_retornar("adm", "res", "cambiarEstadoInvitado(invitado, id)", "Boolean")
-d.sino("varios invitados")
-d.llamar_y_retornar("adm", "res", "cambiarEstadoInvitados(invitados)", "Boolean")
-d.cerrar()
-d.retornar("adm", "act", "estado de los invitados")
-d.cerrar()
 
+# ---------------------------------------------------------------- Configuracion
 d = nuevo("Configurar multas", [ADMIN, o("adm", "Administrador"), o("liq", "Liquidacion")])
 d.llamar("act", "adm", "configurarMultas(inmueble, adminId)")
+d.propio("adm", "exigirAutoridad(adminId)")
+d.propio("adm", "liquidacionVigente(inmueble)", "Liquidacion")
 d.llamar_y_retornar("adm", "liq", "calcularTotal()", "BigDecimal")
-d.retornar("adm", "act", "liquidación con el nuevo valor de multas")
+d.retornar("adm", "act", "")
 
-d = nuevo("Configurar tarifas",
-          [ADMIN, o("adm", "Administrador"), o("paq", "Paqueadero"), o("liq", "Liquidacion")])
+d = nuevo("Configurar tarifas", [ADMIN, o("adm", "Administrador"), o("liq", "Liquidacion")])
 d.llamar("act", "adm", "configurarTarifas(inmueble, adminId)")
-d.llamar_y_retornar("adm", "paq", "obtenerValorMensual()", "BigDecimal")
+d.propio("adm", "exigirAutoridad(adminId)")
+d.propio("adm", "liquidacionVigente(inmueble)", "Liquidacion")
 d.llamar_y_retornar("adm", "liq", "calcularTotal()", "BigDecimal")
-d.retornar("adm", "act", "liquidación con las nuevas tarifas")
+d.retornar("adm", "act", "")
 
 d = nuevo("Configurar zonas comunes", [ADMIN, o("adm", "Administrador"), o("zon", "ZonaComun")])
 d.llamar("act", "adm", "ConfigurarZonasComunes(inmueble, adminId)")
-d.abrir("loop", "por cada zona común a configurar")
-d.llamar_y_retornar("adm", "zon", "cambiarEstado()", "isActive actualizado")
+d.propio("adm", "exigirAutoridad(adminId)")
+d.abrir("loop", "por cada zona común del inmueble")
+d.llamar_y_retornar("adm", "zon", "cambiarEstado()", "")
 d.cerrar()
-d.retornar("adm", "act", "zonas comunes del inmueble")
+d.retornar("adm", "act", "")
 
 d = nuevo("Configurar reglas de reserva",
           [ADMIN, o("adm", "Administrador"), o("reg", "ReglaReserva"), o("rom", "Rompimiento")])
+d.abrir("opt", "cambiar los valores de la regla")
+d.llamar_y_retornar("act", "reg", "actualizarReglas(nuevaAnticipacion, nuevaDuracion)", "")
+d.cerrar()
 d.llamar("act", "adm", "ConfigurarNuevaReglaReserva(inmueble, adminId)")
-d.llamar_y_retornar("adm", "reg", "actualizarReglas(nuevaAnticipacion, nuevaDuracion)", "regla actualizada")
-d.abrir("loop", "por cada zona común a la que se aplica la regla")
-d.llamar_y_retornar("adm", "rom", "aplicarRegla()", "activa = true")
+d.propio("adm", "exigirAutoridad(adminId)")
+d.abrir("loop", "por cada regla asignada a las zonas comunes del inmueble")
+d.propio("adm", "esEste(id)", "boolean")
+d.abrir("opt", "la regla es de este administrador")
+d.llamar_y_retornar("adm", "rom", "aplicarRegla()", "")
 d.cerrar()
+d.cerrar()
+d.retornar("adm", "act", "")
 d.abrir("opt", "retirar la regla de una zona")
-d.llamar_y_retornar("adm", "rom", "inactivarRegla()", "activa = false")
+d.llamar_y_retornar("act", "rom", "inactivarRegla()", "")
 d.cerrar()
-d.retornar("adm", "act", "regla de reserva configurada")
 
-# ---------------------------------------------------------------- Pagos
+# ---------------------------------------------------------------- Pagos y liquidaciones
 d = nuevo("Consultar estado de cuenta e historial de pagos",
-          [RESI, o("res", "Residente"), o("inm", "Inmueble"), o("liq", "Liquidacion"), o("pag", "Pago")])
+          [RESI, o("res", "Residente"), o("liq", "Liquidacion"), o("inm", "Inmueble")])
 d.llamar("act", "res", "consultarEstadoCuenta(inmueble, id)")
-d.llamar("res", "inm", "pagoAlDiaAdministracion(liquidacion)")
-d.llamar_y_retornar("inm", "liq", "estaVencida()", "Boolean")
-d.retornar("inm", "res", "boolean")
+d.propio("res", "exigirPropio(id)")
+d.propio("res", "exigirInmueble(otro)")
 d.llamar_y_retornar("res", "liq", "calcularTotal()", "BigDecimal")
 d.retornar("res", "act", "Liquidacion")
+d.abrir("opt", "sin saldo pendiente y con liquidación")
+d.llamar_y_retornar("act", "inm", "pagoAlDiaAdministracion(liquidacion)", "boolean")
+d.cerrar()
 d.llamar("act", "res", "consultarHistorialPago(id)")
-d.abrir("loop", "por cada pago registrado del inmueble")
-d.llamar_y_retornar("res", "pag", "estaAprobado(pago)", "Boolean")
-d.abrir("opt", "pago aprobado")
-d.llamar_y_retornar("res", "pag", "generarComprobante()", "String")
-d.cerrar()
-d.cerrar()
+d.propio("res", "exigirPropio(id)")
 d.retornar("res", "act", "List<Pago>")
 
 d = nuevo("Realizar pagos",
-          [RESI, o("pag", "Pago"), o("liq", "Liquidacion"), o("pas", "PasarelaPago"), o("not", "Notificacion"),
-           o("inm", "Inmueble")])
-d.llamar("act", "pag", "registrarPago(inmueble)")
-d.llamar_y_retornar("pag", "liq", "calcularTotal()", "BigDecimal")
-d.propio("pag", "validarMonto(liquidacion)", "Boolean")
-d.abrir("alt", "monto válido")
-d.llamar("pag", "pas", "iniciarTransaccion(pago)")
-d.retornar("pas", "pag", "String (URL del checkout)")
-d.retornar("pag", "act", "Pago PENDIENTE y URL del checkout")
-d.mensaje("act", "pas", "paga en la pasarela (PSE, tarjeta o Nequi)")
-d.propio("pas", "confirmarTransaccion(referencia)", "Boolean")
+          [RESI, o("pag", "Pago"), o("pas", "PasarelaPago"), o("liq", "Liquidacion"), o("inm", "Inmueble"),
+           o("not", "Notificacion")])
+d.llamar_y_retornar("act", "pag", "registrarPago(inmueble)", "Pago")
+d.llamar("act", "pas", "iniciarTransaccion(pago)")
+d.propio("pas", "iniciarTransaccion(pago, secretoIntegridad, redirectUrl)", "String")
+d.propio("pas", "enc(v)", "String")
+d.propio("pas", "firmaIntegridad(referencia, centavos, secretoIntegridad)", "String")
+d.retornar("pas", "act", "String")
+d.llamar("act", "pas", "confirmarTransaccion(referencia)")
+d.propio("pas", "buscarPago(referencia)", "Pago")
 d.llamar_y_retornar("pas", "pag", "estaAprobado(pago)", "Boolean")
-d.abrir("alt", "transacción aprobada")
-d.llamar("pas", "pag", "actualizarEstado(pago)")
+d.retornar("pas", "act", "Boolean")
+d.abrir("opt", "transacción aprobada")
+d.llamar("act", "pag", "actualizarEstado(pago)")
+d.propio("pag", "estaAprobado(pago)", "Boolean")
 d.llamar_y_retornar("pag", "liq", "marcarAlDia()", "")
-d.retornar("pag", "pas", "Liquidacion")
-d.llamar_y_retornar("pas", "pag", "generarComprobante()", "String")
-d.propio("pas", "notificarResultado(pago)")
+d.retornar("pag", "act", "Liquidacion")
+d.llamar("act", "pas", "notificarResultado(pago)")
+d.llamar_y_retornar("pas", "inm", "residentesActivos()", "List<Usuario>")
 d.llamar("pas", "not", "notificarActualizacionDePago(inmueble, usuarios)")
-d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
 d.propio("not", "enviarNotificacion()", "Boolean")
 d.retornar("not", "pas", "")
-d.sino("transacción rechazada")
-d.llamar_y_retornar("pas", "pag", "anularPago()", "estado = ANULADO")
+d.retornar("pas", "act", "")
+d.llamar_y_retornar("act", "pag", "generarComprobante()", "String")
 d.cerrar()
-d.llamar_y_retornar("act", "pas", "consultarEstado(referencia)", "String")
-d.sino("monto inválido")
-d.retornar("pag", "act", "error: el monto no coincide con la liquidación")
-d.cerrar()
+d.llamar("act", "pas", "consultarEstado(referencia)")
+d.propio("pas", "buscarPago(referencia)", "Pago")
+d.retornar("pas", "act", "String")
 
 d = nuevo("Conciliar pagos de administración",
-          [ADMIN, o("adm", "Administrador"), o("pag", "Pago"), o("liq", "Liquidacion"), o("not", "Notificacion"),
-           o("inm", "Inmueble")])
+          [ADMIN, o("adm", "Administrador"), o("pag", "Pago"), o("liq", "Liquidacion")])
 d.llamar("act", "adm", "conciliarPagosAdministracion(inmueble, adminId)")
-d.llamar_y_retornar("adm", "pag", "registrarPago(inmueble)", "Pago")
+d.propio("adm", "exigirAutoridad(adminId)")
+d.propio("adm", "liquidacionVigente(inmueble)", "Liquidacion")
 d.llamar_y_retornar("adm", "liq", "calcularTotal()", "BigDecimal")
 d.llamar_y_retornar("adm", "pag", "validarMonto(liquidacion)", "Boolean")
-d.abrir("alt", "monto igual al saldo pendiente")
-d.llamar_y_retornar("adm", "pag", "estaAprobado(pago)", "Boolean")
+d.abrir("alt", "monto igual al total de la liquidación")
 d.llamar("adm", "pag", "actualizarEstado(pago)")
+d.propio("pag", "estaAprobado(pago)", "Boolean")
 d.llamar_y_retornar("pag", "liq", "marcarAlDia()", "")
 d.retornar("pag", "adm", "Liquidacion")
-d.llamar("adm", "not", "notificarActualizacionDePago(inmueble, usuarios)")
-d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
-d.propio("not", "enviarNotificacion()", "Boolean")
-d.retornar("not", "adm", "")
 d.retornar("adm", "act", "Pago", cerrar=False)
-d.sino("monto distinto al saldo pendiente")
-d.llamar_y_retornar("adm", "pag", "anularPago()", "estado = ANULADO")
-d.retornar("adm", "act", "error: el monto debe ser igual al saldo")
+d.sino("monto distinto al total de la liquidación")
+d.llamar_y_retornar("adm", "pag", "anularPago()", "")
+d.retornar("adm", "act", "")
 d.cerrar()
 
-d = nuevo("Generar liquidación mensual",
-          [SIS, o("liq", "Liquidacion"), o("paq", "Paqueadero")])
-d.abrir("loop", "cada mes, por cada inmueble activo")
+d = nuevo("Generar liquidación mensual", [SIS, o("liq", "Liquidacion")])
+d.abrir("loop", "por cada inmueble activo")
 d.llamar("act", "liq", "generarLiquidacion(inmueble)")
-d.llamar_y_retornar("liq", "paq", "obtenerValorMensual()", "BigDecimal")
 d.propio("liq", "calcularTotal()", "BigDecimal")
+d.propio("liq", "nz(v)", "BigDecimal")
 d.retornar("liq", "act", "Liquidacion")
 d.cerrar()
 
-# ---------------------------------------------------------------- Comunicacion
-d = nuevo("Consultar comunicado oficial",
-          [RESI, o("res", "Residente"), o("inm", "Inmueble"), o("not", "Notificacion"), o("usr", "Usuario")])
+# ---------------------------------------------------------------- Comunicados
+d = nuevo("Consultar comunicado oficial", [RESI, o("res", "Residente"), o("usr", "Usuario")])
 d.llamar("act", "res", "consultarNotificacion(inmueble, id)")
-d.llamar("res", "inm", "notificaciones")
-d.retornar("inm", "res", "List<Notificacion>")
+d.propio("res", "exigirPropio(id)")
+d.propio("res", "exigirInmueble(otro)")
 d.retornar("res", "act", "List<Notificacion>")
-d.llamar_y_retornar("act", "usr", "marcarNotificacionLeida(inmueble, id)", "notificacionLeida = true")
+marcar_leida(d)
 
-d = nuevo("Publicar comunicado oficial",
-          [ADMIN, o("inm", "Inmueble"), o("not", "Notificacion")])
+d = nuevo("Publicar comunicado oficial", [ADMIN, o("inm", "Inmueble"), o("not", "Notificacion")])
 d.llamar_y_retornar("act", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
-d.llamar_y_retornar("act", "not", "Notificacion(id, usuarios, mensaje, tipoNotificacion, fechaEnvio)",
-                    "notificación")
+d.llamar_y_retornar("act", "not", "Notificacion(id, usuarios, mensaje, tipoNotificacion, fechaEnvio)", "")
 d.llamar("act", "not", "enviarNotificacion()")
 d.abrir("alt", "hay destinatarios y mensaje")
 d.retornar("not", "act", "true", cerrar=False)
@@ -475,233 +512,201 @@ d.sino("sin destinatarios o sin mensaje")
 d.retornar("not", "act", "false")
 d.cerrar()
 
-d = nuevo("Consultar confirmación de lectura",
-          [ADMIN, o("adm", "Administrador"), o("not", "Notificacion"), o("usr", "Usuario")])
-d.llamar("act", "adm", "consultarConfirmacionLectura")
-d.llamar_y_retornar("adm", "not", "usuarios", "List<Usuario>")
-d.abrir("loop", "por cada destinatario de la notificación")
-d.llamar_y_retornar("adm", "usr", "notificacionLeida", "Boolean")
-d.cerrar()
-d.retornar("adm", "act", "lectura de cada destinatario")
+d = nuevo("Consultar confirmación de lectura", [ADMIN, o("adm", "Administrador")])
+d.llamar("act", "adm", "consultarConfirmacionLectura()")
+d.propio("adm", "exigirVigente()")
+d.retornar("adm", "act", "")
 
-# ---------------------------------------------------------------- Zonas comunes
+# ---------------------------------------------------------------- Zonas comunes y reservas
 d = nuevo("Consultar calendario de disponibilidad",
           [("act", "actor", "Residente o Vigilante"), o("res", "Residente"), o("vig", "Vigilante"),
-           o("rez", "ReservaZonaComun")])
+           o("rez", "ReservaZonaComun"), o("zon", "ZonaComun")])
 d.abrir("alt", "actor = Residente")
 d.llamar("act", "res", "verReservas(id)")
-d.llamar_y_retornar("res", "rez", "mostrarZonasComunes()", "List<ZonaComun>")
-d.abrir("loop", "por cada zona común")
-d.llamar_y_retornar("res", "rez", "verificarDisponibilidad(hora)", "Boolean")
-d.llamar_y_retornar("res", "rez", "validarHorario(hora)", "Boolean")
-d.cerrar()
+d.propio("res", "exigirPropio(id)")
 d.retornar("res", "act", "List<ReservaZonaComun>")
 d.sino("actor = Vigilante")
-d.llamar("act", "vig", "consultarReservas()")
-d.llamar_y_retornar("vig", "rez", "mostrarZonasComunes()", "List<ZonaComun>")
-d.abrir("loop", "por cada zona común")
-d.llamar_y_retornar("vig", "rez", "verificarDisponibilidad(hora)", "Boolean")
-d.llamar_y_retornar("vig", "rez", "validarHorario(hora)", "Boolean")
+d.llamar_y_retornar("act", "vig", "consultarReservas()", "List<ZonaComun>")
 d.cerrar()
-d.retornar("vig", "act", "List<ZonaComun>")
+d.abrir("loop", "por cada zona común")
+d.llamar("act", "rez", "verificarDisponibilidad(hora)")
+d.propio("rez", "validarHorario(hora)", "Boolean")
+d.llamar_y_retornar("rez", "zon", "horarioIncluye(hora)", "boolean")
+d.retornar("rez", "act", "Boolean")
 d.cerrar()
 
 d = nuevo("Reservar zona común",
-          [RESI, o("res", "Residente"), o("rez", "ReservaZonaComun"), o("inm", "Inmueble"),
+          [RESI, o("res", "Residente"), o("rez", "ReservaZonaComun"), o("zon", "ZonaComun"),
            o("liq", "Liquidacion"), o("not", "Notificacion")])
 d.llamar("act", "res", "reservarZonaComun(id)")
-d.llamar_y_retornar("res", "rez", "mostrarZonasComunes()", "List<ZonaComun>")
-d.llamar_y_retornar("res", "rez", "verificarDisponibilidad(hora)", "Boolean")
-d.llamar_y_retornar("res", "rez", "validarHorario(hora)", "Boolean")
+d.llamar_y_retornar("res", "rez", "ReservaZonaComun(id, duenoReserva, zonaComun)", "")
 d.llamar("res", "rez", "estaHabilitado(duenoReserva)")
-d.llamar("rez", "inm", "pagoAlDiaAdministracion(liquidacion)")
-d.llamar_y_retornar("inm", "liq", "estaVencida()", "Boolean")
-d.retornar("inm", "rez", "boolean")
+d.llamar_y_retornar("rez", "res", "isActive()", "Boolean")
+d.llamar_y_retornar("rez", "liq", "estaVencida()", "Boolean")
 d.retornar("rez", "res", "Boolean")
-d.abrir("alt", "zona disponible, horario válido y residente habilitado")
-d.llamar("res", "not", "notificarReserva(reserva)")
-d.propio("not", "enviarNotificacion()", "Boolean")
-d.retornar("not", "res", "")
-d.retornar("res", "act", "ZonaComun reservada", cerrar=False)
-d.sino("alguna condición no se cumple")
-d.retornar("res", "act", "error: reserva rechazada")
-d.cerrar()
+d.retornar("res", "act", "ZonaComun")
+d.llamar_y_retornar("act", "rez", "mostrarZonasComunes()", "List<ZonaComun>")
+d.llamar_y_retornar("act", "rez", "intervaloValido()", "boolean")
+d.llamar("act", "rez", "validarHorario()")
+d.llamar_y_retornar("rez", "zon", "horarioCubre(inicio, fin)", "boolean")
+d.retornar("rez", "act", "Boolean")
+d.llamar_y_retornar("act", "rez", "cumpleAnticipacion(ahora, horas)", "boolean")
+d.llamar_y_retornar("act", "rez", "cumpleDuracionMaxima(horas)", "boolean")
+enviar(d, "act", "notificarReserva(reserva)", destinatarios_del_inmueble=False, apoyo=("cuando(reserva)", "String"))
 
 d = nuevo("Cancelar reserva", [RESI, o("res", "Residente"), o("rez", "ReservaZonaComun")])
 d.llamar("act", "res", "verReservas(id)")
+d.propio("res", "exigirPropio(id)")
 d.retornar("res", "act", "List<ReservaZonaComun>")
 d.llamar("act", "res", "cancelarReservaZonaComun(idAdmin)")
-d.abrir("alt", "reserva propia y aún no iniciada")
-d.retornar("res", "act", "reserva cancelada", cerrar=False)
-d.sino("reserva ajena o ya iniciada")
-d.retornar("res", "act", "error: no se puede cancelar")
-d.cerrar()
+d.llamar("res", "rez", "sePuedeCancelar(ahora)")
+d.propio("rez", "estado(ahora)", "String")
+d.retornar("rez", "res", "boolean")
+d.retornar("res", "act", "")
 
-# ---------------------------------------------------------------- Porteria
 d = nuevo("Verificar acceso a zona común",
           [VIGI, o("vig", "Vigilante"), o("usr", "Usuario"), o("ua", "UsuarioAutorizado"),
-           o("rez", "ReservaZonaComun"), o("not", "Notificacion"), o("inm", "Inmueble")])
+           o("rez", "ReservaZonaComun"), o("inm", "Inmueble"), o("not", "Notificacion")])
 d.llamar("act", "vig", "verificarAccesoZonaComun(usuario)")
 d.llamar_y_retornar("vig", "usr", "isActive()", "Boolean")
-d.abrir("alt", "cuenta inactiva")
-d.retornar("vig", "act", "false", cerrar=False)
-d.sino("cuenta activa")
-d.propio("vig", "existeInvitado(identificacion)", "Boolean")
 d.abrir("opt", "la persona es un invitado")
+d.propio("vig", "existeInvitado(identificacion)", "Boolean")
+d.llamar_y_retornar("vig", "ua", "autorizacionVigente()", "boolean")
 d.llamar_y_retornar("vig", "ua", "buscarRelacionResidente()", "List<Residente>")
 d.cerrar()
-d.llamar_y_retornar("vig", "rez", "validarHorario(hora)", "Boolean")
-d.abrir("alt", "reserva en curso")
-d.abrir("opt", "la persona es un invitado")
-d.llamar("vig", "not", "notificarVisita(inmueble)")
-d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
-d.propio("not", "enviarNotificacion()", "Boolean")
-d.retornar("not", "vig", "")
+d.abrir("loop", "por cada reserva")
+d.llamar_y_retornar("vig", "rez", "intervaloValido()", "boolean")
+d.llamar_y_retornar("vig", "rez", "estado(ahora)", "String")
 d.cerrar()
+d.abrir("alt", "cuenta activa y con una reserva en curso")
 d.retornar("vig", "act", "true", cerrar=False)
-d.sino("sin reserva en curso")
+d.sino("cuenta inactiva o sin reserva en curso")
 d.retornar("vig", "act", "false")
 d.cerrar()
+d.abrir("opt", "entra un invitado")
+enviar(d, "act", "notificarVisita(inmueble)")
 d.cerrar()
 
 # ---------------------------------------------------------------- Notificaciones
-d = nuevo("Consultar notificaciones",
-          [TRES, o("res", "Residente"), o("inm", "Inmueble"), o("not", "Notificacion"), o("usr", "Usuario")])
+d = nuevo("Consultar notificaciones", [TRES, o("res", "Residente"), o("usr", "Usuario")])
 d.llamar("act", "res", "consultarNotificacion(inmueble, id)")
-d.llamar("res", "inm", "notificaciones")
-d.retornar("inm", "res", "List<Notificacion>")
+d.propio("res", "exigirPropio(id)")
+d.propio("res", "exigirInmueble(otro)")
 d.retornar("res", "act", "List<Notificacion>")
-d.llamar_y_retornar("act", "usr", "marcarNotificacionLeida(inmueble, id)", "notificacionLeida = true")
+marcar_leida(d)
 
 d = nuevo("Enviar notificación", [SIS, o("not", "Notificacion"), o("inm", "Inmueble")])
 d.abrir("alt", "envío directo")
-d.llamar("act", "not", "enviarNotificacion()")
-d.retornar("not", "act", "Boolean")
+d.llamar_y_retornar("act", "not", "enviarNotificacion()", "Boolean")
 d.sino("reserva registrada")
-notificar(d, "act", "notificarReserva(reserva)", inmueble=False)
+enviar(d, "act", "notificarReserva(reserva)", destinatarios_del_inmueble=False, apoyo=("cuando(reserva)", "String"))
 d.sino("pago pendiente")
-notificar(d, "act", "notificarPagoPendiente(inmueble)")
+enviar(d, "act", "notificarPagoPendiente(inmueble)", apoyo=("pesos(valor)", "String"))
 d.sino("pago actualizado")
-notificar(d, "act", "notificarActualizacionDePago(inmueble, usuarios)")
+enviar(d, "act", "notificarActualizacionDePago(inmueble, usuarios)")
 d.sino("visita autorizada")
-notificar(d, "act", "notificarVisita(inmueble)")
+enviar(d, "act", "notificarVisita(inmueble)")
 d.cerrar()
 
 d = nuevo("Enviar notificaciones de vencimiento y mora",
-          [SIS, o("inm", "Inmueble"), o("liq", "Liquidacion"), o("not", "Notificacion")])
-d.abrir("loop", "cada día, por cada inmueble con liquidación vigente")
-d.llamar("act", "inm", "pagoAlDiaAdministracion(liquidacion)")
-d.llamar_y_retornar("inm", "liq", "estaVencida()", "Boolean")
-d.retornar("inm", "act", "boolean")
-d.abrir("opt", "liquidación vencida y sin pagar")
-d.llamar_y_retornar("act", "liq", "marcarEnMora()", "estado = EN_MORA")
-d.llamar("act", "not", "notificarPagoPendiente(inmueble)")
-d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
-d.propio("not", "enviarNotificacion()", "Boolean")
-d.retornar("not", "act", "")
+          [SIS, o("liq", "Liquidacion"), o("not", "Notificacion"), o("inm", "Inmueble")])
+d.abrir("loop", "cada día, por cada liquidación pendiente")
+d.llamar_y_retornar("act", "liq", "estaVencida()", "Boolean")
+d.abrir("opt", "liquidación vencida")
+d.llamar_y_retornar("act", "liq", "marcarEnMora()", "")
 d.cerrar()
+d.cerrar()
+d.abrir("opt", "recordatorio de pago al inmueble")
+enviar(d, "act", "notificarPagoPendiente(inmueble)", apoyo=("pesos(valor)", "String"))
 d.cerrar()
 
-d = nuevo("Enviar recordatorio de reserva próxima",
-          [SIS, o("res", "Residente"), o("rez", "ReservaZonaComun"), o("not", "Notificacion")])
+d = nuevo("Enviar recordatorio de reserva próxima", [SIS, o("res", "Residente"), o("not", "Notificacion")])
 d.abrir("loop", "por cada residente con reservas")
-d.llamar_y_retornar("act", "res", "verReservas(id)", "List<ReservaZonaComun>")
+d.llamar("act", "res", "verReservas(id)")
+d.propio("res", "exigirPropio(id)")
+d.retornar("res", "act", "List<ReservaZonaComun>")
 d.abrir("opt", "la reserva empieza pronto")
-d.llamar("act", "not", "notificarReserva(reserva)")
-d.propio("not", "enviarNotificacion()", "Boolean")
-d.retornar("not", "act", "")
+enviar(d, "act", "notificarReserva(reserva)", destinatarios_del_inmueble=False, apoyo=("cuando(reserva)", "String"))
 d.cerrar()
 d.cerrar()
 
-
-# ---------------------------------------------------------------- Casos de uso agregados despues
+# ---------------------------------------------------------------- Otros casos de uso
 d = nuevo("Cambiar contraseña", [TRES, o("usr", "Usuario")])
 d.llamar("act", "usr", "cambiarContrasena(inmueble, id)")
+d.propio("usr", "esEste(id)", "boolean")
 d.propio("usr", "isActive()", "Boolean")
-d.abrir("alt", "cuenta activa y contraseña actual correcta")
+d.propio("usr", "perteneceA(inmueble)", "boolean")
 d.propio("usr", "cerrarSesion()")
-d.retornar("usr", "act", "contraseña actualizada", cerrar=False)
-d.sino("cuenta inactiva o contraseña actual incorrecta")
-d.retornar("usr", "act", "error: no se puede cambiar la contraseña")
-d.cerrar()
+d.retornar("usr", "act", "")
 
-d = nuevo("Reembolsar pago",
-          [SIS, o("pas", "PasarelaPago"), o("pag", "Pago"), o("not", "Notificacion"), o("inm", "Inmueble")])
+d = nuevo("Reembolsar pago", [SIS, o("pas", "PasarelaPago"), o("pag", "Pago"), o("inm", "Inmueble"),
+                              o("not", "Notificacion")])
 d.llamar("act", "pas", "reembolsar(pago)")
-d.llamar_y_retornar("pas", "pag", "estaAprobado(pago)", "Boolean")
+d.llamar("pas", "pag", "estaAprobado()")
+d.propio("pag", "estaAprobado(pago)", "Boolean")
+d.retornar("pag", "pas", "Boolean")
 d.abrir("alt", "pago aprobado")
-d.propio("pas", "notificarResultado(pago)")
-d.llamar("pas", "not", "notificarActualizacionDePago(inmueble, usuarios)")
-d.llamar_y_retornar("not", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
-d.propio("not", "enviarNotificacion()", "Boolean")
-d.retornar("not", "pas", "")
 d.retornar("pas", "act", "true", cerrar=False)
 d.sino("pago no aprobado")
 d.retornar("pas", "act", "false")
 d.cerrar()
+d.abrir("opt", "pago reembolsado")
+enviar(d, "act", "notificarActualizacionDePago(inmueble, usuarios)")
+d.cerrar()
 
-d = nuevo("Consultar dueño del carro", [TRES, o("aut", "Auto"), o("inm", "Inmueble")])
-d.llamar("act", "aut", "consultarDuenos(inmueble, id)")
-d.llamar_y_retornar("aut", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
-d.retornar("aut", "act", "List<Residente>")
+d = nuevo("Consultar dueño del carro", [TRES, o("aut", "Auto")])
+d.llamar_y_retornar("act", "aut", "consultarDuenos(inmueble, id)", "List<Residente>")
 
 d = nuevo("Consultar relacionados al inmueble",
-          [TRES, o("inm", "Inmueble"), o("ua", "UsuarioAutorizado")])
+          [TRES, o("inm", "Inmueble"), o("ua", "UsuarioAutorizado"), o("res", "Residente")])
 d.llamar_y_retornar("act", "inm", "mostrarUsuarios(List<Usuario>)", "List<String>")
 d.abrir("loop", "por cada usuario autorizado (invitado) del inmueble")
-d.llamar_y_retornar("act", "ua", "buscarRelacionResidente()", "List<Residente>")
+d.llamar("act", "ua", "buscarRelacionResidente()")
+d.llamar_y_retornar("ua", "res", "tieneInvitado(invitado)", "boolean")
+d.retornar("ua", "act", "List<Residente>")
+d.cerrar()
+d.abrir("alt", "el residente activa o desactiva un invitado")
+d.llamar("act", "res", "cambiarEstadoInvitado(invitado, id)")
+d.propio("res", "tieneInvitado(invitado)", "boolean")
+d.retornar("res", "act", "Boolean")
+d.sino("el residente activa o desactiva varios invitados")
+d.llamar("act", "res", "cambiarEstadoInvitados(invitados)")
+d.propio("res", "tieneInvitado(invitado)", "boolean")
+d.retornar("res", "act", "Boolean")
 d.cerrar()
 
-d = nuevo("Consultar parqueaderos", [TRES, o("inm", "Inmueble"), o("paq", "Paqueadero")])
-d.llamar_y_retornar("act", "inm", "parqueadero", "Paqueadero")
+d = nuevo("Consultar parqueaderos", [TRES, o("paq", "Paqueadero")])
 d.llamar_y_retornar("act", "paq", "obtenerValorMensual()", "BigDecimal")
 
-
-# ---------------------------------------------------------------- Incidencias (Porteria)
-d = nuevo("Registrar incidencia operativa",
-          [VIGI, o("vig", "Vigilante"), o("not", "Notificacion"), o("usr", "Usuario")])
+d = nuevo("Registrar incidencia operativa", [VIGI, o("vig", "Vigilante"), o("not", "Notificacion")])
 d.llamar("act", "vig", "registrarIncidencia(descripcion)")
-d.llamar_y_retornar("vig", "not", "Notificacion(id, usuarios, mensaje, tipoNotificacion, fechaEnvio)",
-                    "notificación tipo INCIDENCIA")
-d.llamar("vig", "not", "enviarNotificacion()")
+d.propio("vig", "isActive()", "Boolean")
+d.propio("vig", "contratoVigente()", "boolean")
+d.retornar("vig", "act", "")
+d.llamar_y_retornar("act", "not", "Notificacion(id, usuarios, mensaje, tipoNotificacion, fechaEnvio)", "")
+d.llamar("act", "not", "enviarNotificacion()")
 d.abrir("alt", "hay destinatario y mensaje")
-d.retornar("not", "vig", "true", cerrar=False)
+d.retornar("not", "act", "true", cerrar=False)
 d.sino("sin destinatario o sin mensaje")
-d.retornar("not", "vig", "false")
+d.retornar("not", "act", "false")
 d.cerrar()
-d.retornar("vig", "act", "incidencia registrada")
 
-d = nuevo("Consultar incidencias operativas",
-          [ADMIN, o("adm", "Administrador"), o("not", "Notificacion"), o("usr", "Usuario")])
+d = nuevo("Consultar incidencias operativas", [ADMIN, o("adm", "Administrador"), o("usr", "Usuario")])
 d.llamar("act", "adm", "consultarIncidencias()")
-d.llamar_y_retornar("adm", "not", "tipoNotificacion = INCIDENCIA", "List<Notificacion>")
+d.propio("adm", "exigirVigente()")
 d.retornar("adm", "act", "List<Notificacion>")
-d.llamar_y_retornar("act", "usr", "marcarNotificacionLeida(inmueble, id)", "notificacionLeida = true")
+marcar_leida(d)
 
-
-# ---------------------------------------------------------------- Reportes y preferencias
-d = nuevo("Generar reportes consolidados",
-          [ADMIN, o("adm", "Administrador"), o("inm", "Inmueble"), o("liq", "Liquidacion"), o("pag", "Pago")])
+d = nuevo("Generar reportes consolidados", [ADMIN, o("adm", "Administrador")])
 d.llamar("act", "adm", "generarReportes()")
-d.abrir("loop", "por cada inmueble")
-d.llamar("adm", "inm", "pagoAlDiaAdministracion(liquidacion)")
-d.llamar_y_retornar("inm", "liq", "estaVencida()", "Boolean")
-d.retornar("inm", "adm", "boolean")
-d.llamar_y_retornar("adm", "liq", "calcularTotal()", "BigDecimal")
-d.abrir("loop", "por cada pago del inmueble")
-d.llamar_y_retornar("adm", "pag", "estaAprobado(pago)", "Boolean")
-d.cerrar()
-d.cerrar()
-d.retornar("adm", "act", "reporte consolidado (recaudo, mora y pendientes)")
+d.propio("adm", "exigirVigente()")
+d.retornar("adm", "act", "")
 
 d = nuevo("Configurar preferencias de notificación", [TRES, o("usr", "Usuario")])
 d.llamar("act", "usr", "configurarPreferencias(tipoNotificacion)")
 d.propio("usr", "isActive()", "Boolean")
-d.abrir("alt", "cuenta activa")
-d.retornar("usr", "act", "preferenciasNotificacion actualizadas", cerrar=False)
-d.sino("cuenta inactiva")
-d.retornar("usr", "act", "error: cuenta inactiva")
-d.cerrar()
+d.retornar("usr", "act", "")
+d.llamar_y_retornar("act", "usr", "recibe(tipoNotificacion)", "boolean")
 
 
 # =========================================================================================================
@@ -735,7 +740,7 @@ def _texto_svg(x, y, lineas, tam, ancla="start", negrita=False, cursiva=False, c
 
 def svg_de(d):
     """SVG (cadena) del diagrama d, a partir de su XML de draw.io."""
-    modelo = ET.fromstring(d.xml()).find("mxGraphModel")
+    modelo = ET.fromstring(d._xml_crudo()).find("mxGraphModel")
     ancho, alto = int(float(modelo.get("pageWidth"))), int(float(modelo.get("pageHeight")))
     partes = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{ancho}" height="{alto}" viewBox="0 0 {ancho} {alto}">',
@@ -827,16 +832,28 @@ def nombre_archivo(nombre):
 
 
 def main():
-    cuerpo = "".join(d.xml() for d in diagramas)
-    os.makedirs(os.path.dirname(SALIDA), exist_ok=True)
-    with open(SALIDA, "w", encoding="utf-8") as f:
-        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<mxfile host="app.diagrams.net">\n' + cuerpo + "</mxfile>\n")
-    os.makedirs(CARPETA_SVG, exist_ok=True)
-    for d in diagramas:
-        with open(os.path.join(CARPETA_SVG, nombre_archivo(d.nombre) + ".svg"), "w", encoding="utf-8") as f:
-            f.write(svg_de(d))
-    print(f"{len(diagramas)} diagramas (xml) -> {SALIDA}")
-    print(f"{len(diagramas)} svg -> {CARPETA_SVG}")
+    """Exporta los SVG (ver exportar_secuencia_svg.py). El XML solo se reescribe con --regenerar-xml: en draw.io se retoca a mano la posicion
+    de las figuras y regenerarlo descarta esos retoques."""
+    if "--regenerar-xml" in sys.argv:
+        cuerpo = "".join(d.xml() for d in diagramas)
+        os.makedirs(os.path.dirname(SALIDA), exist_ok=True)
+        with open(SALIDA, "w", encoding="utf-8") as f:
+            f.write('<?xml version="1.0" encoding="UTF-8"?>\n<mxfile host="app.diagrams.net">\n' + cuerpo + "</mxfile>\n")
+        print(f"{len(diagramas)} diagramas (xml) -> {SALIDA}")
+    else:
+        print("XML sin tocar (usa --regenerar-xml para reescribirlo; se pierden los retoques hechos en draw.io)")
+    if "--svg-propio" in sys.argv:
+        # dibujo propio (sin internet); no refleja los retoques hechos a mano en draw.io
+        os.makedirs(CARPETA_SVG, exist_ok=True)
+        for d in diagramas:
+            with open(os.path.join(CARPETA_SVG, nombre_archivo(d.nombre) + ".svg"), "w", encoding="utf-8") as f:
+                f.write(svg_de(d))
+        print(f"{len(diagramas)} svg -> {CARPETA_SVG}")
+    else:
+        # los SVG del README salen del XML real con el visor oficial de draw.io
+        import subprocess
+        subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                     "exportar_secuencia_svg.py")], check=False)
 
 
 if __name__ == "__main__":

@@ -1,11 +1,11 @@
 package unisimon.demo.model;
 
 import org.hibernate.annotations.DynamicUpdate;
+import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -18,53 +18,64 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Zona comun (salon social, gimnasio, BBQ...). Las reglas de reserva se le asignan mediante {@link Rompimiento}. */
+/**
+ * Zona comun (salon social, gimnasio, BBQ...). Las reglas de reserva se le asignan mediante {@link Rompimiento}.
+ * <p>
+ * Tal como esta en el diagrama de clases:
+ * <ul>
+ *   <li>hereda de {@link Inmueble}: {@code id} e {@code isActive} son los que hereda. En la base de datos sigue en
+ *       su propia tabla ({@code zonas_comunes}); todo el acceso es SQL nativo sobre esa tabla.</li>
+ *   <li>{@code horaInicio} y {@code horaFin} son {@code LocalDateTime} y el constructor los recibe como
+ *       {@code LocalTime}. Del horario solo cuenta la hora: la fecha es siempre {@link #FECHA_BASE} y en la base
+ *       se guarda como TIME.</li>
+ * </ul>
+ */
 @Entity
 @DynamicUpdate
 @Table(name = "zonas_comunes")
 @Getter
 @Setter
 @NoArgsConstructor
-public class ZonaComun {
+public class ZonaComun extends Inmueble {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    /** Fecha fija que acompana a la hora del horario (el horario es el mismo todos los dias). */
+    public static final LocalDate FECHA_BASE = LocalDate.EPOCH;
 
     @Column(nullable = false, unique = true)
     private String nombreZonaComun;
 
     private int capacidad;
 
-    private LocalTime horaInicio;
+    @Convert(converter = HoraDeHorario.class)
+    private LocalDateTime horaInicio;
 
-    private LocalTime horaFin;
-
-    @Column(nullable = false)
-    private Boolean isActive = true;
+    @Convert(converter = HoraDeHorario.class)
+    private LocalDateTime horaFin;
 
     @OneToMany(mappedBy = "zonaComun")
     private List<Rompimiento> reglasAsignadas = new ArrayList<>();
 
     public ZonaComun(Long id, String nombreZonaComun, int capacidad, LocalTime horaInicio, LocalTime horaFin) {
-        this.id = id;
+        setId(id);
         this.nombreZonaComun = nombreZonaComun;
         this.capacidad = capacidad;
-        this.horaInicio = horaInicio;
-        this.horaFin = horaFin;
-        this.isActive = true;
+        this.horaInicio = horaInicio == null ? null : FECHA_BASE.atTime(horaInicio);
+        this.horaFin = horaFin == null ? null : FECHA_BASE.atTime(horaFin);
+        setIsActive(true);
     }
 
     /** cambiarEstado(): activa la zona si estaba inactiva y viceversa. */
     public void cambiarEstado() {
-        this.isActive = !Boolean.TRUE.equals(this.isActive);
+        setIsActive(!Boolean.TRUE.equals(getIsActive()));
     }
 
     /** La hora cae dentro del horario de la zona (admite cruce de medianoche). */
     public boolean horarioIncluye(LocalTime hora) {
-        if (hora == null || horaInicio == null || horaFin == null) {
+        if (hora == null || this.horaInicio == null || this.horaFin == null) {
             return false;
         }
+        LocalTime horaInicio = this.horaInicio.toLocalTime();
+        LocalTime horaFin = this.horaFin.toLocalTime();
         if (horaInicio.isBefore(horaFin)) {
             return !hora.isBefore(horaInicio) && hora.isBefore(horaFin);
         }
@@ -77,9 +88,11 @@ public class ZonaComun {
      * (20:00-02:00) la apertura empieza un dia y termina al siguiente.
      */
     public boolean horarioCubre(LocalDateTime inicio, LocalDateTime fin) {
-        if (inicio == null || fin == null || horaInicio == null || horaFin == null || !fin.isAfter(inicio)) {
+        if (inicio == null || fin == null || this.horaInicio == null || this.horaFin == null || !fin.isAfter(inicio)) {
             return false;
         }
+        LocalTime horaInicio = this.horaInicio.toLocalTime();
+        LocalTime horaFin = this.horaFin.toLocalTime();
         LocalDate dia = inicio.toLocalDate();
         LocalTime hora = inicio.toLocalTime();
         LocalDateTime apertura;
@@ -95,5 +108,20 @@ public class ZonaComun {
             cierre = dia.atTime(horaFin);
         }
         return !inicio.isBefore(apertura) && !fin.isAfter(cierre);
+    }
+
+    /** La columna es TIME: de la fecha y hora del atributo solo se guarda la hora. */
+    @Converter
+    public static class HoraDeHorario implements AttributeConverter<LocalDateTime, LocalTime> {
+
+        @Override
+        public LocalTime convertToDatabaseColumn(LocalDateTime atributo) {
+            return atributo == null ? null : atributo.toLocalTime();
+        }
+
+        @Override
+        public LocalDateTime convertToEntityAttribute(LocalTime columna) {
+            return columna == null ? null : FECHA_BASE.atTime(columna);
+        }
     }
 }

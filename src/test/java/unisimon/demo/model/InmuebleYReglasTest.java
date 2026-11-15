@@ -47,13 +47,13 @@ class InmuebleYReglasTest {
     @Test
     @DisplayName("Inmueble: el parqueadero queda enlazado y isActive es true por defecto")
     void constructor() {
-        Parqueadero p = new Parqueadero(1L, null, new BigDecimal("120000"));
+        Paqueadero p = new Paqueadero(1L, null, new BigDecimal("120000"));
         Inmueble inmueble = new Inmueble(1L, "A-302", p, null);
 
         assertThat(p.getInmueble()).isSameAs(inmueble);
         assertThat(inmueble.getIsActive()).isTrue();
         assertThat(p.obtenerValorMensual()).isEqualByComparingTo("120000");
-        assertThat(new Parqueadero(2L, null, null).obtenerValorMensual()).isEqualByComparingTo("0");
+        assertThat(new Paqueadero(2L, null, null).obtenerValorMensual()).isEqualByComparingTo("0");
     }
 
     @Test

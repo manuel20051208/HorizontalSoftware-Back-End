@@ -41,9 +41,9 @@ public class Auto {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parqueadero_id", unique = true)
-    private Parqueadero parqueadero;
+    private Paqueadero parqueadero;
 
-    public Auto(Long id, Residente dueno, Long placa, Parqueadero parqueadero) {
+    public Auto(Long id, Residente dueno, Long placa, Paqueadero parqueadero) {
         this.id = id;
         this.dueno = dueno;
         this.placa = placa;

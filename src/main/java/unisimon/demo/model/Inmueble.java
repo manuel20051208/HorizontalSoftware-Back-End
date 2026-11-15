@@ -8,6 +8,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -34,6 +36,7 @@ import java.util.List;
 @Entity
 @DynamicUpdate
 @Table(name = "inmuebles")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -51,7 +54,7 @@ public class Inmueble {
     private String direccionInmueble;
 
     @OneToOne(mappedBy = "inmueble", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Parqueadero parqueadero;
+    private Paqueadero parqueadero;
 
     @ManyToMany
     @JoinTable(name = "inmueble_zonas_comunes",
@@ -75,7 +78,7 @@ public class Inmueble {
             inverseJoinColumns = @JoinColumn(name = "notificacion_id"))
     private List<Notificacion> notificaciones = new ArrayList<>();
 
-    public Inmueble(Long id, String direccionInmueble, Parqueadero parqueadero, Boolean isActive) {
+    public Inmueble(Long id, String direccionInmueble, Paqueadero parqueadero, Boolean isActive) {
         this.id = id;
         this.direccionInmueble = direccionInmueble;
         this.parqueadero = parqueadero;

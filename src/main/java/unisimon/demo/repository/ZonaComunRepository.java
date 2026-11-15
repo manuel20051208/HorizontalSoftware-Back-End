@@ -44,7 +44,7 @@ public interface ZonaComunRepository extends Repository<ZonaComun, Long> {
 
     @Query(value = """
             INSERT INTO zonas_comunes (nombre_zona_comun, capacidad, hora_inicio, hora_fin, is_active)
-            VALUES (:#{#z.nombreZonaComun}, :#{#z.capacidad}, :#{#z.horaInicio}, :#{#z.horaFin}, :#{#z.isActive})
+            VALUES (:#{#z.nombreZonaComun}, :#{#z.capacidad}, :#{#z.horaInicio?.toLocalTime()}, :#{#z.horaFin?.toLocalTime()}, :#{#z.isActive})
             RETURNING id
             """, nativeQuery = true)
     Long insertar(@Param("z") ZonaComun z);

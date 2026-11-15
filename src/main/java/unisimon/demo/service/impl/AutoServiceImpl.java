@@ -11,7 +11,7 @@ import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.mapper.Hidratador;
 import unisimon.demo.mapper.InvitadoMapper;
 import unisimon.demo.model.Auto;
-import unisimon.demo.model.Parqueadero;
+import unisimon.demo.model.Paqueadero;
 import unisimon.demo.repository.AutoRepository;
 import unisimon.demo.repository.InmuebleRepository;
 import unisimon.demo.repository.ParqueaderoRepository;
@@ -40,7 +40,7 @@ public class AutoServiceImpl implements AutoService {
         if (autos.existePorPlaca(s.placa())) {
             throw new ConflictoException("Ya existe un auto con esa placa");
         }
-        Parqueadero parqueadero = null;
+        Paqueadero parqueadero = null;
         if (s.parqueaderoId() != null) {
             ParqueaderoView vista = parqueaderos.buscarPorId(s.parqueaderoId())
                     .orElseThrow(() -> new RecursoNoEncontradoException("El parqueadero " + s.parqueaderoId() + " no existe"));
@@ -50,7 +50,7 @@ public class AutoServiceImpl implements AutoService {
             if (autos.existePorParqueadero(vista.getId())) {
                 throw new ConflictoException("Ese parqueadero ya tiene un auto asignado");
             }
-            parqueadero = new Parqueadero(vista.getId(), null, vista.getValorMensual());
+            parqueadero = new Paqueadero(vista.getId(), null, vista.getValorMensual());
         }
         Auto auto = new Auto(null, Hidratador.referenciaResidente(residenteId), s.placa(), parqueadero);
         Long id = autos.insertar(auto);
