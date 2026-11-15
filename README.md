@@ -21,7 +21,7 @@ Al arrancar, Flyway crea las tablas y se crea un administrador semilla (`SEED_AD
 - **Roles:** `ADMINISTRADOR`, `RESIDENTE` y `VIGILANTE`; los invitados no inician sesión. Cada endpoint declara su rol con `@PreAuthorize`.
 - **Sesión:** access token de 15 min y refresh de 7 días que rota; reutilizar uno viejo anula la sesión.
 - **Pagos:** el servidor fija el monto y solo aprueba con el webhook firmado de Wompi y una consulta directa que confirme estado, monto y moneda.
-- **Mora:** una tarea nocturna pasa a `EN_MORA` las liquidaciones vencidas.
+- **Tareas automáticas:** el día 1 de cada mes se genera la liquidación de todos los inmuebles activos; cada noche las liquidaciones vencidas pasan a `EN_MORA` y se avisa a sus residentes; cada hora se recuerdan las reservas que empiezan en 24 horas.
 
 | Rol | Puede |
 |---|---|
@@ -33,7 +33,7 @@ Al arrancar, Flyway crea las tablas y se crea un administrador semilla (`SEED_AD
 
 ### Casos de uso
 
-![Diagrama de casos de uso](Diagramas/UML/Untitled%20Diagram.drawio.svg)
+![Diagrama de casos de uso](Diagramas/UML/casos-de-uso.drawio.svg)
 
 ### Clases
 
@@ -43,6 +43,18 @@ Al arrancar, Flyway crea las tablas y se crea un administrador semilla (`SEED_AD
 
 ![Diagrama de componentes](Diagramas/Componentes/componentes-backend.svg)
 
+### Despliegue
+
+Dónde está alojada la aplicación completa:
+- el front (Next.js) en Vercel;
+- la API en una VM de AWS EC2, dentro de Docker y detrás de nginx con HTTPS;
+- la base de datos PostgreSQL en Neon;
+- los pagos con Wompi.
+
+El navegador solo habla con Vercel y, al pagar, con el checkout de Wompi; es el servidor de Next quien llama a la API. La Gmail API está pendiente de implementar.
+
+![Diagrama de despliegue](Diagramas/Despliegue/despliegue.drawio.svg)
+
 ### Paquetes
 
 <details>
@@ -51,7 +63,7 @@ Al arrancar, Flyway crea las tablas y se crea un administrador semilla (`SEED_AD
 | Paquete (`unisimon.demo`) | Para qué es |
 |---|---|
 | `controller` | Endpoints REST por rol y recurso |
-| `scheduler` | Tareas programadas (mora) |
+| `scheduler` | Tareas programadas (liquidación mensual, mora y recordatorio de reservas) |
 | `config` | Seguridad, CORS y cache |
 | `security` | JWT, usuario autenticado y anotaciones de rol |
 | `service` / `service/impl` / `service/support` | Casos de uso: leen con los repositorios, piden al modelo que decida, guardan y notifican (transacciones y cache) |
@@ -260,6 +272,7 @@ Usa `postgres:16-alpine`: la v18 cambió la ruta de datos y rompe el volumen.
 
 - **Secuencia:** la fuente es [`Diagramas/_fuente/secuencia-casos-de-uso.xml`](Diagramas/_fuente/secuencia-casos-de-uso.xml) (una página por caso de uso; se edita en draw.io). `python Diagramas/_fuente/exportar_secuencia_svg.py` exporta cada página a `Diagramas/Secuencia/<caso>.svg` con el visor oficial de draw.io (necesita internet); cada SVG se puede abrir y editar en draw.io. `python Diagramas/_fuente/conectar_secuencia.py` deja todas las flechas conectadas a sus barras y líneas de vida y trae los fragmentos `alt`/`opt`/`loop` al frente. `gen_secuencia_casos_uso.py --regenerar-xml` rehace el XML desde cero (se pierden los retoques hechos a mano).
 - **Clases:** la fuente es [`Diagramas/Clases/DiagramaClasesSoftwareHorizontal.xml`](Diagramas/Clases/DiagramaClasesSoftwareHorizontal.xml). `python Diagramas/_fuente/gen_diagrama_clases.py` lo reorganiza en rejilla sin flechas cruzadas ni encima de las clases (mismo contenido), y `python Diagramas/_fuente/exportar_drawio_svg.py Diagramas/Clases/DiagramaClasesSoftwareHorizontal.xml Diagramas/Clases/DiagramaClasesSoftwareHorizontal.drawio.svg` regenera la imagen (editable en draw.io).
+- **Despliegue:** `python Diagramas/_fuente/gen_despliegue.py` genera [`Diagramas/Despliegue/despliegue.xml`](Diagramas/Despliegue/despliegue.xml) y `python Diagramas/_fuente/exportar_drawio_svg.py Diagramas/Despliegue/despliegue.xml Diagramas/Despliegue/despliegue.drawio.svg` regenera la imagen.
 - **Casos de uso y componentes:** abre el `.xml` / `.drawio.svg` en [draw.io](https://app.diagrams.net) → **Archivo → Exportar como → SVG**.
 - **Fondo claro:** draw.io exporta SVG que se ven oscuros en modo oscuro. `python Diagramas/_fuente/fondo_claro.py` los deja siempre claros; el hook `scripts/hooks/pre-commit` lo corre solo al commitear (se activa una vez con `git config core.hooksPath scripts/hooks`).
 

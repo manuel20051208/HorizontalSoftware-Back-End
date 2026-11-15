@@ -97,6 +97,12 @@ public interface ReservaZonaComunRepository extends Repository<ReservaZonaComun,
     @Query(value = SELECT_RESERVA + "WHERE r.id = :id", nativeQuery = true)
     Optional<ReservaView> buscarPorId(@Param("id") Long id);
 
+    /** Reservas que empiezan en [desde, hasta): las del recordatorio de reserva proxima. */
+    @Query(value = SELECT_RESERVA + "WHERE r.fecha_hora_inicio >= :desde AND r.fecha_hora_inicio < :hasta "
+            + "ORDER BY r.fecha_hora_inicio, r.id", nativeQuery = true)
+    List<ReservaView> listarQueEmpiezanEntre(@Param("desde") LocalDateTime desde,
+                                             @Param("hasta") LocalDateTime hasta);
+
     // ------------------------------------------------------------------ listados paginados
 
     @Query(value = SELECT_RESERVA + "WHERE r.dueno_reserva_id = :residenteId AND " + FILTRO_ESTADO

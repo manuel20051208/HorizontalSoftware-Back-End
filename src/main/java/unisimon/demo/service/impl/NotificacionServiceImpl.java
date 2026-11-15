@@ -28,6 +28,7 @@ import unisimon.demo.repository.UsuarioRepository;
 import unisimon.demo.repository.UsuarioRepository.UsuarioListaView;
 import unisimon.demo.service.NotificacionService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -81,14 +82,26 @@ public class NotificacionServiceImpl implements NotificacionService {
     public Optional<NotificacionResponses.Notificacion> notificarReserva(Long reservaId) {
         ReservaView vista = reservas.buscarPorId(reservaId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("La reserva " + reservaId + " no existe"));
-        ZonaComun zona = Hidratador.referenciaZona(vista.getZonaComunId());
-        zona.setNombreZonaComun(vista.getNombreZonaComun());
-        ReservaZonaComun reserva = new ReservaZonaComun(vista.getId(),
-                Hidratador.referenciaResidente(vista.getDuenoReservaId()), zona, vista.getFechaHoraInicio(),
-                vista.getFechaHoraFin());
         Notificacion notificacion = new Notificacion();
-        notificacion.notificarReserva(reserva);
+        notificacion.notificarReserva(reserva(vista));
         return enviar(notificacion, null);
+    }
+
+    @Override
+    @Transactional
+    public int recordarReservasProximas(LocalDateTime desde, LocalDateTime hasta) {
+        int enviados = 0;
+        for (ReservaView vista : reservas.listarQueEmpiezanEntre(desde, hasta)) {
+            Notificacion notificacion = new Notificacion();
+            notificacion.notificarReserva(reserva(vista));
+            LocalDateTime inicio = vista.getFechaHoraInicio();
+            notificacion.setMensaje("Recordatorio: su reserva de " + vista.getNombreZonaComun() + " empieza el "
+                    + inicio.toLocalDate() + " a las " + inicio.toLocalTime() + ".");
+            if (enviar(notificacion, null).isPresent()) {
+                enviados++;
+            }
+        }
+        return enviados;
     }
 
     @Override
@@ -174,6 +187,13 @@ public class NotificacionServiceImpl implements NotificacionService {
         }
         return Optional.of(NotificacionMapper.de(id, notificacion.getMensaje(), notificacion.getTipoNotificacion(),
                 notificacion.getFechaEnvio()));
+    }
+
+    private static ReservaZonaComun reserva(ReservaView vista) {
+        ZonaComun zona = Hidratador.referenciaZona(vista.getZonaComunId());
+        zona.setNombreZonaComun(vista.getNombreZonaComun());
+        return new ReservaZonaComun(vista.getId(), Hidratador.referenciaResidente(vista.getDuenoReservaId()), zona,
+                vista.getFechaHoraInicio(), vista.getFechaHoraFin());
     }
 
     private Inmueble cargarInmueble(Long inmuebleId) {

@@ -164,15 +164,15 @@ public class LiquidacionServiceImpl implements LiquidacionService {
     @Override
     @Transactional
     @CacheEvict(cacheNames = NombresCache.INMUEBLES, allEntries = true)
-    public int marcarVencidas() {
-        List<Long> vencidas = liquidaciones.listarPorEstado(Liquidacion.PENDIENTE).stream()
+    public List<Long> marcarVencidas() {
+        List<LiquidacionView> vencidas = liquidaciones.listarPorEstado(Liquidacion.PENDIENTE).stream()
                 .filter(v -> Hidratador.liquidacion(v).estaVencida())
-                .map(LiquidacionView::getId)
                 .toList();
         if (!vencidas.isEmpty()) {
-            liquidaciones.actualizarEstadoPorIds(vencidas, Liquidacion.EN_MORA);
+            liquidaciones.actualizarEstadoPorIds(vencidas.stream().map(LiquidacionView::getId).toList(),
+                    Liquidacion.EN_MORA);
         }
-        return vencidas.size();
+        return vencidas.stream().map(LiquidacionView::getInmuebleId).distinct().toList();
     }
 
     @Override

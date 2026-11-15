@@ -240,9 +240,9 @@ class LiquidacionServiceImplTest {
                 liquidacion(2, Liquidacion.PENDIENTE, "100", "0", "0", LocalDate.now().plusDays(1)),
                 liquidacion(3, Liquidacion.PENDIENTE, "100", "0", "0", LocalDate.now())));
 
-        int cambiadas = servicio.marcarVencidas();
+        List<Long> inmueblesEnMora = servicio.marcarVencidas();
 
-        assertThat(cambiadas).isEqualTo(1);
+        assertThat(inmueblesEnMora).containsExactly(1L);
         verify(liquidaciones).actualizarEstadoPorIds(List.of(1L), Liquidacion.EN_MORA);
     }
 
@@ -252,7 +252,7 @@ class LiquidacionServiceImplTest {
         when(liquidaciones.listarPorEstado(Liquidacion.PENDIENTE)).thenReturn(List.of(
                 liquidacion(2, Liquidacion.PENDIENTE, "100", "0", "0", LocalDate.now().plusDays(1))));
 
-        assertThat(servicio.marcarVencidas()).isZero();
+        assertThat(servicio.marcarVencidas()).isEmpty();
         verify(liquidaciones, never()).actualizarEstadoPorIds(any(), any());
     }
 

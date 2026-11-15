@@ -5,6 +5,7 @@ import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.NotificacionResponses;
 import unisimon.demo.dto.response.Pagina;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /** Envio, consulta y lectura de notificaciones. */
@@ -18,6 +19,12 @@ public interface NotificacionService {
 
     /** Notificacion.notificarReserva(reserva). Automatica: vacio si no hay a quien avisar. */
     Optional<NotificacionResponses.Notificacion> notificarReserva(Long reservaId);
+
+    /**
+     * Recordatorio de reserva proxima: Notificacion.notificarReserva(reserva) para cada reserva que empieza en
+     * [desde, hasta). Automatica. Devuelve cuantos recordatorios se enviaron.
+     */
+    int recordarReservasProximas(LocalDateTime desde, LocalDateTime hasta);
 
     /** Notificacion.notificarActualizacionDePago(inmueble, usuarios): avisa el resultado de un pago. Automatica. */
     Optional<NotificacionResponses.Notificacion> notificarActualizacionDePago(Long inmuebleId);

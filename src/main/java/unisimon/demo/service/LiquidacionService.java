@@ -7,6 +7,7 @@ import unisimon.demo.dto.response.LiquidacionResponses;
 import unisimon.demo.dto.response.Pagina;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /** Ciclo de vida de las liquidaciones mensuales. */
 public interface LiquidacionService {
@@ -32,8 +33,11 @@ public interface LiquidacionService {
     Pagina<LiquidacionResponses.Liquidacion> listar(Long inmuebleId, String estado, LocalDate periodo,
                                                   SolicitudPagina pagina);
 
-    /** Pasa a EN_MORA las liquidaciones PENDIENTES cuya fecha limite ya paso. Devuelve cuantas cambio. */
-    int marcarVencidas();
+    /**
+     * Pasa a EN_MORA las liquidaciones PENDIENTES cuya fecha limite ya paso. Devuelve los ids de los inmuebles que
+     * quedaron en mora (sin repetir), para avisarles.
+     */
+    List<Long> marcarVencidas();
 
     /** Un pago aprobado deja al dia todas las liquidaciones que el inmueble debia. */
     void marcarInmueblePagado(Long inmuebleId);
