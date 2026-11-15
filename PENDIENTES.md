@@ -13,11 +13,9 @@
   - el recordatorio de reserva se envía cada hora, 24 h antes.
   - Hay 7 pruebas nuevas; en total pasan 213. README y ENDPOINTS.md están actualizados.
 
+- Diagramas revisados y aprobados. Se borraron los 5 backups (`.antes-de-*` y `.copia.xml`); siguen en el historial, en `bb443ab`.
+- Commit y push en `bb443ab`.
+
 ## Queda
-- Revisar los diagramas y confirmar que están bien. Después, borrar los backups:
-  - `Diagramas/Clases/DiagramaClasesSoftwareHorizontal.antes-de-firmas.xml`
-  - `Diagramas/_fuente/secuencia-casos-de-uso.antes-de-tipos.xml`
-  - `Diagramas/_fuente/secuencia-casos-de-uso.antes-de-conectar.xml`
-  - `Diagramas/UML/casos-de-uso.antes-de-limpiar.drawio.xml` (el archivo de 23 páginas original)
-- Commit, push y despliegue de los cambios del scheduler en la VM.
+- Desplegar los cambios del scheduler en la VM.
 - Implementar la API de Gmail para enviar correos (hoy `CorreoLogSender` solo los escribe en el log). En el diagrama de despliegue tiene una nota «Pendiente de implementar».
