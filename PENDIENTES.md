@@ -14,6 +14,7 @@
   - Hay 7 pruebas nuevas; en total pasan 213. README y ENDPOINTS.md están actualizados.
 
 - Diagramas revisados y aprobados. Se borraron los 5 backups (`.antes-de-*` y `.copia.xml`); siguen en el historial, en `bb443ab`.
+- El diagrama de clases se restauró desde tu versión corregida a mano (la `.copia.xml`), con las 5 firmas con `:`. El principal anterior quedó en `DiagramaClasesSoftwareHorizontal.antes-de-restaurar.xml`.
 - Commit y push en `bb443ab`.
 
 ## Queda
