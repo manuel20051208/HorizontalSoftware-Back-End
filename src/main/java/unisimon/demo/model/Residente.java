@@ -160,8 +160,6 @@ public class Residente extends Usuario implements NoAdmin {
         return List.copyOf(inmueble.getNotificaciones());
     }
 
-    // ------------------------------------------------------------------ apoyo (no son operaciones del diagrama)
-
     @Override
     protected boolean perteneceA(Inmueble otro) {
         if (otro == null || inmueble == null) {

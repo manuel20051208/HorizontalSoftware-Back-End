@@ -127,7 +127,7 @@ public class Usuario {
      */
     public void cambiarContrasena(Inmueble inmueble, Long id) {
         if (!esEste(id) || !isActive() || !perteneceA(inmueble)) {
-            throw new IllegalStateException("No se puede cambiar la contrasena de esta cuenta");
+            throw new IllegalStateException("No se puede cambiar la contraseña de esta cuenta");
         }
         cerrarSesion();
     }
@@ -185,8 +185,6 @@ public class Usuario {
         return preferenciasNotificacion == null || preferenciasNotificacion.isEmpty()
                 || preferenciasNotificacion.contains(tipoNotificacion);
     }
-
-    // ------------------------------------------------------------------ apoyo (no son operaciones del diagrama)
 
     /** El id es el de este usuario. */
     protected boolean esEste(Long id) {
