@@ -1,0 +1,429 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Pagina-1" id="V8wEmshVYFbSh1J9g9kn">
+    <mxGraphModel dx="1862" dy="1022" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3620" pageHeight="2528" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="dcsh-1" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#36393d;swimlaneFillColor=default;" value="Inmueble" vertex="1">
+          <mxGeometry height="259" width="430" x="680" y="907" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-2" parent="dcsh-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br&gt;- usuariosRelacionado: List&amp;lt;Usuario&amp;gt;&lt;br&gt;- direccionInmueble: String&lt;br&gt;- parqueadero: Paqueadero&lt;br&gt;- zonaComunes : List&amp;lt;ZonaComun&amp;gt;&lt;br&gt;- liquidacion: Liquidacion&lt;br&gt;- registroPagos: List&amp;lt;Pago&amp;gt;&lt;br&gt;- isActive: Boolean&lt;br&gt;- notificaciones : List&amp;lt;Notificacion&amp;gt;" vertex="1">
+          <mxGeometry height="142" width="430" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-3" parent="dcsh-1" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="430" y="168" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-4" parent="dcsh-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Inmueble(id: Long, direccionInmueble: String, parqueadero: Paqueadero, isActive: Boolean)&lt;br&gt;+ pagoAlDiaAdministracion(liquidacion : Liquidacion): boolean&lt;br&gt;+ mostrarUsuarios(List&amp;lt;Usuario&amp;gt;): List&amp;lt;String&amp;gt;&lt;br&gt;+ residentesActivos() : List&amp;lt;Usuario&amp;gt;" vertex="1">
+          <mxGeometry height="83" width="430" y="176" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-5" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;swimlaneFillColor=default;" value="ReglaReserva" vertex="1">
+          <mxGeometry height="201" width="430" x="3130" y="907" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-6" parent="dcsh-5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br&gt;- anticipacionMinimaHoras : int&lt;br&gt;- duracionMaximaHoras : int&lt;br&gt;- horasAntelacionPenalidad : int&lt;br&gt;- TarifaPenalidad : BigDecimal&lt;br&gt;- admin : Administrador" vertex="1">
+          <mxGeometry height="98" width="430" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-7" parent="dcsh-5" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="430" y="124" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-8" parent="dcsh-5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ ReglaReserva(id: Long, anticipacionMinimaHoras: int, duracionMaximaHoras: int, horasAntelacionPenalidad: int, tarifaPenalidad: BigDecimal, admin: Administrador)&lt;br&gt;+actualizarReglas(nuevaAnticipacion : int, nuevaDuracion : int)" vertex="1">
+          <mxGeometry height="69" width="430" y="132" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-9" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;swimlaneFillColor=default;" value="Liquidacion" vertex="1">
+          <mxGeometry height="391" width="400" x="75" y="1453" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-10" parent="dcsh-9" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br&gt;- inmueble : Inmueble&lt;br&gt;- periodo : LocalDate&lt;br&gt;- fechaGeneracion : LocalDate&lt;br&gt;- fechaLimite : LocalDate&lt;br&gt;- cuotaAdministracion : BigDecimal&lt;br&gt;- valorServiciosComunes : BigDecimal&lt;br&gt;- valorMultas : BigDecimal&lt;br&gt;- total : BigDecimal&lt;br&gt;- estado : String&lt;br&gt;+ PENDIENTE : String&lt;br&gt;+ AL_DIA : String&lt;br&gt;+ EN_MORA : String&lt;br&gt;+ DIA_LIMITE_POR_DEFECTO : int" vertex="1">
+          <mxGeometry height="215" width="400" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-11" parent="dcsh-9" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="400" y="241" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-12" parent="dcsh-9" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Liquidacion(id: Long, inmueble: Inmueble, periodo: LocalDate, fechaLimite: LocalDate, cuotaAdministracion: BigDecimal, valorServiciosComunes: BigDecimal, valorMultas: BigDecimal)&lt;br&gt;+ generarLiquidacion(inmueble: Inmueble) : Liquidacion&lt;br&gt;+ calcularTotal() : BigDecimal&lt;br&gt;+ estaVencida() : Boolean&lt;br&gt;+ marcarEnMora()&lt;br&gt;+ marcarAlDia()&lt;br&gt;- nz(v : BigDecimal) : BigDecimal" vertex="1">
+          <mxGeometry height="142" width="400" y="249" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-13" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#36393d;swimlaneFillColor=default;" value="Notificacion" vertex="1">
+          <mxGeometry height="288" width="430" x="60" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-14" parent="dcsh-13" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br&gt;- usuarios : List&amp;lt;Usuario&amp;gt;&lt;br&gt;- mensaje : String&lt;br&gt;- tipoNotificacion : String&lt;br&gt;- fechaEnvio : LocalDateTime&lt;br&gt;+ INCIDENCIA : String" vertex="1">
+          <mxGeometry height="98" width="430" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-15" parent="dcsh-13" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="430" y="124" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-16" parent="dcsh-13" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Notificacion(id: Long, usuarios: List&amp;lt;Usuario&amp;gt;, mensaje: String, tipoNotificacion: String, fechaEnvio: LocalDateTime)&lt;br&gt;+ enviarNotificacion() : Boolean&lt;br&gt;+ notificarReserva(reserva: ReservaZonaComun)&lt;br&gt;+ notificarPagoPendiente(inmueble: Inmueble)&lt;br&gt;+ notificarActualizacionDePago(inmueble: Inmueble, usuarios : List&amp;lt;Usuario&amp;gt;)&lt;br&gt;+ notificarVisita(inmueble: Inmueble)&lt;br&gt;- pesos(valor : BigDecimal) : String&lt;br&gt;- cuando(reserva : ReservaZonaComun) : String" vertex="1">
+          <mxGeometry height="156" width="430" y="132" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-17" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;swimlaneFillColor=default;" value="Pago" vertex="1">
+          <mxGeometry height="420" width="380" x="705" y="1453" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-18" parent="dcsh-17" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br&gt;- inmueble : Inmueble&lt;br&gt;- monto : BigDecimal&lt;br&gt;- fechaPago : LocalDate&lt;br&gt;- concepto : String&lt;br&gt;- metodoPago : String&lt;br&gt;- estado : String&lt;br&gt;- referencia : String&lt;br&gt;+ PENDIENTE : String&lt;br&gt;+ APROBADO : String&lt;br&gt;+ RECHAZADO : String&lt;br&gt;+ ANULADO : String&lt;br&gt;+ REEMBOLSADO : String&lt;br&gt;- pasarela : PasarelaPago" vertex="1">
+          <mxGeometry height="215" width="380" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-19" parent="dcsh-17" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="380" y="241" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-20" parent="dcsh-17" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Pago(id: Long, inmueble: Inmueble, monto: BigDecimal, fechaPago: LocalDate, concepto: String, metodoPago: String, referencia: String)&lt;br&gt;+ registrarPago(inmueble : Inmueble) : Pago&lt;br&gt;+ validarMonto(liquidacion : Liquidacion) : Boolean&lt;br&gt;+ estaAprobado(pago : Pago) : Boolean&lt;br&gt;+ anularPago()&lt;br&gt;+ generarComprobante() : String&lt;br&gt;+ actualizarEstado(pago : Pago) : Liquidacion&lt;br&gt;+ validarMonto(esperado : BigDecimal) : Boolean&lt;br&gt;+ estaAprobado() : Boolean" vertex="1">
+          <mxGeometry height="171" width="380" y="249" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-21" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;swimlaneFillColor=default;" value="Rompimiento" vertex="1">
+          <mxGeometry height="230" width="230" x="3230" y="1453" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-22" parent="dcsh-21" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br&gt;- zonaComun : ZonaComun&lt;br&gt;- reglaReserva : ReglaReserva&lt;br&gt;- fechaAplicacion : LocalDate&lt;br&gt;- activa : Boolean&lt;br&gt;- observaciones : String" vertex="1">
+          <mxGeometry height="98" width="230" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-23" parent="dcsh-21" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="230" y="124" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-24" parent="dcsh-21" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Rompimiento(id: Long, zonaComun: ZonaComun, reglaReserva: ReglaReserva, fechaAplicacion: LocalDate, observaciones: String)&lt;br&gt;+ aplicarRegla()&lt;br&gt;+ inactivarRegla()" vertex="1">
+          <mxGeometry height="98" width="230" y="132" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-25" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;swimlaneFillColor=default;" value="ZonaComun" vertex="1">
+          <mxGeometry height="244" width="430" x="1920" y="1453" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-26" parent="dcsh-25" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br&gt;- nombreZonaComun : String&lt;br&gt;- capacidad : int&lt;br&gt;- horaInicio : LocalDateTime&lt;br&gt;- horaFin : LocalDateTime&lt;br&gt;- isActive: Boolean&lt;br&gt;- reglasAsignadas : List&amp;lt;Rompimiento&amp;gt;&lt;br&gt;+ FECHA_BASE : LocalDate" vertex="1">
+          <mxGeometry height="127" width="430" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-27" parent="dcsh-25" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="430" y="153" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-28" parent="dcsh-25" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ ZonaComun(id: Long, nombreZonaComun: String, capacidad: int, horaInicio: LocalTime, horaFin: LocalTime)&lt;br&gt;+ cambiarEstado()&lt;br&gt;+ horarioIncluye(hora : LocalTime) : boolean&lt;br&gt;+ horarioCubre(inicio : LocalDateTime, fin : LocalDateTime) : boolean" vertex="1">
+          <mxGeometry height="83" width="430" y="161" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-29" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;swimlaneFillColor=default;" value="Usuario" vertex="1">
+          <mxGeometry height="507" width="430" x="680" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-30" parent="dcsh-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id: Long&lt;br&gt;- identificacion: Long&lt;br&gt;- nombreCompleto: String&lt;br&gt;- fechaNacimiento: LocalDate&lt;br&gt;- correoElectronico: String&lt;br&gt;- contrasena: String&lt;br&gt;- fechaCreacionCuenta: LocalDate&lt;br&gt;- tipoUsuario: String&lt;br&gt;- token: String&lt;br&gt;- active: Boolean&lt;br&gt;- notificacionLeida : Boolean&lt;br&gt;- preferenciasNotificacion : List&amp;lt;String&amp;gt;&lt;br&gt;+ ADMINISTRADOR : String&lt;br&gt;+ RESIDENTE : String&lt;br&gt;+ VIGILANTE : String&lt;br&gt;+ USUARIO_AUTORIZADO : String" vertex="1">
+          <mxGeometry height="244" width="430" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-31" parent="dcsh-29" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="430" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-32" parent="dcsh-29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Usuario(id: Long, identificacion: Long, nombreCompleto: String, fechaNacimiento: LocalDate, correoElectronico: String, contrasena: String, tipoUsuario: String)&lt;br&gt;+ isActive() : Boolean&lt;br&gt;+ iniciarSesion(correo : String, contrasena : String) : Usuario&lt;br&gt;+ cambiarContrasena(inmueble: Inmueble, id : Long)&lt;br&gt;+ cerrarSesion()&lt;br&gt;+ activarCuenta(correo : String, contrasena : String) : Boolean&lt;br&gt;+ recuperarContrasena()&lt;br&gt;+ marcarNotificacionLeida(inmueble: Inmueble, id : Long)&lt;br&gt;+ configurarPreferencias(tipoNotificacion: String)&lt;br&gt;+ recibe(tipoNotificacion : String) : boolean&lt;br&gt;# esEste(id : Long) : boolean&lt;br&gt;# perteneceA(inmueble : Inmueble) : boolean&lt;br&gt;- credencialesCorrectas(correo : String, contrasena : String) : boolean" vertex="1">
+          <mxGeometry height="229" width="430" y="278" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-33" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;swimlaneFillColor=default;" value="Administrador" vertex="1">
+          <mxGeometry height="391" width="430" x="3130" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-34" parent="dcsh-33" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- inicioContrato: LocalDate&lt;br&gt;- venceContrato: LocalDate&lt;br&gt;- cuentas : List&amp;lt;Usuario&amp;gt;&lt;br&gt;- notificaciones : List&amp;lt;Notificacion&amp;gt;" vertex="1">
+          <mxGeometry height="69" width="430" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-35" parent="dcsh-33" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="430" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-36" parent="dcsh-33" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Administrador(id: Long, identificacion: Long, nombreCompleto: String, fechaNacimiento: LocalDate, correoElectronico: String, contrasena: String, tipoUsuario: String, inicioContrato: LocalDate, venceContrato: LocalDate)&lt;br&gt;+ modificarActive(identificacion: Long, idToken : Long) : NoAdmin&lt;br&gt;+ gestionarCuentaUsuario()&lt;br&gt;+ configurarMultas(inmueble: Inmueble, adminId : Long)&lt;br&gt;+ configurarTarifas(inmueble: Inmueble, adminId : Long)&lt;br&gt;+ ConfigurarZonasComunes(inmueble: Inmueble , adminId : Long)&lt;br&gt;+ ConfigurarNuevaReglaReserva(inmueble: Inmueble, adminId : Long)&lt;br&gt;+ conciliarPagosAdministracion(inmueble: Inmueble, adminId : Long) : Pago&lt;br&gt;+ consultarConfirmacionLectura()&lt;br&gt;+ consultarIncidencias() : List&amp;lt;Notificacion&amp;gt;&lt;br&gt;+ generarReportes()&lt;br&gt;+ contratoVigente() : boolean&lt;br&gt;- exigirVigente()&lt;br&gt;- exigirAutoridad(adminId : Long)&lt;br&gt;- liquidacionVigente(inmueble : Inmueble) : Liquidacion" vertex="1">
+          <mxGeometry height="288" width="430" y="103" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-37" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;swimlaneFillColor=default;" value="Residente" vertex="1">
+          <mxGeometry height="376" width="430" x="1300" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-38" parent="dcsh-37" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- inmueble: Inmueble&lt;br&gt;- invitados: List&amp;lt;UsuarioAutorizado&amp;gt;&lt;br&gt;- auto : Auto&lt;br&gt;- reservas : List&amp;lt;ReservaZonaComun&amp;gt;" vertex="1">
+          <mxGeometry height="69" width="430" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-39" parent="dcsh-37" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="430" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-40" parent="dcsh-37" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Residente(id: Long, identificacion: Long, nombreCompleto: String, fechaNacimiento: LocalDate, correoElectronico: String, contrasena: String, tipoUsuario: String, inmueble: Inmueble, auto: Auto)&lt;br&gt;+ verReservas(id : Long) : List&amp;lt;ReservaZonaComun&amp;gt;&lt;br&gt;+ cambiarEstadoInvitado(invitado: UsuarioAutorizado, id: Long) : Boolean&lt;br&gt;+ consultarEstadoCuenta(inmueble: Inmueble, id : Long) : Liquidacion&lt;br&gt;+ consultarHistorialPago(id : Long) : List&amp;lt;Pago&amp;gt;&lt;br&gt;+ cambiarEstadoInvitados (invitados : List&amp;lt;UsuarioAutorizado&amp;gt;) : Boolean&lt;br&gt;+ reservarZonaComun(id : Long) : ZonaComun&lt;br&gt;+ cancelarReservaZonaComun(idAdmin : Long)&lt;br&gt;+ consultarNotificacion(inmueble: Inmueble, id : Long) : List&amp;lt;Notificacion&amp;gt;&lt;br&gt;+ tieneInvitado(invitado : UsuarioAutorizado) : boolean&lt;br&gt;# perteneceA(otro : Inmueble) : boolean&lt;br&gt;- exigirPropio(id : Long)&lt;br&gt;- exigirInmueble(otro : Inmueble)" vertex="1">
+          <mxGeometry height="273" width="430" y="103" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-41" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;swimlaneFillColor=default;" value="Vigilante" vertex="1">
+          <mxGeometry height="245" width="400" x="2540" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-42" parent="dcsh-41" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- inicioContrato: LocalDate&lt;br&gt;- venceContrato: LocalDate&lt;br&gt;- reservas : List&amp;lt;ReservaZonaComun&amp;gt;&lt;br&gt;- invitados : List&amp;lt;UsuarioAutorizado&amp;gt;" vertex="1">
+          <mxGeometry height="69" width="400" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-43" parent="dcsh-41" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="400" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-44" parent="dcsh-41" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Vigilante(id: Long, identificacion: Long, nombreCompleto: String, fechaNacimiento: LocalDate, correoElectronico: String, contrasena: String, tipoUsuario: String, inicioContrato: LocalDate, venceContrato: LocalDate)&lt;br&gt;+ verificarAccesoZonaComun(usuario: Usuario) : Boolean&lt;br&gt;+ existeInvitado(identificacion: Long) : Boolean&lt;br&gt;+ consultarReservas() : List&amp;lt;ZonaComun&amp;gt;&lt;br&gt;+ registrarIncidencia(descripcion: String)&lt;br&gt;+ contratoVigente() : boolean" vertex="1">
+          <mxGeometry height="142" width="400" y="103" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-45" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffcc99;strokeColor=#36393d;swimlaneFillColor=default;" value="UsuarioAutorizado" vertex="1">
+          <mxGeometry height="172" width="330" x="1970" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-46" parent="dcsh-45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- venceAutorizacion : LocalDate" vertex="1">
+          <mxGeometry height="25" width="330" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-47" parent="dcsh-45" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="330" y="51" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-48" parent="dcsh-45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ UsuarioAutorizado(id: Long, identificacion: Long, nombreCompleto: String, fechaNacimiento: LocalDate, correoElectronico: String, contrasena: String, tipoUsuario: String, inmueble: Inmueble, auto: Auto, venceAutorizacion: LocalDate)&lt;br&gt;+ buscarRelacionResidente(): List&amp;lt;Residente&amp;gt;&lt;br&gt;+ autorizacionVigente() : boolean" vertex="1">
+          <mxGeometry height="113" width="330" y="59" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-49" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffff88;strokeColor=#36393d;swimlaneFillColor=default;" value="ReservaZonaComun" vertex="1">
+          <mxGeometry height="376" width="430" x="1920" y="907" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-50" parent="dcsh-49" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br&gt;- duenoReserva: Residente&lt;br&gt;- zonaComun: ZonaComun&lt;br&gt;+ PROGRAMADA : String&lt;br&gt;+ EN_CURSO : String&lt;br&gt;+ FINALIZADA : String&lt;br&gt;- fechaHoraInicio : LocalDateTime&lt;br&gt;- fechaHoraFin : LocalDateTime" vertex="1">
+          <mxGeometry height="127" width="430" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-51" parent="dcsh-49" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="430" y="153" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-52" parent="dcsh-49" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ ReservaZonaComun(id: Long, duenoReserva: Residente, zonaComun: ZonaComun)&lt;br&gt;+ mostrarZonasComunes() : List&amp;lt;ZonaComun&amp;gt;&lt;br&gt;+ verificarDisponibilidad(hora : LocalTime) : Boolean&lt;br&gt;+ validarHorario(hora : LocalTime) : Boolean&lt;br&gt;+ estaHabilitado(duenoReserva: Residente) : Boolean&lt;br&gt;+ ReservaZonaComun(id : Long, duenoReserva : Residente, zonaComun : ZonaComun, fechaHoraInicio : LocalDateTime, fechaHoraFin : LocalDateTime)&lt;br&gt;+ estado(ahora : LocalDateTime) : String&lt;br&gt;+ intervaloValido() : boolean&lt;br&gt;+ validarHorario() : Boolean&lt;br&gt;+ cumpleAnticipacion(ahora : LocalDateTime, horas : Integer) : boolean&lt;br&gt;+ cumpleDuracionMaxima(horas : Integer) : boolean&lt;br&gt;+ sePuedeCancelar(ahora : LocalDateTime) : boolean" vertex="1">
+          <mxGeometry height="215" width="430" y="161" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-53" parent="1" style="html=1;whiteSpace=wrap;fillColor=#ffcc99;strokeColor=#36393d;" value="&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;NoAdmin&lt;/b&gt;" vertex="1">
+          <mxGeometry height="50" width="170" x="2050" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-54" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#E5CCFF;strokeColor=#000000;swimlaneFillColor=default;" value="Paqueadero" vertex="1">
+          <mxGeometry height="142" width="270" x="1380" y="1453" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-55" parent="dcsh-54" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br&gt;- inmueble : Inmueble&lt;br&gt;- valorMensual : BigDecimal" vertex="1">
+          <mxGeometry height="54" width="270" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-56" parent="dcsh-54" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;labelPerimeter=1;" value="" vertex="1">
+          <mxGeometry height="8" width="270" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-57" parent="dcsh-54" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Paqueadero(id: Long, inmueble: Inmueble, valorMensual: BigDecimal)&lt;br&gt;+ obtenerValorMensual() : BigDecimal" vertex="1">
+          <mxGeometry height="54" width="270" y="88" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-58" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#E5CCFF;strokeColor=#000000;swimlaneFillColor=default;" value="Auto" vertex="1">
+          <mxGeometry height="157" width="430" x="1300" y="907" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-59" parent="dcsh-58" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br&gt;- dueno : Residente&lt;br&gt;- placa: Long&lt;br&gt;- parqueadero: Paqueadero" vertex="1">
+          <mxGeometry height="69" width="430" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-60" parent="dcsh-58" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;labelPerimeter=1;" value="" vertex="1">
+          <mxGeometry height="8" width="430" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-61" parent="dcsh-58" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ Auto(id: Long, dueno: Residente, placa: Long, parqueadero: Paqueadero)&lt;br&gt;+ consultarDuenos(inmueble : Inmueble, id : Long) : List&amp;lt;Residente&amp;gt;" vertex="1">
+          <mxGeometry height="54" width="430" y="103" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-62" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;swimlaneFillColor=default;" value="PasarelaPago" vertex="1">
+          <mxGeometry height="405" width="430" x="680" y="2043" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-63" parent="dcsh-62" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- id : Long&lt;br&gt;- nombrePasarela : String&lt;br&gt;- urlApi : String&lt;br&gt;- apiKey : String&lt;br&gt;- estado : String&lt;br&gt;+ ACTIVA : String&lt;br&gt;+ INACTIVA : String&lt;br&gt;- secretoIntegridad : String&lt;br&gt;- pagos : List&amp;lt;Pago&amp;gt;&lt;br&gt;- MONEDA : String" vertex="1">
+          <mxGeometry height="156" width="430" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-64" parent="dcsh-62" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="430" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-65" parent="dcsh-62" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ PasarelaPago(id: Long, nombrePasarela: String, urlApi: String, apiKey: String)&lt;br&gt;+ iniciarTransaccion(pago: Pago) : String&lt;br&gt;+ confirmarTransaccion(referencia: String) : Boolean&lt;br&gt;+ consultarEstado(referencia: String) : String&lt;br&gt;+ reembolsar(pago: Pago) : Boolean&lt;br&gt;+ notificarResultado(pago: Pago)&lt;br&gt;+ iniciarTransaccion(pago : Pago, secretoIntegridad : String) : String&lt;br&gt;+ iniciarTransaccion(pago : Pago, secretoIntegridad : String, redirectUrl : String) : String&lt;br&gt;~ firmaIntegridad(referencia : String, centavos : long, secretoIntegridad : String) : String&lt;br&gt;- buscarPago(referencia : String) : Pago&lt;br&gt;- enc(v : String) : String" vertex="1">
+          <mxGeometry height="215" width="430" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-66" edge="1" parent="1" source="dcsh-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=diamondThin;endFill=0;endSize=16;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-67" connectable="0" parent="dcsh-66" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="14" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-68" edge="1" parent="1" source="dcsh-25" style="endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endSize=10;exitX=1.0000;exitY=0.4713;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-69" connectable="0" parent="dcsh-68" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="1..*" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="16" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-70" edge="1" parent="1" source="dcsh-5" style="endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endSize=16;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-33">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-71" connectable="0" parent="dcsh-70" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="14" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-72" edge="1" parent="1" source="dcsh-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=diamondThin;endFill=0;endSize=15;exitX=1.0000;exitY=0.3202;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0000;entryY=0.7000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-45">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-73" connectable="0" parent="dcsh-72" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="16" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-74" edge="1" parent="1" source="dcsh-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=block;endFill=0;dashed=1;endSize=10;exitX=0.8500;exitY=0.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-53">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1665.5" y="145" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-75" edge="1" parent="1" source="dcsh-41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=block;endFill=0;dashed=1;endSize=10;exitX=0.2500;exitY=0.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.0000;entryY=0.5000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-53">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2640" y="145" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-76" edge="1" parent="1" source="dcsh-41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=block;endFill=0;endSize=10;exitX=0.7000;exitY=0.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.8000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-29">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2820" y="75" />
+              <mxPoint x="1024" y="75" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-77" edge="1" parent="1" source="dcsh-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=diamondThin;endFill=1;endSize=15;exitX=0.1200;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.8500;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1351.6" y="805" />
+              <mxPoint x="1045.5" y="805" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-78" connectable="0" parent="dcsh-77" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="14" y="12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-79" edge="1" parent="1" source="dcsh-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=block;endFill=0;endSize=10;exitX=0.4500;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.6200;entryY=1.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2113.5" y="1767" />
+              <mxPoint x="1185" y="1767" />
+              <mxPoint x="1185" y="1408.8" />
+              <mxPoint x="946.6" y="1408.8" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-80" edge="1" parent="1" source="dcsh-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=block;endFill=0;dashed=1;endSize=10;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-53">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-81" edge="1" parent="1" source="dcsh-49" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=diamondThin;endFill=1;endSize=15;exitX=0.2500;exitY=0.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.8500;entryY=1.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-37">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2027.5" y="830.5" />
+              <mxPoint x="1665.5" y="830.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-82" connectable="0" parent="dcsh-81" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="14" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-83" edge="1" parent="1" source="dcsh-49" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=diamondThin;endFill=1;endSize=16;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-84" connectable="0" parent="dcsh-83" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="14" y="12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-85" edge="1" parent="1" source="dcsh-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=block;endFill=0;endSize=10;exitX=0.0000;exitY=0.3000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.0000;entryY=0.2225;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-86" edge="1" parent="1" source="dcsh-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=diamondThin;endFill=0;endSize=15;exitX=1.0000;exitY=0.4500;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0000;entryY=0.2556;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-87" connectable="0" parent="dcsh-86" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="16" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-88" edge="1" parent="1" source="dcsh-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=block;endFill=0;endSize=10;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5500;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-29">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3345" y="30" />
+              <mxPoint x="916.5" y="30" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-89" edge="1" parent="1" source="dcsh-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=diamondThin;endFill=0;endSize=15;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="stCqW4lUq1A96e437B4j-1" connectable="0" parent="dcsh-89" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;fontSize=12;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="-0.8326" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-90" edge="1" parent="1" source="dcsh-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=block;endFill=0;endSize=10;exitX=0.0000;exitY=0.3000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.0000;entryY=0.1372;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-37">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-91" edge="1" parent="1" source="dcsh-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=diamondThin;endFill=1;endSize=16;exitX=0.2737;exitY=0.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.3000;entryY=1.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-92" connectable="0" parent="dcsh-91" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="14" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-93" edge="1" parent="1" source="dcsh-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=diamondThin;endFill=0;endSize=16;exitX=0.7600;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.3000;entryY=1.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-25">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1006.8" y="1381.6" />
+              <mxPoint x="1225" y="1381.6" />
+              <mxPoint x="1225" y="1737" />
+              <mxPoint x="2049" y="1737" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-94" connectable="0" parent="dcsh-93" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="3" y="12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-96" edge="1" parent="1" source="dcsh-54" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=diamondThin;endFill=1;endSize=16;exitX=0.1500;exitY=0.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.9000;entryY=1.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1420.5" y="1334" />
+              <mxPoint x="1067" y="1334" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-97" connectable="0" parent="dcsh-96" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="0..1" vertex="1">
+          <mxGeometry relative="1" x="1" as="geometry">
+            <mxPoint x="353" y="275" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-98" edge="1" parent="1" source="dcsh-58" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=diamondThin;endFill=1;endSize=15;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-37">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-99" connectable="0" parent="dcsh-98" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="0..1" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="14" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-100" edge="1" parent="1" source="dcsh-58" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=diamondThin;endFill=0;endSize=15;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-54">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-101" connectable="0" parent="dcsh-100" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="0..1" vertex="1">
+          <mxGeometry relative="1" x="1" as="geometry">
+            <mxPoint y="-373" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-102" edge="1" parent="1" source="dcsh-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=diamondThin;endFill=1;endSize=16;exitX=0.7000;exitY=0.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.1200;entryY=1.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="355" y="1354.4" />
+              <mxPoint x="731.6" y="1354.4" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-103" connectable="0" parent="dcsh-102" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="14" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-104" edge="1" parent="1" source="dcsh-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=diamondThin;endFill=0;endSize=16;exitX=0.4500;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.4434;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" target="dcsh-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-105" connectable="0" parent="dcsh-104" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="-3" y="12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-106" edge="1" parent="1" source="dcsh-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endSize=16;exitX=0.0000;exitY=0.2500;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=diamondThin;endFill=0;" target="dcsh-13">
+          <mxGeometry relative="1" x="-0.0009" as="geometry">
+            <Array as="points">
+              <mxPoint x="275" y="971.75" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="stCqW4lUq1A96e437B4j-2" connectable="0" parent="dcsh-106" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;fontSize=12;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="-0.9441" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcsh-107" edge="1" parent="1" source="dcsh-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;endArrow=diamondThin;endSize=16;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;endFill=0;" target="dcsh-62">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dcsh-108" connectable="0" parent="dcsh-107" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;labelBackgroundColor=default;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint y="12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

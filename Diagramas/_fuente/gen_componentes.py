@@ -143,20 +143,30 @@ def text_cell(html, x, y, w, h, style_extra=""):
     cells.append(f'<mxCell id="{nid("t")}" value="{escape(html, q)}" style="text;html=1;{style_extra}" vertex="1" '
                  f'parent="1"><mxGeometry x="{x}" y="{y}" width="{w}" height="{h}" as="geometry"/></mxCell>')
 
-def edge(points, w=1.4):
-    (sx, sy), (tx, ty) = points[0], points[-1]
+def comp_en(pt):
+    """Componente cuyo borde contiene el punto (para pegar ahi el conector)."""
+    for k, (_, _, _, _, (x, y, w, h)) in COMP.items():
+        if x - 1 <= pt[0] <= x + w + 1 and y - 1 <= pt[1] <= y + h + 1:
+            return k, ((pt[0] - x) / w, (pt[1] - y) / h)
+    raise ValueError(f"ningun componente en {pt}")
+
+def frac(v):
+    return f"{round(v, 4):g}"
+
+def edge(id_, points, src, salida, tgt, entrada, w=1.4):
+    """Conector pegado: source/target y puntos fijos exactos (Perimeter=0), asi sigue a las cajas en draw.io."""
     mid = "".join(f'<mxPoint x="{x}" y="{y}"/>' for x, y in points[1:-1])
     arr = f'<Array as="points">{mid}</Array>' if mid else ""
-    cells.append(f'<mxCell id="{nid("e")}" value="" style="endArrow=none;html=1;rounded=0;strokeColor={LINE};'
-                 f'strokeWidth={w};edgeStyle=none;" edge="1" parent="1"><mxGeometry relative="1" as="geometry">'
-                 f'<mxPoint x="{sx}" y="{sy}" as="sourcePoint"/><mxPoint x="{tx}" y="{ty}" as="targetPoint"/>{arr}'
-                 f'</mxGeometry></mxCell>')
+    cells.append(f'<mxCell id="{id_}" value="" style="endArrow=none;html=1;rounded=0;strokeColor={LINE};'
+                 f'strokeWidth={w};edgeStyle=none;exitX={frac(salida[0])};exitY={frac(salida[1])};exitDx=0;exitDy=0;'
+                 f'exitPerimeter=0;entryX={frac(entrada[0])};entryY={frac(entrada[1])};entryDx=0;entryDy=0;'
+                 f'entryPerimeter=0;" edge="1" parent="1" source="{src}" target="{tgt}">'
+                 f'<mxGeometry relative="1" as="geometry">{arr}</mxGeometry></mxCell>')
 
-text_cell(f"<b>{TITLE}</b>", 40, 18, 900, 28, "fontSize=18;align=left;verticalAlign=middle;")
-text_cell(NOTE, 40, 48, 1200, 24, "fontSize=12;align=left;verticalAlign=middle;fontColor=#444444;")
-cells.append(f'<mxCell id="bound" value="{escape("<b>" + BOUND_LABEL + "</b>", q)}" style="rounded=0;html=1;'
-             f'dashed=1;dashPattern=8 4;fillColor=#fbfcfe;strokeColor=#7a8aa6;verticalAlign=top;align=left;'
-             f'spacingLeft=12;spacingTop=4;fontSize=13;fontColor=#33415c;" vertex="1" parent="1">'
+n[0] = 2   # ids estables (t1 y t2 eran el titulo y la leyenda, que Manuel quito a mano)
+# Recuadro del subsistema tal como lo dejo Manuel en draw.io: sin rotulo y con el estilo por defecto.
+cells.append(f'<mxCell id="bound" value="" style="rounded=0;html=1;verticalAlign=top;align=left;'
+             f'spacingLeft=12;spacingTop=4;fontSize=13;" vertex="1" parent="1">'
              f'<mxGeometry x="{bx}" y="{by}" width="{bw}" height="{bh}" as="geometry"/></mxCell>')
 for k, (kind, stereo, name, det, (x, y, w, h)) in COMP.items():
     f, st = COLORS[kind]
@@ -185,12 +195,18 @@ def socket_img(dp):
 for a in ASM:
     dp, p1, p2, pts = socket_geom(a)
     B = a["b"]
-    edge([a["p"], (B[0] + RB * dp[0], B[1] + RB * dp[1])])
-    edge(pts)
-    cells.append(f'<mxCell id="{nid("b")}" value="" style="ellipse;html=1;fillColor=#ffffff;strokeColor={LINE};'
+    id_e1, id_e2, id_b, id_s = nid("e"), nid("e"), nid("b"), nid("s")
+    prov, salida_p = comp_en(a["p"])
+    req, salida_r = comp_en(pts[0])
+    # bola: el conector llega a su borde, del lado del proveedor
+    edge(id_e1, [a["p"], (B[0] + RB * dp[0], B[1] + RB * dp[1])], f"c_{prov}", salida_p,
+         id_b, (0.5 + dp[0] / 2, 0.5 + dp[1] / 2))
+    # socket (imagen de 32x32 centrada en B): el conector llega al vertice del arco
+    edge(id_e2, pts, f"c_{req}", salida_r, id_s, ((16 - RS * dp[0]) / 32, (16 - RS * dp[1]) / 32))
+    cells.append(f'<mxCell id="{id_b}" value="" style="ellipse;html=1;fillColor=#ffffff;strokeColor={LINE};'
                  f'strokeWidth=1.6;" vertex="1" parent="1"><mxGeometry x="{B[0] - RB}" y="{B[1] - RB}" '
                  f'width="{2 * RB}" height="{2 * RB}" as="geometry"/></mxCell>')
-    cells.append(f'<mxCell id="{nid("s")}" value="" style="shape=image;html=1;imageAspect=0;aspect=fixed;'
+    cells.append(f'<mxCell id="{id_s}" value="" style="shape=image;html=1;imageAspect=0;aspect=fixed;'
                  f'image=data:image/svg+xml,{socket_img(dp)};" vertex="1" parent="1"><mxGeometry x="{B[0] - 16}" '
                  f'y="{B[1] - 16}" width="32" height="32" as="geometry"/></mxCell>')
     lines, lx, ly, anc = a["label"]
