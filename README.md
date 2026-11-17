@@ -41,7 +41,7 @@ Al arrancar, Flyway crea las tablas y se crea un administrador semilla (`SEED_AD
 
 ### Componentes
 
-![Diagrama de componentes](Diagramas/Componentes/componentes-backend.svg)
+![Diagrama de componentes](Diagramas/Componentes/componentes-backend.drawio.svg)
 
 ### Despliegue
 
@@ -49,9 +49,10 @@ Dónde está alojada la aplicación completa:
 - el front (Next.js) en Vercel;
 - la API en una VM de AWS EC2, dentro de Docker y detrás de nginx con HTTPS;
 - la base de datos PostgreSQL en Neon;
-- los pagos con Wompi.
+- los pagos con Wompi;
+- los correos con la Gmail API (OAuth2).
 
-El navegador solo habla con Vercel y, al pagar, con el checkout de Wompi; es el servidor de Next quien llama a la API. La Gmail API está pendiente de implementar.
+El navegador solo habla con Vercel y, al pagar, con el checkout de Wompi; es el servidor de Next quien llama a la API.
 
 ![Diagrama de despliegue](Diagramas/Despliegue/despliegue.drawio.svg)
 
@@ -71,7 +72,7 @@ El navegador solo habla con Vercel y, al pagar, con el checkout de Wompi; es el 
 | `mapper` | Vistas SQL a objetos de respuesta |
 | `cache` | Nombres de las caches |
 | `integration/wompi` | Cliente de Wompi |
-| `mail` | Correo (por ahora al log) |
+| `mail` | Correo: Gmail API si hay `GMAIL_REFRESH_TOKEN`, si no al log |
 | `bootstrap` | Admin semilla y pasarela desde el `.env` |
 | `repository` | SQL nativo con Spring Data |
 | `model` | Dominio: las clases del diagrama de clases con sus reglas de negocio |

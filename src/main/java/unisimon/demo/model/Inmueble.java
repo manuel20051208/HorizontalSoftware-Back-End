@@ -46,8 +46,11 @@ public class Inmueble {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** List&lt;Usuario&gt; como en el diagrama; en la base son los residentes e invitados de este inmueble. */
-    @OneToMany(mappedBy = "inmueble", targetEntity = Residente.class, cascade = CascadeType.ALL, orphanRemoval = true)
+    /**
+     * List&lt;Usuario&gt; como en el diagrama; en la base son los residentes e invitados de este inmueble.
+     * Inmueble ◇— Residente es AGREGACION (Inmueble es el todo): sin cascada ni orphanRemoval, borrar uno no borra al otro.
+     */
+    @OneToMany(mappedBy = "inmueble", targetEntity = Residente.class)
     private List<Usuario> usuariosRelacionado = new ArrayList<>();
 
     @Column(nullable = false, unique = true)
