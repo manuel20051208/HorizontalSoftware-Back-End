@@ -16,9 +16,10 @@ COMP = {
     "srv": ("core", "«component»", "Servicios de negocio", ["service · service.impl · policy", "mapper · factory · service.support", "cache"], (660, 480, 330, 150)),
     "wom": ("int", "«component»", "Integración Wompi", ["integration.wompi", "ClienteWompiRest", "FirmaEventosWompi"], (1070, 490, 210, 130)),
     "per": ("int", "«component»", "Persistencia", ["repository · 14 *Repository", "Spring Data + SQL nativo"], (480, 770, 260, 120)),
-    "cor": ("int", "«component»", "Correo", ["mail", "CorreoLogSender (simulado)"], (820, 770, 200, 120)),
+    "cor": ("int", "«component»", "Correo", ["mail", "CorreoGmailSender", "CorreoLogSender (sin token)"], (820, 770, 200, 120)),
     "boo": ("int", "«component»", "Bootstrap", ["bootstrap", "DatosIniciales", "SincronizacionPasarela"], (1080, 770, 200, 120)),
     "wext": ("ext", "«sistema externo»", "Wompi", ["pasarela de pagos"], (1420, 480, 240, 150)),
+    "gext": ("ext", "«sistema externo»", "Gmail API", ["envío de correos"], (1420, 670, 240, 130)),
     "pg": ("db", "«base de datos»", "PostgreSQL 16", ["esquema migrado con Flyway"], (480, 1060, 260, 120)),
 }
 BOUND = (320, 105, 990, 890)
@@ -53,6 +54,8 @@ ASM = [
          label=(["*Repository"], 468, 856, "end")),
     dict(p=(920, 770), b=(920, 740), r=[(920, 630), (920, 740)],
          label=(["CorreoSender"], 936, 745, "start")),
+    dict(p=(1420, 735), b=(1390, 735), r=[(1020, 790), (1050, 790), (1050, 735), (1390, 735)],
+         label=(["Gmail API REST", "OAuth2 · messages/send"], 1220, 712, "middle")),
     dict(p=(680, 890), b=(680, 920), r=[(1180, 890), (1180, 950), (680, 950), (680, 920)],
          label=(["*Repository"], 696, 925, "start")),
     dict(p=(580, 1060), b=(580, 1030), r=[(580, 890), (580, 1030)],

@@ -89,6 +89,14 @@ public class VigilanteServiceImpl implements VigilanteService {
 
     @Override
     @Transactional(readOnly = true)
+    public Pagina<InvitadoResponses.Invitado> consultarInvitados(SolicitudPagina pagina) {
+        List<InvitadoResponses.Invitado> filas = invitados.listarTodos(pagina.limite(), pagina.desplazamiento())
+                .stream().map(InvitadoMapper::invitado).toList();
+        return Pagina.de(filas, invitados.contarTodos(), pagina);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public VigilanteResponses.InvitadoConsulta existeInvitado(Long identificacion) {
         return invitados.buscarPorIdentificacion(identificacion)
                 .map(v -> {

@@ -1,5 +1,5 @@
 """Diagrama de despliegue UML de HorizontalSoftware: donde esta alojada la aplicacion completa
-(navegador, front en Vercel, API en AWS EC2 detras de nginx, base de datos en Neon y Wompi).
+(navegador, front en Vercel, API en AWS EC2 detras de nginx, base de datos en Neon, Wompi y Gmail API).
 Notacion segun OMG UML 2.5.1 (formal/17-12-05):
 - 19.4.4: Node = cubo en perspectiva; Device con «device»; ExecutionEnvironment con «executionEnvironment».
 - 19.3.4: Artifact = rectangulo con «artifact»; anidado dentro del nodo donde se despliega (19.4.4).
@@ -91,12 +91,14 @@ nodo("neon", 1500, 150, 260, 150, "", "Neon", "#d5e8d4")
 nodo("pg", 1520, 200, 220, 80, "executionEnvironment", "PostgreSQL", "#ffffff", ENTORNO)
 
 nodo("wompi", 1500, 560, 260, 110, "", "Wompi", "#f8cecc")
+nodo("gmail", 1500, 375, 260, 90, "", "Gmail API", "#f5f5f5")
 
 # ---------------------------------------------------------------- caminos de comunicacion
 enlace("c1", "nav", "node", "HTTPS :443", (1, 0.5), (0, 0.5))
 enlace("c2", "node", "nginx", "HTTPS :443<br>horizontal-proyect.duckdns.org", (1, 0.5), (0, 0.5))
 enlace("c3", "nginx", "cont", "HTTP<br>:8080", (1, 0.5), (0, 0.25), rotulo_x=-0.45)   # rotulo del lado de Nginx, fuera del borde de Docker
 enlace("c4", "cont", "pg", "JDBC/TLS :5432", (1, 0.25), (0, 0.5), ((1410, 320), (1410, 240)))
+enlace("c5", "cont", "gmail", "HTTPS :443", (1, 0.75), (0, 0.5))
 enlace("c6", "cont", "wompi", "HTTPS :443", (0.5, 1), (0, 0.3636), ((1185, 600),))
 enlace("c7", "wompi", "nginx", "HTTPS :443", (0, 0.7273), (0.5, 1), ((905, 640),))
 enlace("c8", "nav", "wompi", "HTTPS :443", (0.5, 1), (0.5, 1), ((150, 730), (1630, 730)))

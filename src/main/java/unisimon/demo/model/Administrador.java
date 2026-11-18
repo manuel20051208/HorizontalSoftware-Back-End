@@ -1,8 +1,6 @@
 package unisimon.demo.model;
 
 import java.util.List;
-import java.util.ArrayList;
-import jakarta.persistence.Transient;
 import org.hibernate.annotations.DynamicUpdate;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
@@ -17,8 +15,8 @@ import java.time.LocalDate;
  * Administrador (hereda de Usuario).
  * <p>
  * Sus operaciones del diagrama estan aqui con su firma. Trabajan sobre los objetos que reciben (el inmueble
- * con su liquidacion, zonas y pagos ya cargados) y sobre el contexto que deja el servicio en {@code cuentas} y
- * {@code notificaciones}; leer y guardar en la base de datos lo hace la capa de servicios.
+ * con su liquidacion, zonas y pagos ya cargados, las cuentas o las notificaciones que se le pasan por
+ * parametro); leer y guardar en la base de datos lo hace la capa de servicios.
  */
 @Entity
 @DynamicUpdate
@@ -33,14 +31,6 @@ public class Administrador extends Usuario {
 
     @Column(name = "admin_vence_contrato")
     private LocalDate venceContrato;
-
-    /** Contexto (no es atributo del diagrama ni se guarda): las cuentas sobre las que opera modificarActive. */
-    @Transient
-    private List<Usuario> cuentas = new ArrayList<>();
-
-    /** Contexto (no es atributo del diagrama ni se guarda): las notificaciones que consulta el administrador. */
-    @Transient
-    private List<Notificacion> notificaciones = new ArrayList<>();
 
     public Administrador(Long id, Long identificacion, String nombreCompleto, LocalDate fechaNacimiento,
                          String correoElectronico, String contrasena, String tipoUsuario,
@@ -57,13 +47,14 @@ public class Administrador extends Usuario {
     }
 
     /**
-     * modificarActive(identificacion : Long, idToken : Long) : NoAdmin.
-     * El administrador {@code idToken} (este) activa o desactiva la cuenta con esa identificacion. Al
-     * desactivarla tambien le cierra la sesion. Un administrador no se puede modificar por aqui.
+     * modificarActive(identificacion : Long, idToken : Long, cuentas : List&lt;Usuario&gt;) : NoAdmin.
+     * El administrador {@code idToken} (este) activa o desactiva, entre las {@code cuentas} recibidas, la que
+     * tiene esa identificacion. Al desactivarla tambien le cierra la sesion. Un administrador no se puede
+     * modificar por aqui.
      */
-    public NoAdmin modificarActive(Long identificacion, Long idToken) {
+    public NoAdmin modificarActive(Long identificacion, Long idToken, List<Usuario> cuentas) {
         exigirAutoridad(idToken);
-        Usuario cuenta = cuentas.stream()
+        Usuario cuenta = (cuentas == null ? List.<Usuario>of() : cuentas).stream()
                 .filter(u -> identificacion != null && identificacion.equals(u.getIdentificacion()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No existe un usuario con esa identificacion"));
@@ -153,18 +144,21 @@ public class Administrador extends Usuario {
     }
 
     /**
-     * consultarConfirmacionLectura: revisa quienes leyeron las notificaciones. La lectura de cada destinatario
-     * esta en {@code notificaciones} (Notificacion.usuarios y Usuario.notificacionLeida); aqui se comprueba que
-     * quien consulta es un administrador activo.
+     * consultarConfirmacionLectura(): revisa quienes leyeron las notificaciones. La lectura de cada
+     * destinatario esta en Notificacion.usuarios y Usuario.notificacionLeida (la consulta la capa de servicios);
+     * aqui se comprueba que quien consulta es un administrador activo y con contrato vigente.
      */
     public void consultarConfirmacionLectura() {
         exigirVigente();
     }
 
-    /** consultarIncidencias() : List&lt;Notificacion&gt; -> las notificaciones de tipo INCIDENCIA. */
-    public List<Notificacion> consultarIncidencias() {
+    /**
+     * consultarIncidencias(notificaciones : List&lt;Notificacion&gt;) : List&lt;Notificacion&gt;
+     * -> de las notificaciones recibidas, las de tipo INCIDENCIA.
+     */
+    public List<Notificacion> consultarIncidencias(List<Notificacion> notificaciones) {
         exigirVigente();
-        return notificaciones.stream()
+        return (notificaciones == null ? List.<Notificacion>of() : notificaciones).stream()
                 .filter(n -> Notificacion.INCIDENCIA.equals(n.getTipoNotificacion()))
                 .toList();
     }

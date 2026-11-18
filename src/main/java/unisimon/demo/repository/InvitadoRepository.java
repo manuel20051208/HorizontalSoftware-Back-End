@@ -77,6 +77,16 @@ public interface InvitadoRepository extends Repository<UsuarioAutorizado, Long> 
     @Query(value = "SELECT COUNT(*) FROM residente_invitados WHERE residente_id = :residenteId", nativeQuery = true)
     long contarDeResidente(@Param("residenteId") Long residenteId);
 
+    /** Vigilante.consultarInvitados(): una pagina de todos los invitados registrados. */
+    @Query(value = SELECT_INVITADO + """
+            WHERE u.tipo_usuario = 'USUARIO_AUTORIZADO'
+            ORDER BY u.nombre_completo, u.id
+            """ + SqlPaginacion.LIMITE_DESPLAZAMIENTO, nativeQuery = true)
+    List<InvitadoView> listarTodos(@Param("limite") int limite, @Param("desplazamiento") long desplazamiento);
+
+    @Query(value = "SELECT COUNT(*) FROM usuarios WHERE tipo_usuario = 'USUARIO_AUTORIZADO'", nativeQuery = true)
+    long contarTodos();
+
     @Query(value = SELECT_INVITADO + "WHERE u.tipo_usuario = 'USUARIO_AUTORIZADO' AND u.identificacion = :identificacion",
             nativeQuery = true)
     Optional<InvitadoView> buscarPorIdentificacion(@Param("identificacion") Long identificacion);

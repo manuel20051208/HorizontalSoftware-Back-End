@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import unisimon.demo.dto.request.NotificacionRequests;
 import unisimon.demo.dto.request.SolicitudPagina;
+import unisimon.demo.dto.response.InvitadoResponses;
 import unisimon.demo.dto.response.NotificacionResponses;
 import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReservaResponses;
@@ -40,6 +41,12 @@ public class VigilanteController {
     @GetMapping("/zonas-comunes/acceso")
     public VigilanteResponses.Acceso acceso(@RequestParam Long identificacion) {
         return vigilante.verificarAccesoZonaComun(identificacion);
+    }
+
+    @SoloVigilante
+    @GetMapping("/invitados")
+    public Pagina<InvitadoResponses.Invitado> invitados(SolicitudPagina pagina) {
+        return vigilante.consultarInvitados(pagina);
     }
 
     @SoloVigilante

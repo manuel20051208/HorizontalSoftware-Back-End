@@ -131,17 +131,17 @@ class OperacionesDiagramaTest {
         Administrador admin = administrador();
         Residente r = residente(3L, inmueble());
         r.setToken("sesion");
-        admin.setCuentas(List.of(r, administrador()));
+        List<Usuario> cuentas = List.of(r, administrador());
 
-        NoAdmin resultado = admin.modificarActive(r.getIdentificacion(), 1L);
+        NoAdmin resultado = admin.modificarActive(r.getIdentificacion(), 1L, cuentas);
 
         assertThat(resultado).isSameAs(r);
         assertThat(r.isActive()).isFalse();
         assertThat(r.getToken()).isNull();
-        assertThat(((Usuario) admin.modificarActive(r.getIdentificacion(), 1L)).isActive()).isTrue();
-        assertThatThrownBy(() -> admin.modificarActive(100L, 1L)).isInstanceOf(IllegalStateException.class);   // otro admin
-        assertThatThrownBy(() -> admin.modificarActive(555L, 1L)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> admin.modificarActive(r.getIdentificacion(), 9L)).isInstanceOf(IllegalStateException.class);
+        assertThat(((Usuario) admin.modificarActive(r.getIdentificacion(), 1L, cuentas)).isActive()).isTrue();
+        assertThatThrownBy(() -> admin.modificarActive(100L, 1L, cuentas)).isInstanceOf(IllegalStateException.class);   // otro admin
+        assertThatThrownBy(() -> admin.modificarActive(555L, 1L, cuentas)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> admin.modificarActive(r.getIdentificacion(), 9L, cuentas)).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
@@ -215,16 +215,16 @@ class OperacionesDiagramaTest {
         Administrador admin = administrador();
         Notificacion incidencia = new Notificacion(1L, List.of(admin), "Porton danado", Notificacion.INCIDENCIA, null);
         Notificacion general = new Notificacion(2L, List.of(admin), "Hola", "GENERAL", null);
-        admin.setNotificaciones(List.of(incidencia, general));
+        List<Notificacion> notificaciones = List.of(incidencia, general);
 
-        assertThat(admin.consultarIncidencias()).containsExactly(incidencia);
+        assertThat(admin.consultarIncidencias(notificaciones)).containsExactly(incidencia);
         admin.generarReportes();
         admin.consultarConfirmacionLectura();
         admin.gestionarCuentaUsuario();
 
         admin.setVenceContrato(HOY.minusDays(1));
         assertThatThrownBy(admin::generarReportes).isInstanceOf(IllegalStateException.class);
-        assertThatThrownBy(admin::consultarIncidencias).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> admin.consultarIncidencias(notificaciones)).isInstanceOf(IllegalStateException.class);
         assertThatThrownBy(admin::consultarConfirmacionLectura).isInstanceOf(IllegalStateException.class);
         assertThatThrownBy(admin::gestionarCuentaUsuario).isInstanceOf(IllegalStateException.class);
     }
@@ -322,20 +322,48 @@ class OperacionesDiagramaTest {
         ZonaComun zona = zona(1L);
         LocalDateTime ahora = LocalDateTime.now();
         Vigilante v = vigilante();
-        v.getReservas().add(new ReservaZonaComun(1L, r, zona, ahora.minusHours(1), ahora.plusHours(1)));
-        v.getInvitados().add(ua);
+        ReservaZonaComun enCurso = new ReservaZonaComun(1L, r, zona, ahora.minusHours(1), ahora.plusHours(1));
+        List<ReservaZonaComun> reservas = List.of(enCurso);
+        List<UsuarioAutorizado> invitados = List.of(ua);
 
-        assertThat(v.verificarAccesoZonaComun(r)).isTrue();
-        assertThat(v.verificarAccesoZonaComun(ua)).isTrue();
-        assertThat(v.verificarAccesoZonaComun(sinReserva)).isFalse();
-        assertThat(v.existeInvitado(ua.getIdentificacion())).isTrue();
-        assertThat(v.existeInvitado(1L)).isFalse();
-        assertThat(v.consultarReservas()).containsExactly(zona);
+        assertThat(v.verificarAccesoZonaComun(r, reservas, invitados)).isTrue();
+        assertThat(v.verificarAccesoZonaComun(ua, reservas, invitados)).isTrue();
+        assertThat(v.verificarAccesoZonaComun(sinReserva, reservas, invitados)).isFalse();
+        assertThat(v.verificarAccesoZonaComun(ua, reservas, List.of())).isFalse();
+        assertThat(v.verificarAccesoZonaComun(r, null, invitados)).isFalse();
+        assertThat(v.existeInvitado(ua.getIdentificacion(), invitados)).isTrue();
+        assertThat(v.existeInvitado(1L, invitados)).isFalse();
+        assertThat(v.existeInvitado(ua.getIdentificacion(), null)).isFalse();
 
         ua.setVenceAutorizacion(HOY.minusDays(1));
-        assertThat(v.verificarAccesoZonaComun(ua)).isFalse();
+        assertThat(v.verificarAccesoZonaComun(ua, reservas, invitados)).isFalse();
         r.setActive(false);
-        assertThat(v.verificarAccesoZonaComun(r)).isFalse();
+        assertThat(v.verificarAccesoZonaComun(r, reservas, invitados)).isFalse();
+    }
+
+    @Test
+    @DisplayName("Vigilante.consultarReservas y consultarInvitados devuelven copias inmutables de lo que reciben")
+    void consultarReservasEInvitados() {
+        Inmueble inmueble = inmueble();
+        Residente r = residente(3L, inmueble);
+        UsuarioAutorizado ua = invitado(10L, inmueble, r);
+        UsuarioAutorizado otro = invitado(11L, inmueble, r);
+        LocalDateTime ahora = LocalDateTime.now();
+        ReservaZonaComun reserva = new ReservaZonaComun(1L, r, zona(1L), ahora.plusDays(1), ahora.plusDays(1).plusHours(2));
+        Vigilante v = vigilante();
+        assertThat(v.consultarInvitados(null)).isEmpty();
+        assertThat(v.consultarReservas(null)).isEmpty();
+        List<UsuarioAutorizado> registrados = new java.util.ArrayList<>(List.of(ua, otro));
+
+        List<ReservaZonaComun> reservas = v.consultarReservas(List.of(reserva));
+        List<UsuarioAutorizado> invitados = v.consultarInvitados(registrados);
+
+        assertThat(reservas).containsExactly(reserva);
+        assertThat(invitados).containsExactly(ua, otro);
+        assertThatThrownBy(() -> invitados.add(ua)).isInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(() -> reservas.clear()).isInstanceOf(UnsupportedOperationException.class);
+        registrados.clear();
+        assertThat(invitados).containsExactly(ua, otro);
     }
 
     @Test

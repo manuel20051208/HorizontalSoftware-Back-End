@@ -1,6 +1,7 @@
 package unisimon.demo.service;
 
 import unisimon.demo.dto.request.SolicitudPagina;
+import unisimon.demo.dto.response.InvitadoResponses;
 import unisimon.demo.dto.response.NotificacionResponses;
 import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReservaResponses;
@@ -14,6 +15,9 @@ public interface VigilanteService {
 
     /** Vigilante.verificarAccesoZonaComun(usuario): tiene esta persona una reserva en curso de una zona activa? */
     VigilanteResponses.Acceso verificarAccesoZonaComun(Long identificacion);
+
+    /** Vigilante.consultarInvitados(): todos los invitados (usuarios autorizados) registrados, con su vigencia. */
+    Pagina<InvitadoResponses.Invitado> consultarInvitados(SolicitudPagina pagina);
 
     /** Vigilante.existeInvitado(identificacion) */
     VigilanteResponses.InvitadoConsulta existeInvitado(Long identificacion);
