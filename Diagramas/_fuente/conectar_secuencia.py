@@ -6,9 +6,9 @@ Sobre cada pagina:
   2. cada mensaje (y cada llamada a si mismo) queda CONECTADO: source/target apuntan a la barra de activacion que
      toca su punta (o a la linea de vida si no hay barra), con el punto fijo (exitX/exitY, entryX/entryY). Si se
      mueve una barra o una linea de vida en draw.io, la flecha la sigue;
-  3. los fragmentos (umlFrame), sus separadores de rama y sus condiciones [..] pasan al final del XML, es decir,
-     al frente. No tienen relleno y llevan pointerEvents=0: no tapan nada y se sigue pudiendo hacer clic en lo
-     que queda dentro.
+  3. los fragmentos (umlFrame) llevan relleno blanco (no se ven las lineas de vida detras) y quedan justo encima
+     de las lineas de vida y debajo de barras y mensajes, con sus separadores de rama detras; las condiciones [..]
+     pasan al final del XML (al frente). Llevan pointerEvents=0: se sigue pudiendo hacer clic en lo de dentro.
 No mueve ninguna figura: las flechas quedan exactamente donde estaban.
 
 Uso como script:  python conectar_secuencia.py [secuencia.xml]      (reescribe el archivo)
@@ -83,7 +83,7 @@ def conectar_pagina(raiz, nombre=""):
             "recursiveResize": "0", "outlineConnect": "0", "portConstraint": "eastwest", "size": f"{h:g}",
             "verticalAlign": "top", "spacingTop": f"{h + 2:g}", "labelBackgroundColor": "#ffffff",
             "fontStyle": st.get("fontStyle", "1"), "fontSize": st.get("fontSize", "11"),
-            "fillColor": st.get("fillColor", "#ffcc99"), "strokeColor": st.get("strokeColor", "#36393d"),
+            "fillColor": st.get("fillColor", "#ffffff"), "strokeColor": st.get("strokeColor", "#36393d"),
         }
         c.set("style", estilo_str(nuevo))
         c.set("value", partir_actor(c.get("value") or ""))
@@ -151,22 +151,35 @@ def conectar_pagina(raiz, nombre=""):
             pt.set("y", f"{y + h * fy:g}")
         conectadas += 1
 
-    # 3) fragmentos al frente: marcos, separadores y condiciones [..]
-    frente = []
+    # 3) fragmentos: marcos con relleno blanco (tapan las lineas de vida de fondo) justo encima de las lineas de
+    #    vida y debajo de barras y mensajes; separadores tras los marcos; condiciones [..] al frente
+    marcos, seps, conds = [], [], []
     for c in celdas:
         st = estilo_dict(c.get("style"))
         es_marco = st.get("shape") == "umlFrame"
         es_sep = c.get("edge") == "1" and st.get("endArrow") == "none" and not c.get("source")
-        es_cond = (c.get("style") or "").startswith("text;") and st.get("fontStyle") == "2" \
-            and (c.get("value") or "").lstrip().startswith("[")
+        es_cond = (c.get("style") or "").startswith("text;") and st.get("fontStyle") == "2"             and (c.get("value") or "").lstrip().startswith("[")
         if es_marco:
             st["pointerEvents"] = "0"
-            st["fillColor"] = "none"
+            st["fillColor"] = "#ffffff"
             c.set("style", estilo_str(st))
-        if es_marco or es_sep or es_cond:
-            frente.append((0 if es_marco else 1 if es_sep else 2, c))
-    for _, c in sorted(frente, key=lambda t: t[0]):
+            marcos.append(c)
+        elif es_sep and (c.get("id") or "").startswith("d"):
+            seps.append(c)
+        elif es_cond:
+            conds.append(c)
+    # el marco mas grande primero, para que no tape a los que lleva dentro
+    def area(c):
+        _, _, w, h = geo(c)
+        return -(w * h)
+    marcos.sort(key=area)
+    for c in marcos + seps + conds:
         raiz.remove(c)
+    hijos = list(raiz)
+    ult = max((i for i, c in enumerate(hijos) if (c.get("id") or "").startswith(("L-", "V-"))), default=1)
+    for k, c in enumerate(marcos + seps):
+        raiz.insert(ult + 1 + k, c)
+    for c in conds:
         raiz.append(c)
     return conectadas, avisos
 

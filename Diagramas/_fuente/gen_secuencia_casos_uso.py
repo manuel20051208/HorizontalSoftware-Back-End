@@ -271,7 +271,7 @@ class Diagrama:
                 celdas.append(
                     f'<mxCell id="L-{pid}" value="{esc(etiqueta_html(p["etiqueta"]))}" style="shape=umlActor;'
                     f'verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontStyle=1;'
-                    f'fontSize=11;whiteSpace=wrap;fillColor=#ffcc99;strokeColor=#36393d;" vertex="1" parent="1">'
+                    f'fontSize=11;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#36393d;" vertex="1" parent="1">'
                     f'<mxGeometry x="{cx - 14}" y="{TOP}" width="28" height="56" as="geometry"/></mxCell>')
                 celdas.append(
                     f'<mxCell id="V-{pid}" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;" '
