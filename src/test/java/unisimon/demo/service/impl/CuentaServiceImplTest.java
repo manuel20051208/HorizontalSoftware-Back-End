@@ -7,9 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import unisimon.demo.dto.response.UsuarioResponses;
 import unisimon.demo.exception.NoAutenticadoException;
-import unisimon.demo.exception.ProhibidoException;
 import unisimon.demo.exception.SolicitudInvalidaException;
 import unisimon.demo.mail.CorreoSender;
 import unisimon.demo.model.Usuario;
@@ -19,10 +17,7 @@ import unisimon.demo.repository.UsuarioRepository;
 import unisimon.demo.repository.UsuarioRepository.CredencialesView;
 import unisimon.demo.support.Proyecciones;
 
-import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,64 +46,13 @@ class CuentaServiceImplTest {
 
     @BeforeEach
     void preparar() {
-        Clock reloj = Clock.fixed(Instant.parse("2026-11-08T15:00:00Z"), ZoneId.of("America/Bogota"));
-        servicio = new CuentaServiceImpl(usuarios, codificador, new PoliticaContrasena(), generador, correo, reloj);
+        servicio = new CuentaServiceImpl(usuarios, codificador, new PoliticaContrasena(), generador, correo);
     }
 
     private CredencialesView usuario(String tipo, boolean activo, LocalDate creacion) {
         return Proyecciones.de(CredencialesView.class, "id", 1L, "nombreCompleto", "Santiago",
                 "correoElectronico", "s@mail.com", "contrasena", "hash", "tipoUsuario", tipo, "active", activo,
                 "fechaCreacionCuenta", creacion, "notificacionLeida", false, "inmuebleId", 5L);
-    }
-
-    @Test
-    @DisplayName("activarCuenta activa una cuenta recien creada con sus credenciales")
-    void activar() {
-        when(usuarios.buscarCredencialesPorCorreo("s@mail.com"))
-                .thenReturn(Optional.of(usuario("RESIDENTE", false, LocalDate.of(2026, 11, 5))));
-        when(codificador.matches("clave", "hash")).thenReturn(true);
-
-        UsuarioResponses.Activacion resultado = servicio.activarCuenta("s@mail.com", "clave");
-
-        assertThat(resultado.active()).isTrue();
-        verify(usuarios).actualizarActive(1L, true);
-    }
-
-    @Test
-    @DisplayName("activarCuenta no repite el trabajo si la cuenta ya esta activa")
-    void yaActiva() {
-        when(usuarios.buscarCredencialesPorCorreo("s@mail.com"))
-                .thenReturn(Optional.of(usuario("RESIDENTE", true, LocalDate.of(2026, 11, 5))));
-        when(codificador.matches("clave", "hash")).thenReturn(true);
-
-        assertThat(servicio.activarCuenta("s@mail.com", "clave").mensaje()).contains("ya estaba activa");
-        verify(usuarios, never()).actualizarActive(1L, true);
-    }
-
-    @Test
-    @DisplayName("pasado el plazo de 7 dias solo la administracion puede activar la cuenta")
-    void plazoVencido() {
-        when(usuarios.buscarCredencialesPorCorreo("s@mail.com"))
-                .thenReturn(Optional.of(usuario("RESIDENTE", false, LocalDate.of(2026, 10, 1))));
-        when(codificador.matches("clave", "hash")).thenReturn(true);
-
-        assertThatThrownBy(() -> servicio.activarCuenta("s@mail.com", "clave"))
-                .isInstanceOf(ProhibidoException.class).hasMessageContaining("plazo");
-        verify(usuarios, never()).actualizarActive(1L, true);
-    }
-
-    @Test
-    @DisplayName("activarCuenta rechaza credenciales incorrectas y a los invitados")
-    void activarRechazos() {
-        when(usuarios.buscarCredencialesPorCorreo("s@mail.com"))
-                .thenReturn(Optional.of(usuario("RESIDENTE", false, LocalDate.of(2026, 11, 5))));
-        when(codificador.matches("mala", "hash")).thenReturn(false);
-        assertThatThrownBy(() -> servicio.activarCuenta("s@mail.com", "mala")).isInstanceOf(NoAutenticadoException.class);
-
-        when(usuarios.buscarCredencialesPorCorreo("inv@mail.com"))
-                .thenReturn(Optional.of(usuario(Usuario.USUARIO_AUTORIZADO, false, LocalDate.of(2026, 11, 5))));
-        when(codificador.matches("clave", "hash")).thenReturn(true);
-        assertThatThrownBy(() -> servicio.activarCuenta("inv@mail.com", "clave")).isInstanceOf(ProhibidoException.class);
     }
 
     @Test

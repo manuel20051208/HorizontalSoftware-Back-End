@@ -15,13 +15,13 @@ public final class UsuarioMapper {
     public static UsuarioResponses.Usuario de(CredencialesView u) {
         return new UsuarioResponses.Usuario(u.getId(), u.getIdentificacion(), u.getNombreCompleto(),
                 u.getCorreoElectronico(), u.getTipoUsuario(), u.getActive(), u.getNotificacionLeida(),
-                u.getFechaCreacionCuenta(), u.getInmuebleId(), null);
+                u.getFechaCreacionCuenta(), u.getInmuebleId(), null, u.getCorreoVerificado());
     }
 
     public static UsuarioResponses.Usuario de(UsuarioListaView u) {
         return new UsuarioResponses.Usuario(u.getId(), u.getIdentificacion(), u.getNombreCompleto(),
                 u.getCorreoElectronico(), u.getTipoUsuario(), u.getActive(), null, u.getFechaCreacionCuenta(),
-                u.getInmuebleId(), u.getDireccionInmueble());
+                u.getInmuebleId(), u.getDireccionInmueble(), u.getCorreoVerificado());
     }
 
     public static AuthResponses.Sesion sesion(ParTokens tokens, UsuarioResponses.Usuario usuario) {

@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
@@ -29,5 +30,10 @@ public final class UsuarioRequests {
             Long inmuebleId,
             LocalDate inicioContrato,
             LocalDate venceContrato) {
+    }
+
+    /** Codigo de 4 cifras que llego al correo del usuario y que el administrador confirma. */
+    public record VerificarCorreo(@NotBlank @Pattern(regexp = "\\d{4}", message = "El codigo tiene 4 cifras")
+                                  String codigo) {
     }
 }

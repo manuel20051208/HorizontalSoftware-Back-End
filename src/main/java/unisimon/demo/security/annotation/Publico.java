@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Endpoint publico (login, activar cuenta, webhook de la pasarela...).
+ * Endpoint publico (login, recuperar contrasena, webhook de la pasarela...).
  * La proteccion se declara en cada metodo del controlador (nunca por URL en el filtro de seguridad).
  */
 @Target({ElementType.METHOD, ElementType.TYPE})

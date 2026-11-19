@@ -3,11 +3,8 @@ package unisimon.demo.service;
 import unisimon.demo.dto.response.NotificacionResponses;
 import unisimon.demo.dto.response.UsuarioResponses;
 
-/** Operaciones de cuenta que hace el propio usuario sobre su contrasena y su activacion. */
+/** Operaciones de cuenta que hace el propio usuario sobre su contrasena y sus preferencias. */
 public interface CuentaService {
-
-    /** Usuario.activarCuenta(correo, contrasena): activa una cuenta recien creada con sus credenciales iniciales. */
-    UsuarioResponses.Activacion activarCuenta(String correo, String contrasena);
 
     /** Usuario.recuperarContrasena(): genera una contrasena temporal y la envia por correo. */
     void recuperarContrasena(String correo);

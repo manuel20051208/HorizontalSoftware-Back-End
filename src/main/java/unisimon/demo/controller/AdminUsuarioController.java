@@ -19,7 +19,9 @@ import unisimon.demo.dto.response.UsuarioResponses;
 import unisimon.demo.security.annotation.SoloAdministrador;
 import unisimon.demo.service.UsuarioGestionService;
 
-/** El administrador crea cuentas y autoriza o bloquea usuarios. */
+import java.util.Map;
+
+/** El administrador crea cuentas, verifica su correo con el codigo de 4 cifras y autoriza o bloquea usuarios. */
 @RestController
 @RequestMapping("/api/admin/usuarios")
 @RequiredArgsConstructor
@@ -40,6 +42,23 @@ public class AdminUsuarioController {
                                                    @RequestParam(required = false) Boolean active,
                                                    SolicitudPagina pagina) {
         return usuarios.listar(tipo, active, pagina);
+    }
+
+    /** Confirma el codigo que llego al correo del usuario: el correo queda verificado y la cuenta activa. */
+    @SoloAdministrador
+    @PostMapping("/{identificacion}/verificar-correo")
+    public UsuarioResponses.Usuario verificarCorreo(@PathVariable Long identificacion,
+                                                   @Valid @RequestBody UsuarioRequests.VerificarCorreo solicitud) {
+        return usuarios.verificarCorreo(identificacion, solicitud.codigo());
+    }
+
+    /** Envia un codigo nuevo al correo de la cuenta; el anterior deja de servir. */
+    @SoloAdministrador
+    @PostMapping("/{identificacion}/reenviar-codigo")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Map<String, String> reenviarCodigo(@PathVariable Long identificacion) {
+        String correo = usuarios.reenviarCodigo(identificacion);
+        return Map.of("mensaje", "Se envio un codigo nuevo a " + correo);
     }
 
     @SoloAdministrador

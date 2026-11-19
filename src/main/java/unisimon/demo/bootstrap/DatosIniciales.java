@@ -51,7 +51,8 @@ public class DatosIniciales implements ApplicationRunner {
                 datos.correo().toLowerCase(), codificador.encode(datos.contrasena()), Usuario.ADMINISTRADOR,
                 hoy, hoy.plusYears(1));
         admin.setActive(true);
-        persistidor.insertar(admin);
+        Long id = persistidor.insertar(admin);
+        usuarios.marcarCorreoVerificado(id);   // lo crea el sistema: no hay administrador que le confirme un codigo
         log.warn("Administrador inicial creado ({}). Cambie su contrasena antes de usar el sistema en produccion.",
                 datos.correo());
     }

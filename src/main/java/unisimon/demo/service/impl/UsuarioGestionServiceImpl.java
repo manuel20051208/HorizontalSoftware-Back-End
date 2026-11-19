@@ -13,12 +13,14 @@ import unisimon.demo.exception.ProhibidoException;
 import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.exception.SolicitudInvalidaException;
 import unisimon.demo.factory.UsuarioFactory;
+import unisimon.demo.mapper.Hidratador;
 import unisimon.demo.mapper.UsuarioMapper;
 import unisimon.demo.model.Usuario;
 import unisimon.demo.policy.PoliticaContrasena;
 import unisimon.demo.repository.InmuebleRepository;
 import unisimon.demo.repository.UsuarioRepository;
 import unisimon.demo.repository.UsuarioRepository.CredencialesView;
+import unisimon.demo.service.CodigoVerificacionService;
 import unisimon.demo.service.UsuarioGestionService;
 import unisimon.demo.service.support.UsuarioPersistidor;
 
@@ -26,7 +28,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-/** Altas, consulta y bloqueo de cuentas por el administrador. */
+/**
+ * Altas, verificacion del correo, consulta y bloqueo de cuentas por el administrador. Una cuenta nueva queda
+ * inactiva hasta que el administrador confirma el codigo de 4 cifras que llego a su correo.
+ */
 @Service
 @RequiredArgsConstructor
 public class UsuarioGestionServiceImpl implements UsuarioGestionService {
@@ -40,6 +45,7 @@ public class UsuarioGestionServiceImpl implements UsuarioGestionService {
     private final UsuarioPersistidor persistidor;
     private final PasswordEncoder codificador;
     private final PoliticaContrasena politica;
+    private final CodigoVerificacionService codigos;
 
     @Override
     @Transactional
@@ -56,7 +62,47 @@ public class UsuarioGestionServiceImpl implements UsuarioGestionService {
         }
         Usuario nuevo = fabrica.crear(s, codificador.encode(s.contrasena()));
         Long id = persistidor.insertar(nuevo);
+        codigos.emitir(id, nuevo.getCorreoElectronico());   // queda inactiva hasta verificar el correo
         return UsuarioMapper.de(usuarios.buscarCredencialesPorId(id).orElseThrow());
+    }
+
+    @Override
+    @Transactional
+    public UsuarioResponses.Usuario verificarCorreo(Long identificacion, String codigo) {
+        CredencialesView usuario = pendienteDeVerificar(identificacion);
+        codigos.verificar(usuario.getId(), codigo);   // REQUIRES_NEW: un intento fallido queda guardado
+        // Usuario.activarCuenta(correo, contrasena): con las credenciales guardadas (contrasena ya codificada).
+        if (!Hidratador.usuario(usuario).activarCuenta(usuario.getCorreoElectronico(), usuario.getContrasena())) {
+            throw new ConflictoException("La cuenta ya estaba activa");
+        }
+        usuarios.marcarCorreoVerificado(usuario.getId());
+        usuarios.actualizarActive(usuario.getId(), true);
+        return UsuarioMapper.de(usuarios.buscarCredencialesPorId(usuario.getId()).orElseThrow());
+    }
+
+    @Override
+    @Transactional
+    public String reenviarCodigo(Long identificacion) {
+        CredencialesView usuario = pendienteDeVerificar(identificacion);
+        codigos.emitir(usuario.getId(), usuario.getCorreoElectronico());
+        return usuario.getCorreoElectronico();
+    }
+
+    /** La cuenta existe, no es de un invitado y su correo aun no se ha verificado. */
+    private CredencialesView pendienteDeVerificar(Long identificacion) {
+        CredencialesView usuario = buscarPorIdentificacion(identificacion);
+        if (Usuario.USUARIO_AUTORIZADO.equals(usuario.getTipoUsuario())) {
+            throw new ProhibidoException("Los invitados no tienen cuenta que verificar");
+        }
+        if (Boolean.TRUE.equals(usuario.getCorreoVerificado())) {
+            throw new ConflictoException("El correo de esta cuenta ya esta verificado");
+        }
+        return usuario;
+    }
+
+    private CredencialesView buscarPorIdentificacion(Long identificacion) {
+        return usuarios.buscarCredencialesPorIdentificacion(identificacion)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe un usuario con esa identificacion"));
     }
 
     @Override
@@ -77,12 +123,15 @@ public class UsuarioGestionServiceImpl implements UsuarioGestionService {
     @Override
     @Transactional
     public UsuarioResponses.EstadoActivo modificarActive(Long identificacion) {
-        CredencialesView usuario = usuarios.buscarCredencialesPorIdentificacion(identificacion)
-                .orElseThrow(() -> new RecursoNoEncontradoException("No existe un usuario con esa identificacion"));
+        CredencialesView usuario = buscarPorIdentificacion(identificacion);
         if (Usuario.ADMINISTRADOR.equals(usuario.getTipoUsuario())) {
             throw new ProhibidoException("Un administrador no se puede activar ni desactivar desde aqui");
         }
         boolean nuevoEstado = !Boolean.TRUE.equals(usuario.getActive());
+        boolean esInvitado = Usuario.USUARIO_AUTORIZADO.equals(usuario.getTipoUsuario());
+        if (nuevoEstado && !esInvitado && !Boolean.TRUE.equals(usuario.getCorreoVerificado())) {
+            throw new ConflictoException("Primero verifique el correo con el codigo que se le envio");
+        }
         usuarios.actualizarActive(usuario.getId(), nuevoEstado);
         if (!nuevoEstado) {
             usuarios.actualizarToken(usuario.getId(), null); // un usuario desactivado pierde su sesion

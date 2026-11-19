@@ -10,13 +10,11 @@ public final class UsuarioResponses {
 
     public record Usuario(Long id, Long identificacion, String nombreCompleto, String correoElectronico,
                           String tipoUsuario, Boolean active, Boolean notificacionLeida,
-                          LocalDate fechaCreacionCuenta, Long inmuebleId, String direccionInmueble) {
+                          LocalDate fechaCreacionCuenta, Long inmuebleId, String direccionInmueble,
+                          Boolean correoVerificado) {
     }
 
     /** Resultado de activar/desactivar una cuenta. */
     public record EstadoActivo(Long id, String nombreCompleto, Boolean active) {
-    }
-
-    public record Activacion(Boolean active, String mensaje) {
     }
 }

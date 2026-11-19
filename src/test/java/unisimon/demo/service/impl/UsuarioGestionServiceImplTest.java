@@ -22,6 +22,7 @@ import unisimon.demo.policy.PoliticaContrasena;
 import unisimon.demo.repository.InmuebleRepository;
 import unisimon.demo.repository.UsuarioRepository;
 import unisimon.demo.repository.UsuarioRepository.CredencialesView;
+import unisimon.demo.service.CodigoVerificacionService;
 import unisimon.demo.service.support.UsuarioPersistidor;
 import unisimon.demo.support.Proyecciones;
 
@@ -31,6 +32,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,13 +50,15 @@ class UsuarioGestionServiceImplTest {
     private UsuarioPersistidor persistidor;
     @Mock
     private PasswordEncoder codificador;
+    @Mock
+    private CodigoVerificacionService codigos;
 
     private UsuarioGestionServiceImpl servicio;
 
     @BeforeEach
     void preparar() {
         servicio = new UsuarioGestionServiceImpl(usuarios, inmuebles, new UsuarioFactory(), persistidor, codificador,
-                new PoliticaContrasena());
+                new PoliticaContrasena(), codigos);
     }
 
     private CrearUsuario residente(String clave) {
@@ -60,14 +66,20 @@ class UsuarioGestionServiceImplTest {
                 "Santiago@Mail.com", clave, 5L, null, null);
     }
 
+    /** Cuenta con el correo ya verificado (las activas siempre lo estan). */
     private CredencialesView vista(Long id, String tipo, boolean activo) {
+        return vista(id, tipo, activo, true);
+    }
+
+    private CredencialesView vista(Long id, String tipo, boolean activo, boolean verificado) {
         return Proyecciones.de(CredencialesView.class, "id", id, "identificacion", 1001L,
                 "nombreCompleto", "Santiago Mendez", "correoElectronico", "santiago@mail.com", "tipoUsuario", tipo,
-                "active", activo, "notificacionLeida", false, "fechaCreacionCuenta", LocalDate.now());
+                "active", activo, "notificacionLeida", false, "fechaCreacionCuenta", LocalDate.now(),
+                "contrasena", "hash", "correoVerificado", verificado);
     }
 
     @Test
-    @DisplayName("gestionarCuentaUsuario crea un Residente inactivo con la clave codificada")
+    @DisplayName("gestionarCuentaUsuario crea un Residente inactivo y envia el codigo de verificacion a su correo")
     void crearResidente() {
         when(usuarios.existePorCorreo("Santiago@Mail.com")).thenReturn(false);
         when(usuarios.existePorIdentificacion(1001L)).thenReturn(false);
@@ -90,6 +102,7 @@ class UsuarioGestionServiceImplTest {
         assertThat(creado.getContrasena()).isEqualTo("hash");
         assertThat(creado.isActive()).isFalse();
         assertThat(creado.getInmueble().getId()).isEqualTo(5L);
+        verify(codigos).emitir(9L, "santiago@mail.com");
     }
 
     @Test
@@ -104,6 +117,7 @@ class UsuarioGestionServiceImplTest {
         assertThatThrownBy(() -> servicio.gestionarCuentaUsuario(residente("Clave12345")))
                 .isInstanceOf(ConflictoException.class).hasMessageContaining("identificacion");
         verify(persistidor, never()).insertar(any());
+        verify(codigos, never()).emitir(any(), any());
     }
 
     @Test
@@ -148,6 +162,83 @@ class UsuarioGestionServiceImplTest {
     }
 
     @Test
+    @DisplayName("modificarActive no activa una cuenta con el correo sin verificar")
+    void modificarActiveSinVerificar() {
+        when(usuarios.buscarCredencialesPorIdentificacion(1001L))
+                .thenReturn(Optional.of(vista(2L, "RESIDENTE", false, false)));
+
+        assertThatThrownBy(() -> servicio.modificarActive(1001L))
+                .isInstanceOf(ConflictoException.class).hasMessageContaining("verifique el correo");
+        verify(usuarios, never()).actualizarActive(any(), anyBoolean());
+    }
+
+    @Test
+    @DisplayName("un invitado, que lo autoriza su residente, se reactiva sin verificar correo")
+    void reactivarInvitado() {
+        when(usuarios.buscarCredencialesPorIdentificacion(1001L))
+                .thenReturn(Optional.of(vista(4L, Usuario.USUARIO_AUTORIZADO, false, false)));
+
+        assertThat(servicio.modificarActive(1001L).active()).isTrue();
+        verify(usuarios).actualizarActive(4L, true);
+    }
+
+    @Test
+    @DisplayName("verificarCorreo con el codigo correcto marca el correo verificado y activa la cuenta")
+    void verificarCorreo() {
+        when(usuarios.buscarCredencialesPorIdentificacion(1001L))
+                .thenReturn(Optional.of(vista(2L, "RESIDENTE", false, false)));
+        when(usuarios.buscarCredencialesPorId(2L)).thenReturn(Optional.of(vista(2L, "RESIDENTE", true, true)));
+
+        UsuarioResponses.Usuario respuesta = servicio.verificarCorreo(1001L, "0427");
+
+        verify(codigos).verificar(2L, "0427");
+        verify(usuarios).marcarCorreoVerificado(2L);
+        verify(usuarios).actualizarActive(2L, true);
+        assertThat(respuesta.active()).isTrue();
+        assertThat(respuesta.correoVerificado()).isTrue();
+    }
+
+    @Test
+    @DisplayName("con un codigo incorrecto la cuenta sigue inactiva y sin verificar")
+    void verificarCorreoIncorrecto() {
+        when(usuarios.buscarCredencialesPorIdentificacion(1001L))
+                .thenReturn(Optional.of(vista(2L, "RESIDENTE", false, false)));
+        doThrow(new SolicitudInvalidaException("Codigo incorrecto. Quedan 4 intentos"))
+                .when(codigos).verificar(2L, "9999");
+
+        assertThatThrownBy(() -> servicio.verificarCorreo(1001L, "9999"))
+                .isInstanceOf(SolicitudInvalidaException.class);
+        verify(usuarios, never()).marcarCorreoVerificado(anyLong());
+        verify(usuarios, never()).actualizarActive(any(), anyBoolean());
+    }
+
+    @Test
+    @DisplayName("verificarCorreo y reenviarCodigo rechazan correos ya verificados, invitados y usuarios inexistentes")
+    void verificarRechazos() {
+        when(usuarios.buscarCredencialesPorIdentificacion(1L)).thenReturn(Optional.of(vista(1L, "VIGILANTE", true, true)));
+        when(usuarios.buscarCredencialesPorIdentificacion(2L))
+                .thenReturn(Optional.of(vista(2L, Usuario.USUARIO_AUTORIZADO, true, false)));
+        when(usuarios.buscarCredencialesPorIdentificacion(404L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> servicio.verificarCorreo(1L, "0427")).isInstanceOf(ConflictoException.class);
+        assertThatThrownBy(() -> servicio.reenviarCodigo(1L)).isInstanceOf(ConflictoException.class);
+        assertThatThrownBy(() -> servicio.verificarCorreo(2L, "0427")).isInstanceOf(ProhibidoException.class);
+        assertThatThrownBy(() -> servicio.reenviarCodigo(404L)).isInstanceOf(RecursoNoEncontradoException.class);
+        verify(codigos, never()).verificar(any(), any());
+        verify(codigos, never()).emitir(any(), any());
+    }
+
+    @Test
+    @DisplayName("reenviarCodigo emite un codigo nuevo para una cuenta pendiente, tambien las inactivas de antes")
+    void reenviarCodigo() {
+        when(usuarios.buscarCredencialesPorIdentificacion(1001L))
+                .thenReturn(Optional.of(vista(2L, "ADMINISTRADOR", false, false)));
+
+        assertThat(servicio.reenviarCodigo(1001L)).isEqualTo("santiago@mail.com");
+        verify(codigos).emitir(2L, "santiago@mail.com");
+    }
+
+    @Test
     @DisplayName("modificarActive activa a un usuario inactivo sin tocar su token")
     void activar() {
         when(usuarios.buscarCredencialesPorIdentificacion(1001L)).thenReturn(Optional.of(vista(2L, "VIGILANTE", false)));
@@ -166,7 +257,7 @@ class UsuarioGestionServiceImplTest {
 
         assertThatThrownBy(() -> servicio.modificarActive(1L)).isInstanceOf(ProhibidoException.class);
         assertThatThrownBy(() -> servicio.modificarActive(404L)).isInstanceOf(RecursoNoEncontradoException.class);
-        verify(usuarios, never()).actualizarActive(any(), org.mockito.ArgumentMatchers.anyBoolean());
+        verify(usuarios, never()).actualizarActive(any(), anyBoolean());
     }
 
     @Test

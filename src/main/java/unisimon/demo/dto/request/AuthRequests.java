@@ -15,9 +15,6 @@ public final class AuthRequests {
     public record Refresh(@NotBlank String refreshToken) {
     }
 
-    public record Activar(@NotBlank @Email String correo, @NotBlank String contrasena) {
-    }
-
     public record Recuperar(@NotBlank @Email String correo) {
     }
 

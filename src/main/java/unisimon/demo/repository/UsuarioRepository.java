@@ -43,6 +43,9 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
         Boolean getNotificacionLeida();
 
         LocalDate getFechaCreacionCuenta();
+
+        /** TRUE cuando el administrador confirmo el codigo enviado al correo (V9). */
+        Boolean getCorreoVerificado();
     }
 
     /** Fila para listados de usuarios. */
@@ -66,6 +69,8 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
         LocalDate getFechaCreacionCuenta();
 
         LocalDate getVenceAutorizacion();
+
+        Boolean getCorreoVerificado();
     }
 
     /** Lo necesario para Usuario.configurarPreferencias: si la cuenta esta activa y sus preferencias actuales. */
@@ -81,7 +86,7 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
                    u.correo_electronico AS "correoElectronico", u.contrasena AS "contrasena",
                    u.tipo_usuario AS "tipoUsuario", u.active AS "active", u.token AS "token",
                    u.inmueble_id AS "inmuebleId", u.notificacion_leida AS "notificacionLeida",
-                   u.fecha_creacion_cuenta AS "fechaCreacionCuenta"
+                   u.fecha_creacion_cuenta AS "fechaCreacionCuenta", u.correo_verificado AS "correoVerificado"
             FROM usuarios u
             """;
 
@@ -90,7 +95,8 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
                    u.correo_electronico AS "correoElectronico", u.tipo_usuario AS "tipoUsuario",
                    u.active AS "active", u.inmueble_id AS "inmuebleId",
                    i.direccion_inmueble AS "direccionInmueble",
-                   u.fecha_creacion_cuenta AS "fechaCreacionCuenta", u.vence_autorizacion AS "venceAutorizacion"
+                   u.fecha_creacion_cuenta AS "fechaCreacionCuenta", u.vence_autorizacion AS "venceAutorizacion",
+                   u.correo_verificado AS "correoVerificado"
             FROM usuarios u
             LEFT JOIN inmuebles i ON i.id = u.inmueble_id
             """;
@@ -200,6 +206,11 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
     @Modifying
     @Query(value = "UPDATE usuarios SET active = :active WHERE id = :id", nativeQuery = true)
     int actualizarActive(@Param("id") Long id, @Param("active") boolean active);
+
+    /** El administrador confirmo el codigo de 4 cifras enviado al correo de este usuario. */
+    @Modifying
+    @Query(value = "UPDATE usuarios SET correo_verificado = TRUE WHERE id = :id", nativeQuery = true)
+    int marcarCorreoVerificado(@Param("id") Long id);
 
     /** Guarda (o borra con null) la huella del refresh token vigente: es la sesion del usuario. */
     @Modifying

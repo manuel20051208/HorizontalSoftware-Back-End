@@ -241,6 +241,23 @@ class Diagrama:
             p["max"] = max(p["max"], x2)
         self.max_x = max(self.max_x, x2 + 20)
 
+    def ref(self, caso_de_uso):
+        """«include» -> InteractionUse (UML 2.5.1, 17.7.4): marco 'ref' con el nombre del caso de uso incluido,
+        que cubre las lineas de vida del diagrama."""
+        self.y += 14
+        x1 = self.cx(self.orden[0]) - 35
+        x2 = self.cx(self.orden[-1]) + 50
+        self.celdas_frames.append(
+            f'<mxCell id="{self._id("f")}" value="ref" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;'
+            f'fillColor=#ffffff;strokeColor=#36393d;fontStyle=1;fontSize=11;width=40;height=22;" vertex="1" '
+            f'parent="1"><mxGeometry x="{x1}" y="{self.y}" width="{x2 - x1}" height="50" as="geometry"/></mxCell>')
+        self.celdas_txt.append(
+            f'<mxCell id="{self._id("g")}" value="{esc(etiqueta_html(caso_de_uso))}" style="text;html=1;align=center;'
+            f'verticalAlign=middle;whiteSpace=wrap;fontSize=12;fontStyle=1;" vertex="1" parent="1">'
+            f'<mxGeometry x="{x1 + 45}" y="{self.y + 12}" width="{x2 - x1 - 90}" height="26" as="geometry"/></mxCell>')
+        self.y += 50 + 14
+        self.max_x = max(self.max_x, x2 + 20)
+
     # ------------------------------------------------------------ salida XML
     def xml(self):
         """XML final para draw.io: mensajes conectados a barras/lineas de vida y fragmentos al frente."""
@@ -353,7 +370,9 @@ d.sino("cuenta inactiva o credenciales incorrectas")
 d.retornar("usr", "act", "null")
 d.cerrar()
 
-d = nuevo("Activar cuenta creada", [TRES, o("usr", "Usuario")])
+# El administrador confirma el codigo de 4 cifras que llego al correo (UsuarioGestionServiceImpl.verificarCorreo).
+# El codigo no es del modelo; con el codigo correcto se llama a Usuario.activarCuenta con las credenciales guardadas.
+d = nuevo("Verificar correo", [ADMIN, o("usr", "Usuario")])
 d.llamar("act", "usr", "activarCuenta(correo, contrasena)")
 d.propio("usr", "isActive()", "Boolean")
 d.propio("usr", "credencialesCorrectas(correo, contrasena)", "boolean")
@@ -372,6 +391,7 @@ d = nuevo("Gestionar cuentas de usuario", [ADMIN, o("adm", "Administrador"), o("
 d.llamar("act", "adm", "gestionarCuentaUsuario()")
 d.propio("adm", "exigirVigente()")
 d.retornar("adm", "act", "")
+d.ref("Verificar correo")   # «include»: la cuenta nueva solo se activa verificando su correo
 d.abrir("opt", "activar o desactivar una cuenta existente")
 d.llamar("act", "adm", "modificarActive(identificacion, idToken)")
 d.propio("adm", "exigirAutoridad(adminId)")

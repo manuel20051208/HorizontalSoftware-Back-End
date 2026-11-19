@@ -92,10 +92,6 @@ Un diagrama por caso de uso: los participantes son clases del diagrama de clases
 
 ![Secuencia: Iniciar sesión](Diagramas/Secuencia/iniciar-sesion.svg)
 
-**Activar cuenta creada**
-
-![Secuencia: Activar cuenta creada](Diagramas/Secuencia/activar-cuenta-creada.svg)
-
 **Recuperar contraseña**
 
 ![Secuencia: Recuperar contraseña](Diagramas/Secuencia/recuperar-contrasena.svg)
@@ -107,6 +103,10 @@ Un diagrama por caso de uso: los participantes son clases del diagrama de clases
 **Gestionar cuentas de usuario**
 
 ![Secuencia: Gestionar cuentas de usuario](Diagramas/Secuencia/gestionar-cuentas-de-usuario.svg)
+
+**Verificar correo** (incluido en *Gestionar cuentas de usuario*: el administrador confirma el código de 4 cifras que llegó al correo y solo así se activa la cuenta)
+
+![Secuencia: Verificar correo](Diagramas/Secuencia/verificar-correo.svg)
 
 **Configurar preferencias de notificación**
 

@@ -50,12 +50,6 @@ public class AuthController {
     }
 
     @Publico
-    @PostMapping("/activar")
-    public UsuarioResponses.Activacion activar(@Valid @RequestBody AuthRequests.Activar solicitud) {
-        return cuentas.activarCuenta(solicitud.correo(), solicitud.contrasena());
-    }
-
-    @Publico
     @PostMapping("/recuperar-contrasena")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Map<String, String> recuperar(@Valid @RequestBody AuthRequests.Recuperar solicitud) {
