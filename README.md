@@ -279,8 +279,8 @@ Usa `postgres:16-alpine`: la v18 cambió la ruta de datos y rompe el volumen.
 - **Clases:** la fuente es [`Diagramas/Clases/DiagramaClasesSoftwareHorizontal.xml`](Diagramas/Clases/DiagramaClasesSoftwareHorizontal.xml). `python Diagramas/_fuente/gen_diagrama_clases.py` lo reorganiza en rejilla sin flechas cruzadas ni encima de las clases (mismo contenido), y `python Diagramas/_fuente/exportar_drawio_svg.py Diagramas/Clases/DiagramaClasesSoftwareHorizontal.xml Diagramas/Clases/DiagramaClasesSoftwareHorizontal.drawio.svg` regenera la imagen (editable en draw.io).
 - **Despliegue:** `python Diagramas/_fuente/gen_despliegue.py` genera [`Diagramas/Despliegue/despliegue.xml`](Diagramas/Despliegue/despliegue.xml) y `python Diagramas/_fuente/exportar_drawio_svg.py Diagramas/Despliegue/despliegue.xml Diagramas/Despliegue/despliegue.drawio.svg` regenera la imagen.
 - **Casos de uso y componentes:** abre el `.xml` / `.drawio.svg` en [draw.io](https://app.diagrams.net) → **Archivo → Exportar como → SVG**.
-- **Fondo claro:** draw.io exporta SVG que se ven oscuros en modo oscuro. `python Diagramas/_fuente/fondo_claro.py` los deja siempre claros; el hook `scripts/hooks/pre-commit` lo corre solo al commitear (se activa una vez con `git config core.hooksPath scripts/hooks`).
+- **Fondo claro:** draw.io exporta SVG que se ven oscuros en modo oscuro. `python Diagramas/_fuente/fondo_claro.py` los deja siempre claros; el hook `scripts/hooks/pre-commit` lo corre solo al commitear (se pi una vez con `git config core.hooksPath scripts/hooks`).
 
 </details>
 
-* autores: Manuel Ramos, 
+* autores: Manuel Ramos, Alvaro Alvarez, 
