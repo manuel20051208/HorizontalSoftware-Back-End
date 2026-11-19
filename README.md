@@ -283,4 +283,4 @@ Usa `postgres:16-alpine`: la v18 cambió la ruta de datos y rompe el volumen.
 
 </details>
 
-* autores: Manuel Ramos, Alvaro Alvarez, 
+* autores: Manuel Ramos, Alvaro Alvarez, jurgen orozco
