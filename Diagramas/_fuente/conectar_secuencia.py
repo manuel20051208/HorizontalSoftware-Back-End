@@ -6,9 +6,11 @@ Sobre cada pagina:
   2. cada mensaje (y cada llamada a si mismo) queda CONECTADO: source/target apuntan a la barra de activacion que
      toca su punta (o a la linea de vida si no hay barra), con el punto fijo (exitX/exitY, entryX/entryY). Si se
      mueve una barra o una linea de vida en draw.io, la flecha la sigue;
-  3. los fragmentos (umlFrame) llevan relleno blanco (no se ven las lineas de vida detras) y quedan justo encima
-     de las lineas de vida y debajo de barras y mensajes, con sus separadores de rama detras; las condiciones [..]
-     pasan al final del XML (al frente). Llevan pointerEvents=0: se sigue pudiendo hacer clic en lo de dentro.
+  3. REGLA: los fragmentos (umlFrame: alt/opt/loop/ref) van AL FRENTE, por encima de lineas de vida, barras de
+     activacion y mensajes, para que ninguna barra tape su pentagono (p. ej. 'opt'). En umlFrame el relleno blanco
+     solo pinta el pentagono; el cuerpo queda transparente y se ve lo de dentro. Detras de los marcos van sus
+     separadores de rama y al final las condiciones [..]. Llevan pointerEvents=0: se sigue pudiendo hacer clic
+     en lo de dentro.
 No mueve ninguna figura: las flechas quedan exactamente donde estaban.
 
 Uso como script:  python conectar_secuencia.py [secuencia.xml]      (reescribe el archivo)
@@ -151,8 +153,8 @@ def conectar_pagina(raiz, nombre=""):
             pt.set("y", f"{y + h * fy:g}")
         conectadas += 1
 
-    # 3) fragmentos: marcos con relleno blanco (tapan las lineas de vida de fondo) justo encima de las lineas de
-    #    vida y debajo de barras y mensajes; separadores tras los marcos; condiciones [..] al frente
+    # 3) fragmentos AL FRENTE (encima de lineas de vida, barras y mensajes): el pentagono blanco tapa la barra que
+    #    lo cruce; el cuerpo del marco es transparente. Despues los separadores y al final las condiciones [..]
     marcos, seps, conds = [], [], []
     for c in celdas:
         st = estilo_dict(c.get("style"))
@@ -175,11 +177,7 @@ def conectar_pagina(raiz, nombre=""):
     marcos.sort(key=area)
     for c in marcos + seps + conds:
         raiz.remove(c)
-    hijos = list(raiz)
-    ult = max((i for i, c in enumerate(hijos) if (c.get("id") or "").startswith(("L-", "V-"))), default=1)
-    for k, c in enumerate(marcos + seps):
-        raiz.insert(ult + 1 + k, c)
-    for c in conds:
+    for c in marcos + seps + conds:
         raiz.append(c)
     return conectadas, avisos
 
