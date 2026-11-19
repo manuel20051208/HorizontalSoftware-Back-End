@@ -75,7 +75,15 @@ class UsuarioGestionServiceImplTest {
         return Proyecciones.de(CredencialesView.class, "id", id, "identificacion", 1001L,
                 "nombreCompleto", "Santiago Mendez", "correoElectronico", "santiago@mail.com", "tipoUsuario", tipo,
                 "active", activo, "notificacionLeida", false, "fechaCreacionCuenta", LocalDate.now(),
-                "contrasena", "hash", "correoVerificado", verificado);
+                "contrasena", "hash", "correoVerificado", verificado, "inmuebleId", 5L);
+    }
+
+    /** Residente desvinculado de su inmueble (V10): no se puede activar ni verificar su correo. */
+    private CredencialesView vistaSinInmueble(Long id, String tipo, boolean activo, boolean verificado) {
+        return Proyecciones.de(CredencialesView.class, "id", id, "identificacion", 1001L,
+                "nombreCompleto", "Santiago Mendez", "correoElectronico", "santiago@mail.com", "tipoUsuario", tipo,
+                "active", activo, "notificacionLeida", false, "fechaCreacionCuenta", LocalDate.now(),
+                "contrasena", "hash", "correoVerificado", verificado, "inmuebleId", null);
     }
 
     @Test
@@ -258,6 +266,23 @@ class UsuarioGestionServiceImplTest {
         assertThatThrownBy(() -> servicio.modificarActive(1L)).isInstanceOf(ProhibidoException.class);
         assertThatThrownBy(() -> servicio.modificarActive(404L)).isInstanceOf(RecursoNoEncontradoException.class);
         verify(usuarios, never()).actualizarActive(any(), anyBoolean());
+    }
+
+    @Test
+    @DisplayName("no activa ni verifica el correo de un residente que no esta relacionado con un inmueble")
+    void residenteSinInmueble() {
+        when(usuarios.buscarCredencialesPorIdentificacion(1001L))
+                .thenReturn(Optional.of(vistaSinInmueble(2L, "RESIDENTE", false, true)));
+        assertThatThrownBy(() -> servicio.modificarActive(1001L))
+                .isInstanceOf(ConflictoException.class).hasMessageContaining("relacione");
+
+        when(usuarios.buscarCredencialesPorIdentificacion(1001L))
+                .thenReturn(Optional.of(vistaSinInmueble(2L, "RESIDENTE", false, false)));
+        assertThatThrownBy(() -> servicio.verificarCorreo(1001L, "0427"))
+                .isInstanceOf(ConflictoException.class).hasMessageContaining("relacione");
+
+        verify(usuarios, never()).actualizarActive(any(), anyBoolean());
+        verify(codigos, never()).verificar(any(), any());
     }
 
     @Test

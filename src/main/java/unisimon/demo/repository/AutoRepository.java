@@ -1,5 +1,6 @@
 package unisimon.demo.repository;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
@@ -66,6 +67,11 @@ public interface AutoRepository extends Repository<Auto, Long> {
 
     @Query(value = "SELECT EXISTS (SELECT 1 FROM autos WHERE parqueadero_id = :parqueaderoId)", nativeQuery = true)
     boolean existePorParqueadero(@Param("parqueaderoId") Long parqueaderoId);
+
+    /** El auto del residente deja libre el parqueadero de su inmueble anterior; el auto sigue siendo suyo. */
+    @Modifying
+    @Query(value = "UPDATE autos SET parqueadero_id = NULL WHERE dueno_id = :duenoId", nativeQuery = true)
+    int liberarParqueaderoDe(@Param("duenoId") Long duenoId);
 
     /** consultarDuenos(inmueble, id): quien es el dueno del auto dentro de ese inmueble. */
     @Query(value = """

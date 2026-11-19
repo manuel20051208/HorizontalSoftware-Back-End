@@ -17,4 +17,9 @@ public final class UsuarioResponses {
     /** Resultado de activar/desactivar una cuenta. */
     public record EstadoActivo(Long id, String nombreCompleto, Boolean active) {
     }
+
+    /** Cuenta de residente con el inmueble al que esta relacionada (null si no tiene). */
+    public record RelacionInmueble(Long id, Long identificacion, String nombreCompleto, String tipoUsuario,
+                                   Boolean active, Long inmuebleId, String direccionInmueble) {
+    }
 }

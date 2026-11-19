@@ -36,4 +36,8 @@ public final class UsuarioRequests {
     public record VerificarCorreo(@NotBlank @Pattern(regexp = "\\d{4}", message = "El codigo tiene 4 cifras")
                                   String codigo) {
     }
+
+    /** Inmueble con el que se vincula o al que se cambia una cuenta de residente. */
+    public record RelacionInmueble(@NotNull @Positive Long inmuebleId) {
+    }
 }

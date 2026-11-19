@@ -70,6 +70,9 @@ public class UsuarioGestionServiceImpl implements UsuarioGestionService {
     @Transactional
     public UsuarioResponses.Usuario verificarCorreo(Long identificacion, String codigo) {
         CredencialesView usuario = pendienteDeVerificar(identificacion);
+        if (Usuario.RESIDENTE.equals(usuario.getTipoUsuario()) && usuario.getInmuebleId() == null) {
+            throw new ConflictoException("Primero relacione la cuenta con un inmueble");
+        }
         codigos.verificar(usuario.getId(), codigo);   // REQUIRES_NEW: un intento fallido queda guardado
         // Usuario.activarCuenta(correo, contrasena): con las credenciales guardadas (contrasena ya codificada).
         if (!Hidratador.usuario(usuario).activarCuenta(usuario.getCorreoElectronico(), usuario.getContrasena())) {
@@ -131,6 +134,9 @@ public class UsuarioGestionServiceImpl implements UsuarioGestionService {
         boolean esInvitado = Usuario.USUARIO_AUTORIZADO.equals(usuario.getTipoUsuario());
         if (nuevoEstado && !esInvitado && !Boolean.TRUE.equals(usuario.getCorreoVerificado())) {
             throw new ConflictoException("Primero verifique el correo con el codigo que se le envio");
+        }
+        if (nuevoEstado && Usuario.RESIDENTE.equals(usuario.getTipoUsuario()) && usuario.getInmuebleId() == null) {
+            throw new ConflictoException("Primero relacione la cuenta con un inmueble");
         }
         usuarios.actualizarActive(usuario.getId(), nuevoEstado);
         if (!nuevoEstado) {

@@ -200,4 +200,21 @@ public interface ReservaZonaComunRepository extends Repository<ReservaZonaComun,
     @Modifying
     @Query(value = "DELETE FROM reservas_zona_comun WHERE id = :id", nativeQuery = true)
     int eliminar(@Param("id") Long id);
+
+    /**
+     * Cancela las reservas PROGRAMADA (aun no empiezan) del residente cuyas zonas no estan asignadas al inmueble
+     * dado; con inmuebleId null cancela todas. Las EN_CURSO no se tocan.
+     */
+    @Modifying
+    @Query(value = """
+            DELETE FROM reservas_zona_comun r
+            WHERE r.dueno_reserva_id = :residenteId
+              AND r.fecha_hora_inicio > :ahora
+              AND (CAST(:inmuebleId AS BIGINT) IS NULL
+                   OR NOT EXISTS (SELECT 1 FROM inmueble_zonas_comunes iz
+                                  WHERE iz.inmueble_id = CAST(:inmuebleId AS BIGINT)
+                                    AND iz.zona_comun_id = r.zona_comun_id))
+            """, nativeQuery = true)
+    int cancelarProgramadasFuturas(@Param("residenteId") Long residenteId, @Param("inmuebleId") Long inmuebleId,
+                                   @Param("ahora") LocalDateTime ahora);
 }

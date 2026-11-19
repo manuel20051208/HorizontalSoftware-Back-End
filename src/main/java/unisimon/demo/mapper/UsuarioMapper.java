@@ -32,4 +32,17 @@ public final class UsuarioMapper {
     public static UsuarioResponses.EstadoActivo estadoActivo(Long id, String nombre, boolean active) {
         return new UsuarioResponses.EstadoActivo(id, nombre, active);
     }
+
+    /** La cuenta con el inmueble indicado (el servicio pasa el nuevo al vincular o cambiar). */
+    public static UsuarioResponses.RelacionInmueble relacionInmueble(CredencialesView u, Long inmuebleId,
+                                                                     String direccionInmueble) {
+        return new UsuarioResponses.RelacionInmueble(u.getId(), u.getIdentificacion(), u.getNombreCompleto(),
+                u.getTipoUsuario(), u.getActive(), inmuebleId, direccionInmueble);
+    }
+
+    /** Fila del listado de residentes de un inmueble (ya trae la direccion). */
+    public static UsuarioResponses.RelacionInmueble relacionInmueble(UsuarioListaView u) {
+        return new UsuarioResponses.RelacionInmueble(u.getId(), u.getIdentificacion(), u.getNombreCompleto(),
+                u.getTipoUsuario(), u.getActive(), u.getInmuebleId(), u.getDireccionInmueble());
+    }
 }

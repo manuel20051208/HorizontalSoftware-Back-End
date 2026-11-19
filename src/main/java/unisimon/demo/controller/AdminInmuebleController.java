@@ -19,12 +19,15 @@ import unisimon.demo.dto.response.LiquidacionResponses;
 import unisimon.demo.dto.response.NotificacionResponses;
 import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.PagoResponses;
+import unisimon.demo.dto.response.UsuarioResponses;
 import unisimon.demo.dto.response.ZonaResponses;
+import unisimon.demo.security.UsuarioAutenticado;
 import unisimon.demo.security.annotation.SoloAdministrador;
 import unisimon.demo.service.InmuebleService;
 import unisimon.demo.service.LiquidacionService;
 import unisimon.demo.service.NotificacionService;
 import unisimon.demo.service.PagoService;
+import unisimon.demo.service.RelacionInmuebleService;
 import unisimon.demo.service.ZonaComunService;
 
 import java.util.List;
@@ -40,6 +43,7 @@ public class AdminInmuebleController {
     private final ZonaComunService zonas;
     private final PagoService pagos;
     private final NotificacionService notificaciones;
+    private final RelacionInmuebleService relaciones;
 
     @SoloAdministrador
     @PostMapping
@@ -93,5 +97,12 @@ public class AdminInmuebleController {
     @ResponseStatus(HttpStatus.CREATED)
     public PagoResponses.Pago conciliarPago(@PathVariable Long id, @Valid @RequestBody PagoRequests.Conciliar s) {
         return pagos.conciliarPagosAdministracion(id, s);
+    }
+
+    /** Los residentes relacionados con el inmueble, por nombre. */
+    @SoloAdministrador
+    @GetMapping("/{id}/residentes")
+    public List<UsuarioResponses.RelacionInmueble> residentes(UsuarioAutenticado usuario, @PathVariable Long id) {
+        return relaciones.listarPorInmueble(usuario.id(), id);
     }
 }

@@ -77,6 +77,41 @@ public interface InvitadoRepository extends Repository<UsuarioAutorizado, Long> 
     @Query(value = "SELECT COUNT(*) FROM residente_invitados WHERE residente_id = :residenteId", nativeQuery = true)
     long contarDeResidente(@Param("residenteId") Long residenteId);
 
+    // ------------------------------------------------------------------ relacion inmueble <-> residente
+
+    /** Invitados cuyo unico anfitrion es este residente: se mudan con el o se desactivan con el. */
+    @Query(value = """
+            SELECT ri.invitado_id FROM residente_invitados ri
+            WHERE ri.residente_id = :residenteId
+              AND NOT EXISTS (SELECT 1 FROM residente_invitados otro
+                              WHERE otro.invitado_id = ri.invitado_id AND otro.residente_id <> :residenteId)
+            ORDER BY ri.invitado_id
+            """, nativeQuery = true)
+    List<Long> listarExclusivosDeResidente(@Param("residenteId") Long residenteId);
+
+    /** Ids de todos los invitados que autorizo este residente. */
+    @Query(value = "SELECT invitado_id FROM residente_invitados WHERE residente_id = :residenteId ORDER BY invitado_id",
+            nativeQuery = true)
+    List<Long> listarIdsDeResidente(@Param("residenteId") Long residenteId);
+
+    @Modifying
+    @Query(value = "UPDATE usuarios SET inmueble_id = :inmuebleId WHERE id IN (:ids)", nativeQuery = true)
+    int moverAInmueble(@Param("ids") List<Long> ids, @Param("inmuebleId") Long inmuebleId);
+
+    /** Desactiva invitados; conservan el inmueble que tenian. */
+    @Modifying
+    @Query(value = "UPDATE usuarios SET active = FALSE WHERE id IN (:ids)", nativeQuery = true)
+    int desactivar(@Param("ids") List<Long> ids);
+
+    @Modifying
+    @Query(value = "DELETE FROM residente_invitados WHERE residente_id = :residenteId", nativeQuery = true)
+    int borrarVinculosDeResidente(@Param("residenteId") Long residenteId);
+
+    @Modifying
+    @Query(value = "DELETE FROM residente_invitados WHERE residente_id = :residenteId AND invitado_id = :invitadoId",
+            nativeQuery = true)
+    int borrarVinculo(@Param("residenteId") Long residenteId, @Param("invitadoId") Long invitadoId);
+
     /** Vigilante.consultarInvitados(): una pagina de todos los invitados registrados. */
     @Query(value = SELECT_INVITADO + """
             WHERE u.tipo_usuario = 'USUARIO_AUTORIZADO'

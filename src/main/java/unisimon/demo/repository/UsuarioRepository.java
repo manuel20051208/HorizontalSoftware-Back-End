@@ -142,6 +142,13 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
     @Query(value = SELECT_LISTA + "WHERE u.inmueble_id = :inmuebleId ORDER BY u.nombre_completo", nativeQuery = true)
     List<UsuarioListaView> listarPorInmueble(@Param("inmuebleId") Long inmuebleId);
 
+    /** Solo las cuentas de residente del inmueble, por nombre (relacion inmueble <-> residentes). */
+    @Query(value = SELECT_LISTA + """
+            WHERE u.inmueble_id = :inmuebleId AND u.tipo_usuario = 'RESIDENTE'
+            ORDER BY u.nombre_completo, u.id
+            """, nativeQuery = true)
+    List<UsuarioListaView> listarResidentesDeInmueble(@Param("inmuebleId") Long inmuebleId);
+
     @Query(value = """
             SELECT u.active AS "active", array_to_string(u.preferencias_notificacion, ',') AS "preferencias"
             FROM usuarios u WHERE u.id = :id
@@ -216,6 +223,11 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
     @Modifying
     @Query(value = "UPDATE usuarios SET token = :token WHERE id = :id", nativeQuery = true)
     int actualizarToken(@Param("id") Long id, @Param("token") String token);
+
+    /** Inmueble de la cuenta (null la desvincula). Un residente desvinculado queda sin inmueble (V10). */
+    @Modifying
+    @Query(value = "UPDATE usuarios SET inmueble_id = CAST(:inmuebleId AS BIGINT) WHERE id = :id", nativeQuery = true)
+    int actualizarInmueble(@Param("id") Long id, @Param("inmuebleId") Long inmuebleId);
 
     @Modifying
     @Query(value = "UPDATE usuarios SET contrasena = :contrasena WHERE id = :id", nativeQuery = true)
