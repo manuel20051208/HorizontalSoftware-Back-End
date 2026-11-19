@@ -96,9 +96,20 @@
         <mxCell id="vc-include" edge="1" parent="1" source="CcF7kHvnpvj1t0UgSXWZ-25" target="vc-ellipse" style="endArrow=open;endFill=0;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;defaultLabelBackgroundColor=page;labelPadding=0 4;dashed=1;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="vc-include-etiqueta" connectable="0" parent="vc-include" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" value="«include»" vertex="1">
+        <mxCell id="vc-include-etiqueta" connectable="0" parent="vc-include" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" value="«extend»" vertex="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ri-ellipse" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;align=center;fontSize=14;" value="Relacionar con inmueble" vertex="1">
+          <mxGeometry height="60" width="125" x="1288" y="245" as="geometry" />
+        </mxCell>
+        <mxCell id="ri-extend" edge="1" parent="1" source="CcF7kHvnpvj1t0UgSXWZ-25" target="ri-ellipse" style="endArrow=open;endFill=0;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.854;exitY=0.854;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.146;entryY=0.146;entryDx=0;entryDy=0;entryPerimeter=0;defaultLabelBackgroundColor=page;labelPadding=0 4;dashed=1;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ri-extend-etiqueta" connectable="0" parent="ri-extend" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" value="«extend»" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="12" y="-16" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="CcF7kHvnpvj1t0UgSXWZ-27" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;" value="" vertex="1">

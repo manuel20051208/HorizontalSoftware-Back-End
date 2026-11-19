@@ -86,7 +86,7 @@ El navegador solo habla con Vercel y, al pagar, con el checkout de Wompi; es el 
 Un diagrama por caso de uso: los participantes son clases del diagrama de clases y los mensajes son sus operaciones, con los nombres y parámetros del diagrama. Entre todos usan cada operación del diagrama de clases. Las flechas están conectadas a sus barras de activación y líneas de vida, y los fragmentos `alt`/`opt`/`loop` van al frente. Fuente: [`Diagramas/_fuente/secuencia-casos-de-uso.xml`](Diagramas/_fuente/secuencia-casos-de-uso.xml); cómo editarlos y regenerarlos en «Editar los diagramas», más abajo.
 
 <details>
-<summary><b>Cuenta y sesión</b> (6)</summary>
+<summary><b>Cuenta y sesión</b> (7)</summary>
 
 **Iniciar sesión**
 
@@ -104,9 +104,13 @@ Un diagrama por caso de uso: los participantes son clases del diagrama de clases
 
 ![Secuencia: Gestionar cuentas de usuario](Diagramas/Secuencia/gestionar-cuentas-de-usuario.svg)
 
-**Verificar correo** (incluido en *Gestionar cuentas de usuario*: el administrador confirma el código de 4 cifras que llegó al correo y solo así se activa la cuenta)
+**Verificar correo** («extend» de *Gestionar cuentas de usuario*: cuando la cuenta nueva está pendiente, el administrador confirma el código de 4 cifras que llegó al correo y solo así se activa)
 
 ![Secuencia: Verificar correo](Diagramas/Secuencia/verificar-correo.svg)
+
+**Relacionar con inmueble** («extend» de *Gestionar cuentas de usuario*: el administrador vincula, cambia o desvincula el inmueble de un residente; al desvincular una cuenta activa, la deja inactiva y sin sesión)
+
+![Secuencia: Relacionar con inmueble](Diagramas/Secuencia/relacionar-con-inmueble.svg)
 
 **Configurar preferencias de notificación**
 

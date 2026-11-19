@@ -242,11 +242,16 @@ class Diagrama:
         self.max_x = max(self.max_x, x2 + 20)
 
     def ref(self, caso_de_uso):
-        """«include» -> InteractionUse (UML 2.5.1, 17.7.4): marco 'ref' con el nombre del caso de uso incluido,
+        """«include»/«extend» -> InteractionUse (UML 2.5.1, 17.7.4): marco 'ref' con el nombre del caso de uso incluido,
         que cubre las lineas de vida del diagrama."""
         self.y += 14
         x1 = self.cx(self.orden[0]) - 35
         x2 = self.cx(self.orden[-1]) + 50
+        if self.pila_frames:   # dentro de un opt/alt: el ref va 10 px adentro y el marco de fuera conserva x1..x2
+            p = self.pila_frames[-1]
+            p["min"] = min(p["min"], x1 + 15)
+            p["max"] = max(p["max"], x2 - 15)
+            x1, x2 = x1 + 10, x2 - 10
         self.celdas_frames.append(
             f'<mxCell id="{self._id("f")}" value="ref" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;'
             f'fillColor=#ffffff;strokeColor=#36393d;fontStyle=1;fontSize=11;width=40;height=22;" vertex="1" '
@@ -391,10 +396,34 @@ d = nuevo("Gestionar cuentas de usuario", [ADMIN, o("adm", "Administrador"), o("
 d.llamar("act", "adm", "gestionarCuentaUsuario()")
 d.propio("adm", "exigirVigente()")
 d.retornar("adm", "act", "")
-d.ref("Verificar correo")   # «include»: la cuenta nueva solo se activa verificando su correo
+# «extend» que salen de Gestionar cuentas (pedido de Manuel 2026-11-19): Verificar correo y Relacionar con inmueble
+d.abrir("opt", "cuenta nueva pendiente de verificar")
+d.ref("Verificar correo")
+d.cerrar()
+d.abrir("opt", "relacionar la cuenta con un inmueble")
+d.ref("Relacionar con inmueble")
+d.cerrar()
 d.abrir("opt", "activar o desactivar una cuenta existente")
-d.llamar("act", "adm", "modificarActive(identificacion, idToken)")
+d.llamar("act", "adm", "modificarActive(identificacion, idToken, cuentas)")
 d.propio("adm", "exigirAutoridad(adminId)")
+d.llamar_y_retornar("adm", "usr", "isActive()", "Boolean")
+d.llamar_y_retornar("adm", "usr", "isActive()", "Boolean")
+d.abrir("opt", "la cuenta queda inactiva")
+d.llamar_y_retornar("adm", "usr", "cerrarSesion()", "")
+d.cerrar()
+d.retornar("adm", "act", "NoAdmin")
+d.cerrar()
+
+# RelacionInmuebleServiceImpl: toda operacion (consultar, listar, vincular, cambiar, desvincular) llama
+# Administrador.gestionarCuentaUsuario(); al desvincular una cuenta activa, modificarActive(...) la deja inactiva.
+d = nuevo("Relacionar con inmueble", [ADMIN, o("adm", "Administrador"), o("usr", "Usuario")])
+d.llamar("act", "adm", "gestionarCuentaUsuario()")
+d.propio("adm", "exigirVigente()")
+d.retornar("adm", "act", "")
+d.abrir("opt", "desvincular una cuenta activa")
+d.llamar("act", "adm", "modificarActive(identificacion, idToken, cuentas)")
+d.propio("adm", "exigirAutoridad(adminId)")
+d.llamar_y_retornar("adm", "usr", "isActive()", "Boolean")
 d.llamar_y_retornar("adm", "usr", "isActive()", "Boolean")
 d.abrir("opt", "la cuenta queda inactiva")
 d.llamar_y_retornar("adm", "usr", "cerrarSesion()", "")

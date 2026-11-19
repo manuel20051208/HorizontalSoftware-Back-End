@@ -30,7 +30,7 @@
 <polyline points="690,340 690.0,436.0" fill="none" stroke="#3d3d3d" stroke-width="1.4"/>
 <circle cx="690" cy="450" r="8" fill="#fff" stroke="#3d3d3d" stroke-width="1.6"/>
 <path d="M676.0,450.0 A14,14 0 0 1 704.0,450.0" fill="none" stroke="#3d3d3d" stroke-width="1.6"/>
-<text x="706" y="455" text-anchor="start" font-size="11.5" fill="#1a1a1a" paint-order="stroke" stroke="#fff" stroke-width="3">*Service (17 interfaces)</text>
+<text x="706" y="455" text-anchor="start" font-size="11.5" fill="#1a1a1a" paint-order="stroke" stroke="#fff" stroke-width="3">*Service (18 interfaces)</text>
 <line x1="660" y1="555" x2="638.0" y2="555.0" stroke="#3d3d3d" stroke-width="1.4"/>
 <polyline points="520,555 616.0,555.0" fill="none" stroke="#3d3d3d" stroke-width="1.4"/>
 <circle cx="630" cy="555" r="8" fill="#fff" stroke="#3d3d3d" stroke-width="1.6"/>
