@@ -1,8 +1,5 @@
 package unisimon.demo.service.impl;
 
-import unisimon.demo.service.CodigoActivacionService;
-import static org.mockito.Mockito.doThrow;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,16 +46,13 @@ class CuentaServiceImplTest {
     private GeneradorContrasena generador;
     @Mock
     private CorreoSender correo;
-    @Mock
-    private CodigoActivacionService codigos;
 
     private CuentaServiceImpl servicio;
 
     @BeforeEach
     void preparar() {
         Clock reloj = Clock.fixed(Instant.parse("2026-11-08T15:00:00Z"), ZoneId.of("America/Bogota"));
-        servicio = new CuentaServiceImpl(usuarios, codificador, new PoliticaContrasena(), generador, correo, codigos,
-                reloj);
+        servicio = new CuentaServiceImpl(usuarios, codificador, new PoliticaContrasena(), generador, correo, reloj);
     }
 
     private CredencialesView usuario(String tipo, boolean activo, LocalDate creacion) {
@@ -74,66 +68,10 @@ class CuentaServiceImplTest {
                 .thenReturn(Optional.of(usuario("RESIDENTE", false, LocalDate.of(2026, 11, 5))));
         when(codificador.matches("clave", "hash")).thenReturn(true);
 
-        UsuarioResponses.Activacion resultado = servicio.activarCuenta("s@mail.com", "clave", "1234");
+        UsuarioResponses.Activacion resultado = servicio.activarCuenta("s@mail.com", "clave");
 
         assertThat(resultado.active()).isTrue();
-        verify(codigos).verificar(1L, "1234");
         verify(usuarios).actualizarActive(1L, true);
-    }
-
-    @Test
-    @DisplayName("activarCuenta no activa la cuenta si el codigo de 4 cifras es incorrecto")
-    void activarCodigoIncorrecto() {
-        when(usuarios.buscarCredencialesPorCorreo("s@mail.com"))
-                .thenReturn(Optional.of(usuario("RESIDENTE", false, LocalDate.of(2026, 11, 5))));
-        when(codificador.matches("clave", "hash")).thenReturn(true);
-        doThrow(new NoAutenticadoException("Codigo incorrecto")).when(codigos).verificar(1L, "0000");
-
-        assertThatThrownBy(() -> servicio.activarCuenta("s@mail.com", "clave", "0000"))
-                .isInstanceOf(NoAutenticadoException.class).hasMessageContaining("Codigo");
-        verify(usuarios, never()).actualizarActive(1L, true);
-    }
-
-    @Test
-    @DisplayName("activarCuenta revisa la contrasena antes que el codigo: con clave mala no gasta intentos")
-    void claveMalaNoGastaIntentos() {
-        when(usuarios.buscarCredencialesPorCorreo("s@mail.com"))
-                .thenReturn(Optional.of(usuario("RESIDENTE", false, LocalDate.of(2026, 11, 5))));
-        when(codificador.matches("mala", "hash")).thenReturn(false);
-
-        assertThatThrownBy(() -> servicio.activarCuenta("s@mail.com", "mala", "1234"))
-                .isInstanceOf(NoAutenticadoException.class);
-        verifyNoInteractions(codigos);
-    }
-
-    @Test
-    @DisplayName("reenviarCodigo emite un codigo nuevo solo para cuentas pendientes dentro del plazo")
-    void reenviarCodigo() {
-        when(usuarios.buscarCredencialesPorCorreo("s@mail.com"))
-                .thenReturn(Optional.of(usuario("RESIDENTE", false, LocalDate.of(2026, 11, 5))));
-
-        servicio.reenviarCodigo(" s@mail.com ");
-
-        verify(codigos).emitir(1L, "s@mail.com");
-    }
-
-    @Test
-    @DisplayName("reenviarCodigo no hace nada (ni lo revela) si no hay cuenta, ya esta activa, vencio o es invitado")
-    void reenviarCodigoSinEfecto() {
-        when(usuarios.buscarCredencialesPorCorreo("nadie@mail.com")).thenReturn(Optional.empty());
-        when(usuarios.buscarCredencialesPorCorreo("activa@mail.com"))
-                .thenReturn(Optional.of(usuario("RESIDENTE", true, LocalDate.of(2026, 11, 5))));
-        when(usuarios.buscarCredencialesPorCorreo("vieja@mail.com"))
-                .thenReturn(Optional.of(usuario("RESIDENTE", false, LocalDate.of(2026, 10, 1))));
-        when(usuarios.buscarCredencialesPorCorreo("inv@mail.com"))
-                .thenReturn(Optional.of(usuario(Usuario.USUARIO_AUTORIZADO, false, LocalDate.of(2026, 11, 5))));
-
-        servicio.reenviarCodigo("nadie@mail.com");
-        servicio.reenviarCodigo("activa@mail.com");
-        servicio.reenviarCodigo("vieja@mail.com");
-        servicio.reenviarCodigo("inv@mail.com");
-
-        verifyNoInteractions(codigos);
     }
 
     @Test
@@ -143,7 +81,7 @@ class CuentaServiceImplTest {
                 .thenReturn(Optional.of(usuario("RESIDENTE", true, LocalDate.of(2026, 11, 5))));
         when(codificador.matches("clave", "hash")).thenReturn(true);
 
-        assertThat(servicio.activarCuenta("s@mail.com", "clave", "1234").mensaje()).contains("ya estaba activa");
+        assertThat(servicio.activarCuenta("s@mail.com", "clave").mensaje()).contains("ya estaba activa");
         verify(usuarios, never()).actualizarActive(1L, true);
     }
 
@@ -154,7 +92,7 @@ class CuentaServiceImplTest {
                 .thenReturn(Optional.of(usuario("RESIDENTE", false, LocalDate.of(2026, 10, 1))));
         when(codificador.matches("clave", "hash")).thenReturn(true);
 
-        assertThatThrownBy(() -> servicio.activarCuenta("s@mail.com", "clave", "1234"))
+        assertThatThrownBy(() -> servicio.activarCuenta("s@mail.com", "clave"))
                 .isInstanceOf(ProhibidoException.class).hasMessageContaining("plazo");
         verify(usuarios, never()).actualizarActive(1L, true);
     }
@@ -165,12 +103,12 @@ class CuentaServiceImplTest {
         when(usuarios.buscarCredencialesPorCorreo("s@mail.com"))
                 .thenReturn(Optional.of(usuario("RESIDENTE", false, LocalDate.of(2026, 11, 5))));
         when(codificador.matches("mala", "hash")).thenReturn(false);
-        assertThatThrownBy(() -> servicio.activarCuenta("s@mail.com", "mala", "1234")).isInstanceOf(NoAutenticadoException.class);
+        assertThatThrownBy(() -> servicio.activarCuenta("s@mail.com", "mala")).isInstanceOf(NoAutenticadoException.class);
 
         when(usuarios.buscarCredencialesPorCorreo("inv@mail.com"))
                 .thenReturn(Optional.of(usuario(Usuario.USUARIO_AUTORIZADO, false, LocalDate.of(2026, 11, 5))));
         when(codificador.matches("clave", "hash")).thenReturn(true);
-        assertThatThrownBy(() -> servicio.activarCuenta("inv@mail.com", "clave", "1234")).isInstanceOf(ProhibidoException.class);
+        assertThatThrownBy(() -> servicio.activarCuenta("inv@mail.com", "clave")).isInstanceOf(ProhibidoException.class);
     }
 
     @Test

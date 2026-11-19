@@ -1,7 +1,5 @@
 package unisimon.demo.service.impl;
 
-import unisimon.demo.service.CodigoActivacionService;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,15 +46,13 @@ class UsuarioGestionServiceImplTest {
     private UsuarioPersistidor persistidor;
     @Mock
     private PasswordEncoder codificador;
-    @Mock
-    private CodigoActivacionService codigos;
 
     private UsuarioGestionServiceImpl servicio;
 
     @BeforeEach
     void preparar() {
         servicio = new UsuarioGestionServiceImpl(usuarios, inmuebles, new UsuarioFactory(), persistidor, codificador,
-                new PoliticaContrasena(), codigos);
+                new PoliticaContrasena());
     }
 
     private CrearUsuario residente(String clave) {
@@ -94,7 +90,6 @@ class UsuarioGestionServiceImplTest {
         assertThat(creado.getContrasena()).isEqualTo("hash");
         assertThat(creado.isActive()).isFalse();
         assertThat(creado.getInmueble().getId()).isEqualTo(5L);
-        verify(codigos).emitir(9L, "santiago@mail.com");   // codigo de 4 cifras para activar la cuenta
     }
 
     @Test

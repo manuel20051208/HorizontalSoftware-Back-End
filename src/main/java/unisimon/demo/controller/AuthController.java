@@ -52,15 +52,7 @@ public class AuthController {
     @Publico
     @PostMapping("/activar")
     public UsuarioResponses.Activacion activar(@Valid @RequestBody AuthRequests.Activar solicitud) {
-        return cuentas.activarCuenta(solicitud.correo(), solicitud.contrasena(), solicitud.codigo());
-    }
-
-    @Publico
-    @PostMapping("/reenviar-codigo")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Map<String, String> reenviarCodigo(@Valid @RequestBody AuthRequests.ReenviarCodigo solicitud) {
-        cuentas.reenviarCodigo(solicitud.correo());
-        return Map.of("mensaje", "Si la cuenta existe y esta pendiente de activar, recibira un codigo nuevo");
+        return cuentas.activarCuenta(solicitud.correo(), solicitud.contrasena());
     }
 
     @Publico

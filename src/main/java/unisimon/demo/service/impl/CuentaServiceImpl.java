@@ -19,7 +19,6 @@ import unisimon.demo.policy.PoliticaContrasena;
 import unisimon.demo.repository.UsuarioRepository;
 import unisimon.demo.repository.UsuarioRepository.CredencialesView;
 import unisimon.demo.repository.UsuarioRepository.PreferenciasView;
-import unisimon.demo.service.CodigoActivacionService;
 import unisimon.demo.service.CuentaService;
 
 import java.time.Clock;
@@ -38,12 +37,11 @@ public class CuentaServiceImpl implements CuentaService {
     private final PoliticaContrasena politica;
     private final GeneradorContrasena generador;
     private final CorreoSender correo;
-    private final CodigoActivacionService codigos;
     private final Clock reloj;
 
     @Override
     @Transactional
-    public UsuarioResponses.Activacion activarCuenta(String correoElectronico, String contrasena, String codigo) {
+    public UsuarioResponses.Activacion activarCuenta(String correoElectronico, String contrasena) {
         CredencialesView usuario = usuarios.buscarCredencialesPorCorreo(correoElectronico.trim())
                 .filter(u -> codificador.matches(contrasena, u.getContrasena()))
                 .orElseThrow(() -> new NoAutenticadoException("Correo o contrasena incorrectos"));
@@ -53,32 +51,16 @@ public class CuentaServiceImpl implements CuentaService {
         if (Usuario.USUARIO_AUTORIZADO.equals(usuario.getTipoUsuario())) {
             throw new ProhibidoException("Los invitados no tienen cuenta que activar");
         }
-        if (!dentroDeVentana(usuario)) {
+        LocalDate ultimoDia = usuario.getFechaCreacionCuenta().plusDays(DIAS_VENTANA_ACTIVACION);
+        if (LocalDate.now(reloj).isAfter(ultimoDia)) {
             throw new ProhibidoException("El plazo de activacion vencio: pida a la administracion que active su cuenta");
         }
-        codigos.verificar(usuario.getId(), codigo);   // codigo de 4 cifras enviado al correo
         // Usuario.activarCuenta(correo, contrasena): la contrasena ya quedo verificada arriba con el codificador.
         if (!Hidratador.usuario(usuario).activarCuenta(correoElectronico, usuario.getContrasena())) {
             throw new NoAutenticadoException("Correo o contrasena incorrectos");
         }
         usuarios.actualizarActive(usuario.getId(), true);
         return new UsuarioResponses.Activacion(true, "Cuenta activada");
-    }
-
-    @Override
-    @Transactional
-    public void reenviarCodigo(String correoElectronico) {
-        // Siempre responde igual: no se revela si el correo tiene cuenta ni en que estado esta.
-        usuarios.buscarCredencialesPorCorreo(correoElectronico.trim())
-                .filter(u -> !Usuario.USUARIO_AUTORIZADO.equals(u.getTipoUsuario()))
-                .filter(u -> !Boolean.TRUE.equals(u.getActive()))
-                .filter(this::dentroDeVentana)
-                .ifPresent(u -> codigos.emitir(u.getId(), u.getCorreoElectronico()));
-    }
-
-    private boolean dentroDeVentana(CredencialesView usuario) {
-        LocalDate ultimoDia = usuario.getFechaCreacionCuenta().plusDays(DIAS_VENTANA_ACTIVACION);
-        return !LocalDate.now(reloj).isAfter(ultimoDia);
     }
 
     @Override
