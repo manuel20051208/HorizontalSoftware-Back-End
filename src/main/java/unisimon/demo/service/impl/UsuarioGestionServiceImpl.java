@@ -19,6 +19,7 @@ import unisimon.demo.policy.PoliticaContrasena;
 import unisimon.demo.repository.InmuebleRepository;
 import unisimon.demo.repository.UsuarioRepository;
 import unisimon.demo.repository.UsuarioRepository.CredencialesView;
+import unisimon.demo.service.CodigoActivacionService;
 import unisimon.demo.service.UsuarioGestionService;
 import unisimon.demo.service.support.UsuarioPersistidor;
 
@@ -40,6 +41,7 @@ public class UsuarioGestionServiceImpl implements UsuarioGestionService {
     private final UsuarioPersistidor persistidor;
     private final PasswordEncoder codificador;
     private final PoliticaContrasena politica;
+    private final CodigoActivacionService codigos;
 
     @Override
     @Transactional
@@ -56,6 +58,9 @@ public class UsuarioGestionServiceImpl implements UsuarioGestionService {
         }
         Usuario nuevo = fabrica.crear(s, codificador.encode(s.contrasena()));
         Long id = persistidor.insertar(nuevo);
+        if (!Usuario.USUARIO_AUTORIZADO.equals(nuevo.getTipoUsuario())) {
+            codigos.emitir(id, nuevo.getCorreoElectronico());   // codigo de 4 cifras para activar la cuenta
+        }
         return UsuarioMapper.de(usuarios.buscarCredencialesPorId(id).orElseThrow());
     }
 
