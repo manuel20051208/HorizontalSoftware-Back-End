@@ -282,3 +282,5 @@ Usa `postgres:16-alpine`: la v18 cambió la ruta de datos y rompe el volumen.
 - **Fondo claro:** draw.io exporta SVG que se ven oscuros en modo oscuro. `python Diagramas/_fuente/fondo_claro.py` los deja siempre claros; el hook `scripts/hooks/pre-commit` lo corre solo al commitear (se activa una vez con `git config core.hooksPath scripts/hooks`).
 
 </details>
+
+* autores: Manuel Ramos, 
