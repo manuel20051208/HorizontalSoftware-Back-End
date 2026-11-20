@@ -445,6 +445,10 @@ d.propio("adm", "exigirAutoridad(adminId)")
 d.propio("adm", "liquidacionVigente(inmueble)", "Liquidacion")
 d.llamar_y_retornar("adm", "liq", "calcularTotal()", "BigDecimal")
 d.retornar("adm", "act", "")
+# LiquidacionServiceImpl.actualizar: editar una liquidacion que aun no esta pagada recalcula su total
+d.abrir("opt", "editar una liquidación no pagada")
+d.llamar_y_retornar("act", "liq", "calcularTotal()", "BigDecimal")
+d.cerrar()
 
 d = nuevo("Configurar zonas comunes", [ADMIN, o("adm", "Administrador"), o("zon", "ZonaComun")])
 d.llamar("act", "adm", "ConfigurarZonasComunes(inmueble, adminId)")
@@ -471,6 +475,22 @@ d.retornar("adm", "act", "")
 d.abrir("opt", "retirar la regla de una zona")
 d.llamar_y_retornar("act", "rom", "inactivarRegla()", "")
 d.cerrar()
+# ReglaReservaServiceImpl.asignarZona: crea el Rompimiento de la regla con otra zona y lo deja aplicado
+d.abrir("opt", "aplicar la regla a otra zona")
+d.llamar_y_retornar("act", "rom", "Rompimiento(id, zonaComun, reglaReserva, fechaAplicacion, observaciones)", "")
+d.llamar_y_retornar("act", "rom", "aplicarRegla()", "")
+d.cerrar()
+
+# InmuebleServiceImpl.detalle/actualizar: arma el Inmueble y le pide los nombres de su gente. Eliminar el inmueble solo
+# toca la base (composicion en cascada / vinculos de agregacion): no llama operaciones del modelo.
+d = nuevo("Gestionar inmuebles", [ADMIN, o("inm", "Inmueble")])
+d.llamar_y_retornar("act", "inm", "mostrarUsuarios(usuarios)", "List<String>")
+
+# ParqueaderoServiceImpl crear/consultar/actualizar: ParqueaderoMapper crea el Paqueadero y le pide su valor mensual.
+# Eliminar solo toca la base.
+d = nuevo("Gestionar parqueaderos", [ADMIN, o("paq", "Paqueadero")])
+d.llamar_y_retornar("act", "paq", "Paqueadero(id, inmueble, valorMensual)", "")
+d.llamar_y_retornar("act", "paq", "obtenerValorMensual()", "BigDecimal")
 
 # ---------------------------------------------------------------- Pagos y liquidaciones
 d = nuevo("Consultar estado de cuenta e historial de pagos",
@@ -483,8 +503,9 @@ d.retornar("res", "act", "Liquidacion")
 d.abrir("opt", "sin saldo pendiente y con liquidación")
 d.llamar_y_retornar("act", "inm", "pagoAlDiaAdministracion(liquidacion)", "boolean")
 d.cerrar()
-d.llamar("act", "res", "consultarHistorialPago(id)")
+d.llamar("act", "res", "consultarHistorialPago(inmueble, id)")
 d.propio("res", "exigirPropio(id)")
+d.propio("res", "exigirInmueble(otro)")
 d.retornar("res", "act", "List<Pago>")
 
 d = nuevo("Realizar pagos",
@@ -532,7 +553,7 @@ d.retornar("pag", "adm", "Liquidacion")
 d.retornar("adm", "act", "Pago", cerrar=False)
 d.sino("monto distinto al total de la liquidación")
 d.llamar_y_retornar("adm", "pag", "anularPago()", "")
-d.retornar("adm", "act", "")
+d.retornar("adm", "act", "Pago")
 d.cerrar()
 
 d = nuevo("Generar liquidación mensual", [SIS, o("liq", "Liquidacion")])
@@ -587,8 +608,9 @@ d.cerrar()
 d = nuevo("Reservar zona común",
           [RESI, o("res", "Residente"), o("rez", "ReservaZonaComun"), o("zon", "ZonaComun"),
            o("liq", "Liquidacion"), o("not", "Notificacion")])
-d.llamar("act", "res", "reservarZonaComun(id)")
-d.llamar_y_retornar("res", "rez", "ReservaZonaComun(id, duenoReserva, zonaComun)", "")
+d.llamar("act", "res", "reservarZonaComun(inmueble, id)")
+d.propio("res", "exigirInmueble(otro)")
+d.llamar_y_retornar("res", "rez", "ReservaZonaComun(id, duenoReserva, zonaComun, inmueble)", "")
 d.llamar("res", "rez", "estaHabilitado(duenoReserva)")
 d.llamar_y_retornar("rez", "res", "isActive()", "Boolean")
 d.llamar_y_retornar("rez", "liq", "estaVencida()", "Boolean")
@@ -612,6 +634,34 @@ d.llamar("res", "rez", "sePuedeCancelar(ahora)")
 d.propio("rez", "estado(ahora)", "String")
 d.retornar("rez", "res", "boolean")
 d.retornar("res", "act", "")
+
+# ReservaZonaComunServiceImpl.reprogramarReserva: la reserva actual (con su intervalo) dice si aun no empieza; la nueva
+# (mismo dueno, zona e inmueble, otro intervalo) pasa las mismas validaciones de reservar. Dos objetos de la misma clase:
+# rol:Clase.
+d = nuevo("Reprogramar reserva",
+          [RESI, ("act1", "obj", "actual:ReservaZonaComun"), ("nue", "obj", "nueva:ReservaZonaComun"),
+           o("res", "Residente"), o("zon", "ZonaComun"), o("liq", "Liquidacion")])
+d.llamar_y_retornar("act", "act1", "ReservaZonaComun(id, duenoReserva, zonaComun, inmueble, fechaHoraInicio, "
+                                   "fechaHoraFin)", "")
+d.llamar("act", "act1", "sePuedeCancelar(ahora)")
+d.propio("act1", "estado(ahora)", "String")
+d.retornar("act1", "act", "boolean")
+d.abrir("alt", "la reserva ya empezó")
+d.llamar_y_retornar("act", "act1", "estado(ahora)", "String")
+d.sino("la reserva aún no empieza")
+d.llamar_y_retornar("act", "nue", "ReservaZonaComun(id, duenoReserva, zonaComun, inmueble, fechaHoraInicio, "
+                                  "fechaHoraFin)", "")
+d.llamar_y_retornar("act", "nue", "intervaloValido()", "boolean")
+d.llamar("act", "nue", "estaHabilitado(duenoReserva)")
+d.llamar_y_retornar("nue", "res", "isActive()", "Boolean")
+d.llamar_y_retornar("nue", "liq", "estaVencida()", "Boolean")
+d.retornar("nue", "act", "Boolean")
+d.llamar("act", "nue", "validarHorario()")
+d.llamar_y_retornar("nue", "zon", "horarioCubre(inicio, fin)", "boolean")
+d.retornar("nue", "act", "Boolean")
+d.llamar_y_retornar("act", "nue", "cumpleAnticipacion(ahora, horas)", "boolean")
+d.llamar_y_retornar("act", "nue", "cumpleDuracionMaxima(horas)", "boolean")
+d.cerrar()
 
 d = nuevo("Verificar acceso a zona común",
           [VIGI, o("vig", "Vigilante"), o("usr", "Usuario"), o("ua", "UsuarioAutorizado"),
@@ -722,6 +772,15 @@ d.sino("el residente activa o desactiva varios invitados")
 d.llamar("act", "res", "cambiarEstadoInvitados(invitados)")
 d.propio("res", "tieneInvitado(invitado)", "boolean")
 d.retornar("res", "act", "Boolean")
+d.cerrar()
+
+# InvitadoServiceImpl consultar/actualizar: InvitadoMapper pregunta isActive() && autorizacionVigente(). Hidratador arma
+# el UsuarioAutorizado con el constructor vacio + setters (no es una operacion del diagrama). Quitar la autorizacion
+# solo borra el vinculo (agregacion): no llama operaciones del modelo.
+d = nuevo("Gestionar invitados", [RESI, o("ua", "UsuarioAutorizado")])
+d.llamar_y_retornar("act", "ua", "isActive()", "Boolean")
+d.abrir("opt", "el invitado está activo")
+d.llamar_y_retornar("act", "ua", "autorizacionVigente()", "boolean")
 d.cerrar()
 
 d = nuevo("Consultar parqueaderos", [TRES, o("paq", "Paqueadero")])

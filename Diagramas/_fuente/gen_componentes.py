@@ -10,7 +10,7 @@ q = {'"': "&quot;"}
 # tipo: int (interno), core (servicios), ext (externo), db
 COMP = {
     "front": ("ext", "«componente externo»", "Front-end web", ["software-residencial", "(Next.js)"], (40, 200, 230, 130)),
-    "api": ("int", "«component»", "API REST", ["controller", "16 controladores REST"], (460, 210, 260, 130)),
+    "api": ("int", "«component»", "API REST", ["controller", "17 controladores REST"], (460, 210, 260, 130)),
     "seg": ("int", "«component»", "Seguridad", ["security · security.annotation · config", "JwtTokenService, SecurityConfig"], (930, 210, 300, 130)),
     "sch": ("int", "«component»", "Scheduler", ["scheduler", "LiquidacionScheduler"], (380, 500, 140, 110)),
     "srv": ("core", "«component»", "Servicios de negocio", ["service · service.impl · policy", "mapper · factory · service.support", "cache"], (660, 480, 330, 150)),
@@ -39,7 +39,7 @@ ASM = [
     dict(p=(1610, 480), b=(1610, 450), r=[(155, 200), (155, 85), (1610, 85), (1610, 450)],
          label=(["Web Checkout"], 1594, 456, "end")),
     dict(p=(690, 480), b=(690, 450), r=[(690, 340), (690, 450)],
-         label=(["*Service (18 interfaces)"], 706, 455, "start")),
+         label=(["*Service (19 interfaces)"], 706, 455, "start")),
     dict(p=(660, 555), b=(630, 555), r=[(520, 555), (630, 555)],
          label=(["LiquidacionService"], 585, 536, "middle")),
     dict(p=(960, 340), b=(960, 370), r=[(960, 480), (960, 370)],

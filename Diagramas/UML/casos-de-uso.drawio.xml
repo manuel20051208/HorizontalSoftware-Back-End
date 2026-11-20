@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mxfile host="app.diagrams.net">
   <diagram name="Casos de uso" id="iniciar-sesión">
-    <mxGraphModel dx="3103" dy="1703" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3500" pageHeight="1300" math="0" shadow="0">
+    <mxGraphModel dx="3103" dy="1703" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3500" pageHeight="1400" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="CcF7kHvnpvj1t0UgSXWZ-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#76608a;arcSize=7;strokeColor=#432D57;verticalAlign=top;fontSize=12;fontColor=#ffffff;" value="&lt;h2&gt;Modulo zonas comunes&lt;/h2&gt;" vertex="1">
-          <mxGeometry height="380" width="296.25" x="1687.88" y="200" as="geometry" />
+          <mxGeometry height="480" width="296.25" x="1687.88" y="200" as="geometry" />
         </mxCell>
         <mxCell id="CcF7kHvnpvj1t0UgSXWZ-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;arcSize=14;strokeColor=#82b366;verticalAlign=top;" value="&lt;h3&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;Modulo de generacion de reportes&lt;/font&gt;&lt;/h3&gt;" vertex="1">
           <mxGeometry height="155" width="285" x="1955" y="695" as="geometry" />
@@ -321,7 +321,7 @@
           <mxGeometry height="87.5" width="50" x="2370" y="727.5" as="geometry" />
         </mxCell>
         <mxCell id="CcF7kHvnpvj1t0UgSXWZ-94" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;arcSize=14;strokeColor=#d6b656;verticalAlign=top;" value="&lt;h2&gt;&lt;a name=&quot;_Toc239951685&quot;&gt;Modulo de consultas relacionadas al inmueble residencial&lt;/a&gt;&lt;/h2&gt;" vertex="1">
-          <mxGeometry height="380" width="350" x="2540" y="650" as="geometry" />
+          <mxGeometry height="620" width="350" x="2540" y="650" as="geometry" />
         </mxCell>
         <mxCell id="CcF7kHvnpvj1t0UgSXWZ-95" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;align=center;fontSize=14;" value="Consultar dueño del carro" vertex="1">
           <mxGeometry height="60" width="180" x="2620" y="742.5" as="geometry" />
@@ -394,7 +394,7 @@
         <mxCell id="CcF7kHvnpvj1t0UgSXWZ-124" edge="1" parent="1" source="CcF7kHvnpvj1t0UgSXWZ-123" style="endArrow=none;startArrow=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.023;entryY=0.319;entryDx=0;entryDy=0;entryPerimeter=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="CcF7kHvnpvj1t0UgSXWZ-119">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-      </root>
+      <mxCell id="crud-rr" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;" value="Reprogramar reserva" vertex="1"><mxGeometry x="1747.88" y="600" width="190" height="60" as="geometry"/></mxCell><mxCell id="crud-rr-asoc" edge="1" parent="1" source="CcF7kHvnpvj1t0UgSXWZ-54" target="crud-rr" style="endArrow=none;startArrow=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" value=""><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="crud-gin" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;fontSize=14;" value="Gestionar inmuebles" vertex="1"><mxGeometry x="2620" y="1010" width="200" height="60" as="geometry"/></mxCell><mxCell id="crud-gpq" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;fontSize=14;" value="Gestionar parqueaderos" vertex="1"><mxGeometry x="2620" y="1100" width="200" height="60" as="geometry"/></mxCell><mxCell id="crud-gin-asoc" edge="1" parent="1" source="CcF7kHvnpvj1t0UgSXWZ-98" target="crud-gin" style="endArrow=none;startArrow=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" value=""><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="crud-gpq-asoc" edge="1" parent="1" source="CcF7kHvnpvj1t0UgSXWZ-98" target="crud-gpq" style="endArrow=none;startArrow=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" value=""><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="crud-giv" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;fontSize=14;" value="Gestionar invitados" vertex="1"><mxGeometry x="2620" y="1190" width="200" height="60" as="geometry"/></mxCell><mxCell id="crud-giv-asoc" edge="1" parent="1" source="CcF7kHvnpvj1t0UgSXWZ-92" target="crud-giv" style="endArrow=none;startArrow=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.3333;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" value=""><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="2335" y="756.67"/><mxPoint x="2335" y="1220"/></Array></mxGeometry></mxCell></root>
     </mxGraphModel>
   </diagram>
 </mxfile>

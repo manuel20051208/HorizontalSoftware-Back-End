@@ -198,7 +198,7 @@ Un diagrama por caso de uso: los participantes son clases del diagrama de clases
 </details>
 
 <details>
-<summary><b>Zonas comunes y reservas</b> (4)</summary>
+<summary><b>Zonas comunes y reservas</b> (5)</summary>
 
 **Consultar calendario de disponibilidad**
 
@@ -212,6 +212,10 @@ Un diagrama por caso de uso: los participantes son clases del diagrama de clases
 
 ![Secuencia: Cancelar reserva](Diagramas/Secuencia/cancelar-reserva.svg)
 
+**Reprogramar reserva** (cambia el día y el horario de una reserva propia que aún no empieza, con las mismas validaciones de reservar)
+
+![Secuencia: Reprogramar reserva](Diagramas/Secuencia/reprogramar-reserva.svg)
+
 **Verificar acceso a zona común**
 
 ![Secuencia: Verificar acceso a zona común](Diagramas/Secuencia/verificar-acceso-a-zona-comun.svg)
@@ -219,7 +223,7 @@ Un diagrama por caso de uso: los participantes son clases del diagrama de clases
 </details>
 
 <details>
-<summary><b>Portería, incidencias y reportes</b> (6)</summary>
+<summary><b>Portería, incidencias y reportes</b> (9)</summary>
 
 **Consultar dueño del carro**
 
@@ -232,6 +236,18 @@ Un diagrama por caso de uso: los participantes son clases del diagrama de clases
 **Consultar parqueaderos**
 
 ![Secuencia: Consultar parqueaderos](Diagramas/Secuencia/consultar-parqueaderos.svg)
+
+**Gestionar inmuebles** (el administrador edita o elimina un inmueble)
+
+![Secuencia: Gestionar inmuebles](Diagramas/Secuencia/gestionar-inmuebles.svg)
+
+**Gestionar parqueaderos** (el administrador crea, edita o elimina el parqueadero de un inmueble)
+
+![Secuencia: Gestionar parqueaderos](Diagramas/Secuencia/gestionar-parqueaderos.svg)
+
+**Gestionar invitados** (el residente edita o quita la autorización de un invitado)
+
+![Secuencia: Gestionar invitados](Diagramas/Secuencia/gestionar-invitados.svg)
 
 **Registrar incidencia operativa**
 

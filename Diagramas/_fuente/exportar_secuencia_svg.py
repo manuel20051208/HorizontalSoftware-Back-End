@@ -3,7 +3,7 @@ draw.io, asi el SVG del README es exactamente lo que se ve en draw.io (incluidos
 Cada SVG lleva su pagina dentro (atributo content): tambien se abre y se edita en draw.io.
 
 Uso: python Diagramas/_fuente/exportar_secuencia_svg.py [nombre-de-pagina ...]
-     sin argumentos exporta las 33. Necesita internet (carga el visor) y Edge o Chrome.
+     sin argumentos exporta las 37. Necesita internet (carga el visor) y Edge o Chrome.
 """
 import html
 import os
