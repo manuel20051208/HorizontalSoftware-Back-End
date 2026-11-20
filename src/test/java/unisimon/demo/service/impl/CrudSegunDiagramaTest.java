@@ -458,6 +458,22 @@ class CrudSegunDiagramaTest {
     }
 
     @Test
+    @DisplayName("Usuario: consultar devuelve nacimiento y contrato para prellenar el formulario de editar")
+    void usuarioConsultarParaEditar() {
+        when(usuarios.buscarCredencialesPorIdentificacion(1007L)).thenReturn(Optional.of(Proyecciones.de(
+                CredencialesView.class, "id", 7L, "identificacion", 1007L, "nombreCompleto", "Vigilante",
+                "correoElectronico", "vig@mail.com", "tipoUsuario", Usuario.VIGILANTE, "active", true,
+                "fechaNacimiento", LocalDate.of(1990, 5, 1), "inicioContrato", LocalDate.of(2026, 1, 1),
+                "venceContrato", LocalDate.of(2026, 12, 31))));
+
+        var cuenta = usuarioService().consultar(1007L);
+
+        assertThat(cuenta.fechaNacimiento()).isEqualTo(LocalDate.of(1990, 5, 1));
+        assertThat(cuenta.inicioContrato()).isEqualTo(LocalDate.of(2026, 1, 1));
+        assertThat(cuenta.venceContrato()).isEqualTo(LocalDate.of(2026, 12, 31));
+    }
+
+    @Test
     @DisplayName("Usuario: cambiar el correo obliga a verificarlo de nuevo")
     void usuarioActualizarCorreo() {
         when(usuarios.buscarCredencialesPorIdentificacion(1005L))

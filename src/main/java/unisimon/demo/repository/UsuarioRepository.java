@@ -48,6 +48,15 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
 
         /** TRUE cuando el administrador confirmo el codigo enviado al correo (V9). */
         Boolean getCorreoVerificado();
+
+        /** Para prellenar el formulario de editar la cuenta. */
+        LocalDate getFechaNacimiento();
+
+        LocalDate getInicioContrato();
+
+        LocalDate getVenceContrato();
+
+        LocalDate getVenceAutorizacion();
     }
 
     /** Fila para listados de usuarios. */
@@ -72,6 +81,12 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
         LocalDate getVenceAutorizacion();
 
         Boolean getCorreoVerificado();
+
+        LocalDate getFechaNacimiento();
+
+        LocalDate getInicioContrato();
+
+        LocalDate getVenceContrato();
     }
 
     /** Persona relacionada con un inmueble (residente o invitado). */
@@ -109,7 +124,11 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
                    u.tipo_usuario AS "tipoUsuario", u.active AS "active", u.token AS "token",
                    """ + SUB_INMUEBLES + """
                    AS "inmuebles", u.notificacion_leida AS "notificacionLeida",
-                   u.fecha_creacion_cuenta AS "fechaCreacionCuenta", u.correo_verificado AS "correoVerificado"
+                   u.fecha_creacion_cuenta AS "fechaCreacionCuenta", u.correo_verificado AS "correoVerificado",
+                   u.fecha_nacimiento AS "fechaNacimiento",
+                   COALESCE(u.admin_inicio_contrato, u.vigilante_inicio_contrato) AS "inicioContrato",
+                   COALESCE(u.admin_vence_contrato, u.vigilante_vence_contrato) AS "venceContrato",
+                   u.vence_autorizacion AS "venceAutorizacion"
             FROM usuarios u
             """;
 
@@ -119,7 +138,10 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
                    u.active AS "active", """ + SUB_INMUEBLES + """
                    AS "inmuebles",
                    u.fecha_creacion_cuenta AS "fechaCreacionCuenta", u.vence_autorizacion AS "venceAutorizacion",
-                   u.correo_verificado AS "correoVerificado"
+                   u.correo_verificado AS "correoVerificado",
+                   u.fecha_nacimiento AS "fechaNacimiento",
+                   COALESCE(u.admin_inicio_contrato, u.vigilante_inicio_contrato) AS "inicioContrato",
+                   COALESCE(u.admin_vence_contrato, u.vigilante_vence_contrato) AS "venceContrato"
             FROM usuarios u
             """;
 

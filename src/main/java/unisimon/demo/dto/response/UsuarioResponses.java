@@ -16,7 +16,8 @@ public final class UsuarioResponses {
     public record Usuario(Long id, Long identificacion, String nombreCompleto, String correoElectronico,
                           String tipoUsuario, Boolean active, Boolean notificacionLeida,
                           LocalDate fechaCreacionCuenta, List<InmuebleResumen> inmuebles,
-                          Boolean correoVerificado) {
+                          Boolean correoVerificado, LocalDate fechaNacimiento, LocalDate inicioContrato,
+                          LocalDate venceContrato, LocalDate venceAutorizacion) {
     }
 
     /** Resultado de activar/desactivar una cuenta. */

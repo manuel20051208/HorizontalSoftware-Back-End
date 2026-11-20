@@ -20,13 +20,15 @@ public final class UsuarioMapper {
     public static UsuarioResponses.Usuario de(CredencialesView u) {
         return new UsuarioResponses.Usuario(u.getId(), u.getIdentificacion(), u.getNombreCompleto(),
                 u.getCorreoElectronico(), u.getTipoUsuario(), u.getActive(), u.getNotificacionLeida(),
-                u.getFechaCreacionCuenta(), inmuebles(u.getInmuebles()), u.getCorreoVerificado());
+                u.getFechaCreacionCuenta(), inmuebles(u.getInmuebles()), u.getCorreoVerificado(),
+                u.getFechaNacimiento(), u.getInicioContrato(), u.getVenceContrato(), u.getVenceAutorizacion());
     }
 
     public static UsuarioResponses.Usuario de(UsuarioListaView u) {
         return new UsuarioResponses.Usuario(u.getId(), u.getIdentificacion(), u.getNombreCompleto(),
                 u.getCorreoElectronico(), u.getTipoUsuario(), u.getActive(), null, u.getFechaCreacionCuenta(),
-                inmuebles(u.getInmuebles()), u.getCorreoVerificado());
+                inmuebles(u.getInmuebles()), u.getCorreoVerificado(), u.getFechaNacimiento(),
+                u.getInicioContrato(), u.getVenceContrato(), u.getVenceAutorizacion());
     }
 
     public static AuthResponses.Sesion sesion(ParTokens tokens, UsuarioResponses.Usuario usuario) {

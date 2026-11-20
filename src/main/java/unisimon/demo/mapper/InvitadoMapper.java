@@ -19,7 +19,7 @@ public final class InvitadoMapper {
         boolean vigente = dominio.isActive() && dominio.autorizacionVigente();
         return new InvitadoResponses.Invitado(v.getId(), v.getIdentificacion(), v.getNombreCompleto(),
                 v.getCorreoElectronico(), v.getActive(), v.getVenceAutorizacion(), vigente,
-                UsuarioMapper.inmuebles(v.getInmuebles()));
+                UsuarioMapper.inmuebles(v.getInmuebles()), v.getFechaNacimiento());
     }
 
     public static InvitadoResponses.Anfitrion anfitrion(AnfitrionView v) {

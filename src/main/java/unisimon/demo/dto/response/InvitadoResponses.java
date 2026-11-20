@@ -11,7 +11,7 @@ public final class InvitadoResponses {
 
     public record Invitado(Long id, Long identificacion, String nombreCompleto, String correoElectronico,
                            Boolean active, LocalDate venceAutorizacion, Boolean vigente,
-                           List<UsuarioResponses.InmuebleResumen> inmuebles) {
+                           List<UsuarioResponses.InmuebleResumen> inmuebles, LocalDate fechaNacimiento) {
     }
 
     public record Anfitrion(Long id, Long identificacion, String nombreCompleto,

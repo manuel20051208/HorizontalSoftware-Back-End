@@ -28,6 +28,9 @@ public interface InvitadoRepository extends Repository<UsuarioAutorizado, Long> 
 
         /** Inmuebles del invitado como "id|direccion;id|direccion" (vacio o null si no tiene). */
         String getInmuebles();
+
+        /** Para prellenar el formulario de editar el invitado. */
+        LocalDate getFechaNacimiento();
     }
 
     /** Residente que autorizo a un invitado. */
@@ -53,7 +56,7 @@ public interface InvitadoRepository extends Repository<UsuarioAutorizado, Long> 
             SELECT u.id AS "id", u.identificacion AS "identificacion", u.nombre_completo AS "nombreCompleto",
                    u.correo_electronico AS "correoElectronico", u.active AS "active",
                    u.vence_autorizacion AS "venceAutorizacion", """ + SUB_INMUEBLES + """
-                   AS "inmuebles"
+                   AS "inmuebles", u.fecha_nacimiento AS "fechaNacimiento"
             FROM usuarios u
             """;
 
