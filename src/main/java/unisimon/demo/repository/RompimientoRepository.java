@@ -76,4 +76,16 @@ public interface RompimientoRepository extends Repository<Rompimiento, Long> {
             nativeQuery = true)
     int actualizarActiva(@Param("id") Long id, @Param("activa") boolean activa,
                          @Param("fechaAplicacion") LocalDate fechaAplicacion);
+
+    @Query(value = "SELECT COUNT(*) FROM rompimientos WHERE regla_reserva_id = :reglaId", nativeQuery = true)
+    long contarPorRegla(@Param("reglaId") Long reglaId);
+
+    @Query(value = """
+            SELECT EXISTS (SELECT 1 FROM rompimientos WHERE zona_comun_id = :zonaId AND regla_reserva_id = :reglaId)
+            """, nativeQuery = true)
+    boolean existePorZonaYRegla(@Param("zonaId") Long zonaId, @Param("reglaId") Long reglaId);
+
+    @Modifying
+    @Query(value = "DELETE FROM rompimientos WHERE id = :id", nativeQuery = true)
+    int eliminar(@Param("id") Long id);
 }

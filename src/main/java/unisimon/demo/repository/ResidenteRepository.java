@@ -42,9 +42,10 @@ public interface ResidenteRepository extends Repository<Residente, Long> {
                    i.is_active AS "inmuebleActive", l.id AS "liquidacionId", l.estado AS "liquidacionEstado",
                    l.fecha_limite AS "liquidacionFechaLimite", l.total AS "liquidacionTotal"
             FROM usuarios u
-            JOIN inmuebles i ON i.id = u.inmueble_id
+            JOIN usuario_inmuebles ui ON ui.usuario_id = u.id AND ui.inmueble_id = :inmuebleId
+            JOIN inmuebles i ON i.id = ui.inmueble_id
             LEFT JOIN liquidaciones l ON l.id = i.liquidacion_actual_id
             WHERE u.id = :id AND u.tipo_usuario IN ('RESIDENTE', 'USUARIO_AUTORIZADO')
             """, nativeQuery = true)
-    Optional<ContextoResidenteView> buscarContexto(@Param("id") Long id);
+    Optional<ContextoResidenteView> buscarContexto(@Param("id") Long id, @Param("inmuebleId") Long inmuebleId);
 }

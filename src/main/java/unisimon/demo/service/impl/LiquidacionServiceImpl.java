@@ -230,6 +230,59 @@ public class LiquidacionServiceImpl implements LiquidacionService {
         return vigente;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public LiquidacionResponses.Liquidacion consultar(Long liquidacionId) {
+        cargar(liquidacionId);
+        return respuesta(liquidacionId);
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = NombresCache.INMUEBLES, allEntries = true)
+    public LiquidacionResponses.Liquidacion actualizar(Long liquidacionId, LiquidacionRequests.Actualizar s) {
+        Liquidacion liquidacion = noPagada(liquidacionId, "editar");
+        if (s.fechaLimite().isBefore(liquidacion.getPeriodo())) {
+            throw new SolicitudInvalidaException("fechaLimite no puede ser anterior al periodo");
+        }
+        liquidacion.setFechaLimite(s.fechaLimite());
+        liquidacion.setCuotaAdministracion(s.cuotaAdministracion());
+        liquidacion.setValorServiciosComunes(s.valorServiciosComunes());
+        liquidacion.setValorMultas(s.valorMultas());
+        liquidacion.calcularTotal();
+        guardarValores(liquidacion);
+        liquidaciones.actualizarFechaLimite(liquidacionId, s.fechaLimite());
+        return respuesta(liquidacionId);
+    }
+
+    /**
+     * Inmueble ◆— Liquidacion es composicion: la liquidacion es parte del inmueble y se puede borrar sola. Una ya
+     * pagada (AL_DIA) es historial y no se borra. Si era la vigente, pasa a serlo la mas reciente que quede.
+     */
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = NombresCache.INMUEBLES, allEntries = true)
+    public void eliminar(Long liquidacionId) {
+        LiquidacionView vista = liquidaciones.buscarPorId(liquidacionId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("La liquidacion " + liquidacionId + " no existe"));
+        noPagada(liquidacionId, "borrar");
+        boolean eraVigente = liquidaciones.buscarVigenteDeInmueble(vista.getInmuebleId())
+                .map(v -> v.getId().equals(liquidacionId)).orElse(false);
+        liquidaciones.eliminar(liquidacionId);
+        if (eraVigente) {
+            inmuebles.actualizarLiquidacionActual(vista.getInmuebleId(),
+                    liquidaciones.buscarUltimaIdDeInmueble(vista.getInmuebleId()).orElse(null));
+        }
+    }
+
+    private Liquidacion noPagada(Long liquidacionId, String accion) {
+        Liquidacion liquidacion = cargar(liquidacionId);
+        if (Liquidacion.AL_DIA.equals(liquidacion.getEstado())) {
+            throw new ConflictoException("No se puede " + accion + " una liquidacion ya pagada (AL_DIA)");
+        }
+        return liquidacion;
+    }
+
     private Liquidacion cargar(Long liquidacionId) {
         return liquidaciones.buscarPorId(liquidacionId).map(Hidratador::liquidacion)
                 .orElseThrow(() -> new RecursoNoEncontradoException("La liquidacion " + liquidacionId + " no existe"));

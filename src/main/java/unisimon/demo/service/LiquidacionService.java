@@ -44,4 +44,12 @@ public interface LiquidacionService {
 
     /** Un reembolso reabre la liquidacion vigente del inmueble (PENDIENTE, o EN_MORA si ya vencio). */
     void reabrirVigente(Long inmuebleId);
+
+    LiquidacionResponses.Liquidacion consultar(Long liquidacionId);
+
+    /** Fecha limite y valores de una liquidacion que aun no esta pagada; el total lo recalcula el dominio. */
+    LiquidacionResponses.Liquidacion actualizar(Long liquidacionId, LiquidacionRequests.Actualizar solicitud);
+
+    /** Borra una liquidacion no pagada; si era la vigente, la vigente pasa a ser la mas reciente que quede. */
+    void eliminar(Long liquidacionId);
 }

@@ -22,6 +22,9 @@ public interface PasarelaPagoService {
     /** PasarelaPago.consultarEstado(referencia) */
     PagoResponses.EstadoPago consultarEstado(String referencia, UsuarioAutenticado usuario);
 
+    /** Igual que la anterior; si se indico inmueble, la referencia debe ser de ese inmueble. */
+    PagoResponses.EstadoPago consultarEstado(String referencia, UsuarioAutenticado usuario, Long inmuebleId);
+
     /** PasarelaPago.reembolsar(pago): solo pagos aprobados. */
     PagoResponses.Pago reembolsar(Long pagoId);
 }

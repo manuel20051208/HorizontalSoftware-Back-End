@@ -19,12 +19,14 @@ import unisimon.demo.mapper.UsuarioMapper;
 import unisimon.demo.mapper.ZonaMapper;
 import unisimon.demo.model.Inmueble;
 import unisimon.demo.policy.EstadoPagoPolicy;
+import unisimon.demo.repository.AutoRepository;
 import unisimon.demo.repository.InmuebleRepository;
 import unisimon.demo.repository.InmuebleRepository.InmuebleBasicoView;
 import unisimon.demo.repository.InmuebleRepository.InmuebleResumenView;
 import unisimon.demo.repository.LiquidacionRepository;
 import unisimon.demo.repository.ParqueaderoRepository;
 import unisimon.demo.repository.UsuarioRepository;
+import unisimon.demo.repository.UsuarioRepository.UsuarioDeInmuebleView;
 import unisimon.demo.repository.UsuarioRepository.UsuarioListaView;
 import unisimon.demo.repository.ZonaComunRepository;
 import unisimon.demo.service.InmuebleService;
@@ -44,6 +46,7 @@ public class InmuebleServiceImpl implements InmuebleService {
     private final ZonaComunRepository zonas;
     private final LiquidacionRepository liquidaciones;
     private final EstadoPagoPolicy estadoPago;
+    private final AutoRepository autos;
 
     @Override
     @Transactional
@@ -86,6 +89,52 @@ public class InmuebleServiceImpl implements InmuebleService {
                 usuariosDelInmueble.stream().map(UsuarioMapper::de).toList(),
                 zonas.listarActivasDeInmueble(inmuebleId).stream().map(ZonaMapper::zona).toList(),
                 liquidaciones.buscarVigenteDeInmueble(inmuebleId).map(LiquidacionMapper::de).orElse(null));
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = NombresCache.INMUEBLES, allEntries = true)
+    public InmuebleResponses.Detalle actualizar(Long inmuebleId, InmuebleRequests.ActualizarInmueble s) {
+        existente(inmuebleId);
+        String direccion = s.direccionInmueble().trim().toUpperCase(Locale.ROOT);
+        if (inmuebles.existePorDireccionEnOtro(direccion, inmuebleId)) {
+            throw new ConflictoException("Ya existe el inmueble " + direccion);
+        }
+        inmuebles.actualizarDatos(inmuebleId, direccion, s.isActive());
+        return detalle(inmuebleId);
+    }
+
+    /**
+     * Inmueble es el TODO de varias relaciones del diagrama:
+     * composicion con Pago, Paqueadero y Liquidacion (la base los borra en cascada) y agregacion con Residente,
+     * ZonaComun y Notificacion (solo se borra el vinculo; esos objetos siguen existiendo). ReservaZonaComun -> Inmueble
+     * es asociacion: con reservas registradas no se borra (409) y se sugiere desactivarlo.
+     */
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = {NombresCache.INMUEBLES, NombresCache.ZONAS_POR_INMUEBLE}, allEntries = true)
+    public void eliminar(Long inmuebleId) {
+        existente(inmuebleId);
+        if (inmuebles.contarReservas(inmuebleId) > 0) {
+            throw new ConflictoException("El inmueble tiene reservas registradas; desactivelo en lugar de borrarlo");
+        }
+        List<Long> relacionados = usuarios.listarUsuariosDeInmueble(inmuebleId).stream()
+                .map(UsuarioDeInmuebleView::getId).toList();
+        inmuebles.limpiarZonas(inmuebleId);                  // agregacion Inmueble - ZonaComun
+        inmuebles.desvincularNotificaciones(inmuebleId);     // agregacion Inmueble - Notificacion
+        autos.liberarParqueaderosDeInmueble(inmuebleId);     // asociacion Auto - Paqueadero: el auto se queda
+        inmuebles.eliminar(inmuebleId);                      // composicion: pagos, parqueadero y liquidaciones
+        for (Long usuarioId : relacionados) {
+            if (usuarios.contarInmueblesDe(usuarioId) == 0) {
+                usuarios.actualizarToken(usuarioId, null);   // sin inmueble no conserva la sesion
+            }
+        }
+    }
+
+    private void existente(Long inmuebleId) {
+        if (!inmuebles.existePorId(inmuebleId)) {
+            throw new RecursoNoEncontradoException("El inmueble " + inmuebleId + " no existe");
+        }
     }
 
     private InmuebleResponses.Resumen resumen(InmuebleResumenView v) {

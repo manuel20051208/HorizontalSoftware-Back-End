@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,13 +24,14 @@ class ReservaZonaComunTest {
         Residente r = new Residente();
         r.setId(1L);
         r.setActive(activo);
-        r.setInmueble(inmueble);
+        r.setInmuebles(List.of(inmueble));
         return r;
     }
 
-    private ReservaZonaComun reserva() {
+    /** La reserva lleva el inmueble del dueno: estaHabilitado ya no lo toma del residente. */
+    private ReservaZonaComun reserva(Residente dueno) {
         ZonaComun zona = new ZonaComun(1L, "Salon", 5, LocalTime.of(8, 0), LocalTime.of(20, 0));
-        return new ReservaZonaComun(null, null, zona);
+        return new ReservaZonaComun(null, dueno, zona, dueno.getInmuebles().get(0));
     }
 
     @Test
@@ -37,9 +39,12 @@ class ReservaZonaComunTest {
     void habilitado() {
         LocalDate futuro = LocalDate.now().plusDays(5);
 
-        assertThat(reserva().estaHabilitado(residente(true, true, Liquidacion.PENDIENTE, futuro))).isTrue();
-        assertThat(reserva().estaHabilitado(residente(true, true, Liquidacion.AL_DIA, futuro))).isTrue();
-        assertThat(reserva().estaHabilitado(residente(true, true, null, null))).isTrue();
+        Residente pendiente = residente(true, true, Liquidacion.PENDIENTE, futuro);
+        assertThat(reserva(pendiente).estaHabilitado(pendiente)).isTrue();
+        Residente alDia = residente(true, true, Liquidacion.AL_DIA, futuro);
+        assertThat(reserva(alDia).estaHabilitado(alDia)).isTrue();
+        Residente sinLiquidacion = residente(true, true, null, null);
+        assertThat(reserva(sinLiquidacion).estaHabilitado(sinLiquidacion)).isTrue();
     }
 
     @Test
@@ -47,16 +52,21 @@ class ReservaZonaComunTest {
     void inactivos() {
         LocalDate futuro = LocalDate.now().plusDays(5);
 
-        assertThat(reserva().estaHabilitado(residente(false, true, Liquidacion.AL_DIA, futuro))).isFalse();
-        assertThat(reserva().estaHabilitado(residente(true, false, Liquidacion.AL_DIA, futuro))).isFalse();
-        assertThat(reserva().estaHabilitado(null)).isFalse();
+        Residente cuentaInactiva = residente(false, true, Liquidacion.AL_DIA, futuro);
+        assertThat(reserva(cuentaInactiva).estaHabilitado(cuentaInactiva)).isFalse();
+        Residente inmuebleInactivo = residente(true, false, Liquidacion.AL_DIA, futuro);
+        assertThat(reserva(inmuebleInactivo).estaHabilitado(inmuebleInactivo)).isFalse();
+        Residente activo = residente(true, true, Liquidacion.AL_DIA, futuro);
+        assertThat(reserva(activo).estaHabilitado(null)).isFalse();
     }
 
     @Test
     @DisplayName("no esta habilitado si debe la administracion (en mora o vencida)")
     void enMora() {
-        assertThat(reserva().estaHabilitado(residente(true, true, Liquidacion.EN_MORA, LocalDate.now().plusDays(5)))).isFalse();
-        assertThat(reserva().estaHabilitado(residente(true, true, Liquidacion.PENDIENTE, LocalDate.now().minusDays(1)))).isFalse();
+        Residente enMora = residente(true, true, Liquidacion.EN_MORA, LocalDate.now().plusDays(5));
+        assertThat(reserva(enMora).estaHabilitado(enMora)).isFalse();
+        Residente vencida = residente(true, true, Liquidacion.PENDIENTE, LocalDate.now().minusDays(1));
+        assertThat(reserva(vencida).estaHabilitado(vencida)).isFalse();
     }
 
     private static final LocalDate DIA = LocalDate.of(2026, 11, 20);
@@ -64,7 +74,7 @@ class ReservaZonaComunTest {
     private ReservaZonaComun reserva(LocalTime horaInicioZona, LocalTime horaFinZona,
                                      LocalDateTime inicio, LocalDateTime fin) {
         ZonaComun zona = new ZonaComun(1L, "Salon", 5, horaInicioZona, horaFinZona);
-        return new ReservaZonaComun(null, null, zona, inicio, fin);
+        return new ReservaZonaComun(null, null, zona, null, inicio, fin);
     }
 
     private ReservaZonaComun deDiezADoce() {

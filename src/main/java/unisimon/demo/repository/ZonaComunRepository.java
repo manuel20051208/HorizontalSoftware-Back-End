@@ -86,4 +86,35 @@ public interface ZonaComunRepository extends Repository<ZonaComun, Long> {
     @Modifying
     @Query(value = "UPDATE zonas_comunes SET is_active = :activa WHERE id = :id", nativeQuery = true)
     int actualizarEstado(@Param("id") Long id, @Param("activa") boolean activa);
+
+    // ------------------------------------------------------------------ actualizar y eliminar
+
+    @Query(value = """
+            SELECT EXISTS (SELECT 1 FROM zonas_comunes WHERE LOWER(nombre_zona_comun) = LOWER(:nombre) AND id <> :id)
+            """, nativeQuery = true)
+    boolean existePorNombreEnOtra(@Param("nombre") String nombre, @Param("id") Long id);
+
+    @Modifying
+    @Query(value = """
+            UPDATE zonas_comunes
+            SET nombre_zona_comun = :nombre, capacidad = :capacidad, hora_inicio = :inicio, hora_fin = :fin
+            WHERE id = :id
+            """, nativeQuery = true)
+    int actualizarDatos(@Param("id") Long id, @Param("nombre") String nombre, @Param("capacidad") int capacidad,
+                        @Param("inicio") LocalTime inicio, @Param("fin") LocalTime fin);
+
+    @Query(value = "SELECT COUNT(*) FROM reservas_zona_comun WHERE zona_comun_id = :id", nativeQuery = true)
+    long contarReservas(@Param("id") Long id);
+
+    @Query(value = "SELECT COUNT(*) FROM rompimientos WHERE zona_comun_id = :id", nativeQuery = true)
+    long contarRompimientos(@Param("id") Long id);
+
+    /** Inmueble ◇— ZonaComun es agregacion: se borra solo el vinculo, los inmuebles siguen existiendo. */
+    @Modifying
+    @Query(value = "DELETE FROM inmueble_zonas_comunes WHERE zona_comun_id = :id", nativeQuery = true)
+    int desvincularInmuebles(@Param("id") Long id);
+
+    @Modifying
+    @Query(value = "DELETE FROM zonas_comunes WHERE id = :id", nativeQuery = true)
+    int eliminar(@Param("id") Long id);
 }

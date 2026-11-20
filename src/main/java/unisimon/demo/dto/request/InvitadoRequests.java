@@ -30,4 +30,10 @@ public final class InvitadoRequests {
 
     public record CambiarEstadoInvitados(@NotEmpty List<@NotNull Long> invitadoIds) {
     }
+
+    /** venceAutorizacion nula = autorizacion permanente. */
+    public record ActualizarInvitado(@NotBlank @Size(max = 150) String nombreCompleto,
+                                     @Past LocalDate fechaNacimiento,
+                                     LocalDate venceAutorizacion) {
+    }
 }

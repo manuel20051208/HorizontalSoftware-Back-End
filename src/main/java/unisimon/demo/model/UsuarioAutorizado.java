@@ -13,8 +13,8 @@ import java.time.LocalDate;
 
 /**
  * UsuarioAutorizado: invitado de un residente. Segun el diagrama hereda de Residente
- * (y por tanto de Usuario) e implementa NoAdmin.
- * buscarRelacionResidente() recorre los residentes de su inmueble, que el servicio deja cargados.
+ * (y por tanto de Usuario) e implementa NoAdmin. Puede estar relacionado con varios inmuebles.
+ * buscarRelacionResidente() recorre los residentes de todos sus inmuebles, que el servicio deja cargados.
  */
 @Entity
 @DynamicUpdate
@@ -29,9 +29,9 @@ public class UsuarioAutorizado extends Residente implements NoAdmin {
 
     public UsuarioAutorizado(Long id, Long identificacion, String nombreCompleto, LocalDate fechaNacimiento,
                              String correoElectronico, String contrasena, String tipoUsuario,
-                             Inmueble inmueble, Auto auto, LocalDate venceAutorizacion) {
+                             List<Inmueble> inmuebles, Auto auto, LocalDate venceAutorizacion) {
         super(id, identificacion, nombreCompleto, fechaNacimiento, correoElectronico, contrasena, tipoUsuario,
-                inmueble, auto);
+                inmuebles, auto);
         this.venceAutorizacion = venceAutorizacion;
     }
 
@@ -41,16 +41,22 @@ public class UsuarioAutorizado extends Residente implements NoAdmin {
     }
 
     /**
-     * buscarRelacionResidente() : List&lt;Residente&gt; -> los residentes de su inmueble que lo tienen como invitado.
+     * buscarRelacionResidente() : List&lt;Residente&gt; -> los residentes de TODOS sus inmuebles que lo tienen como
+     * invitado, sin repetir.
      */
     public List<Residente> buscarRelacionResidente() {
-        if (getInmueble() == null) {
+        if (getInmuebles() == null) {
             return List.of();
         }
-        return getInmueble().getUsuariosRelacionado().stream()
+        return getInmuebles().stream()
+                .filter(java.util.Objects::nonNull)
+                .flatMap(inmueble -> inmueble.getUsuariosRelacionado().stream())
                 .filter(u -> u instanceof Residente && !(u instanceof UsuarioAutorizado))
                 .map(u -> (Residente) u)
                 .filter(r -> r.tieneInvitado(this))
-                .toList();
+                .collect(java.util.stream.Collectors.collectingAndThen(
+                        java.util.stream.Collectors.toMap(Residente::getId, r -> r, (a, b) -> a,
+                                java.util.LinkedHashMap::new),
+                        m -> List.copyOf(m.values())));
     }
 }

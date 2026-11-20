@@ -14,6 +14,7 @@ import unisimon.demo.dto.response.PagoResponses;
 import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.exception.NoAutenticadoException;
 import unisimon.demo.exception.PasarelaNoDisponibleException;
+import unisimon.demo.exception.ProhibidoException;
 import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.exception.SolicitudInvalidaException;
 import unisimon.demo.integration.wompi.ClienteWompi;
@@ -133,8 +134,17 @@ public class PasarelaPagoServiceImpl implements PasarelaPagoService {
     @Override
     @Transactional(readOnly = true)
     public PagoResponses.EstadoPago consultarEstado(String referencia, UsuarioAutenticado usuario) {
+        return consultarEstado(referencia, usuario, null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PagoResponses.EstadoPago consultarEstado(String referencia, UsuarioAutenticado usuario, Long inmuebleId) {
         PagoView pago = pagos.buscarPorReferencia(referencia)
                 .orElseThrow(() -> new RecursoNoEncontradoException("No existe un pago con esa referencia"));
+        if (inmuebleId != null && !inmuebleId.equals(pago.getInmuebleId())) {
+            throw new ProhibidoException("Ese pago pertenece a otro inmueble");
+        }
         accesoInmueble.verificar(usuario, pago.getInmuebleId());
         return new PagoResponses.EstadoPago(referencia, pago.getEstado());
     }

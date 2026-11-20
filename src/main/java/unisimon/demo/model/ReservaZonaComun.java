@@ -51,19 +51,25 @@ public class ReservaZonaComun {
     @JoinColumn(name = "zona_comun_id")
     private ZonaComun zonaComun;
 
+    /** El apartamento del residente al que pertenece la reserva (una reserva es de UN inmueble). */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "inmueble_id")
+    private Inmueble inmueble;
+
     private LocalDateTime fechaHoraInicio;
 
     private LocalDateTime fechaHoraFin;
 
-    public ReservaZonaComun(Long id, Residente duenoReserva, ZonaComun zonaComun) {
+    public ReservaZonaComun(Long id, Residente duenoReserva, ZonaComun zonaComun, Inmueble inmueble) {
         this.id = id;
         this.duenoReserva = duenoReserva;
         this.zonaComun = zonaComun;
+        this.inmueble = inmueble;
     }
 
-    public ReservaZonaComun(Long id, Residente duenoReserva, ZonaComun zonaComun,
+    public ReservaZonaComun(Long id, Residente duenoReserva, ZonaComun zonaComun, Inmueble inmueble,
                             LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin) {
-        this(id, duenoReserva, zonaComun);
+        this(id, duenoReserva, zonaComun, inmueble);
         this.fechaHoraInicio = fechaHoraInicio;
         this.fechaHoraFin = fechaHoraFin;
     }
@@ -81,9 +87,8 @@ public class ReservaZonaComun {
         return fechaHoraInicio != null && fechaHoraFin != null && fechaHoraFin.isAfter(fechaHoraInicio);
     }
 
-    /** mostrarZonasComunes() : List&lt;ZonaComun&gt; -> las zonas activas asignadas al inmueble del dueno. */
+    /** mostrarZonasComunes() : List&lt;ZonaComun&gt; -> las zonas activas asignadas al inmueble de la reserva. */
     public List<ZonaComun> mostrarZonasComunes() {
-        Inmueble inmueble = duenoReserva == null ? null : duenoReserva.getInmueble();
         if (inmueble == null) {
             return List.of();
         }
@@ -131,7 +136,6 @@ public class ReservaZonaComun {
         if (duenoReserva == null || !duenoReserva.isActive()) {
             return false;
         }
-        Inmueble inmueble = duenoReserva.getInmueble();
         if (inmueble == null || !Boolean.TRUE.equals(inmueble.getIsActive())) {
             return false;
         }

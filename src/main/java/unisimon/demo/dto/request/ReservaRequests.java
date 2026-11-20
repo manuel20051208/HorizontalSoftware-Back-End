@@ -18,4 +18,8 @@ public final class ReservaRequests {
                            @NotNull LocalDateTime fechaHoraInicio,
                            @NotNull LocalDateTime fechaHoraFin) {
     }
+
+    /** Nuevo intervalo de una reserva que aun no empieza; se valida igual que al reservar. */
+    public record Reprogramar(@NotNull LocalDateTime fechaHoraInicio, @NotNull LocalDateTime fechaHoraFin) {
+    }
 }

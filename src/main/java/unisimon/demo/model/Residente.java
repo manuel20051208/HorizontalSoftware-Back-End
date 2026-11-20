@@ -10,7 +10,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,9 +22,10 @@ import java.util.List;
 /**
  * Residente (hereda de Usuario e implementa NoAdmin).
  * <p>
- * Sus operaciones del diagrama estan aqui con su firma. Trabajan sobre su inmueble (liquidacion, pagos, zonas
- * y notificaciones ya cargados), sus invitados y el contexto que deja el servicio en {@code reservas}; leer y
- * guardar en la base de datos lo hace la capa de servicios.
+ * Sus operaciones del diagrama estan aqui con su firma. Trabajan sobre el inmueble elegido (liquidacion, pagos,
+ * zonas y notificaciones ya cargados), sus invitados y el contexto que deja el servicio en {@code reservas};
+ * leer y guardar en la base de datos lo hace la capa de servicios. Un residente puede estar relacionado con
+ * varios inmuebles (relacion N:M en {@code usuario_inmuebles}).
  */
 @Entity
 @DynamicUpdate
@@ -35,9 +35,11 @@ import java.util.List;
 @NoArgsConstructor
 public class Residente extends Usuario implements NoAdmin {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "inmueble_id")
-    private Inmueble inmueble;
+    @ManyToMany
+    @JoinTable(name = "usuario_inmuebles",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "inmueble_id"))
+    private List<Inmueble> inmuebles = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(name = "residente_invitados",
@@ -55,9 +57,9 @@ public class Residente extends Usuario implements NoAdmin {
 
     public Residente(Long id, Long identificacion, String nombreCompleto, LocalDate fechaNacimiento,
                      String correoElectronico, String contrasena, String tipoUsuario,
-                     Inmueble inmueble, Auto auto) {
+                     List<Inmueble> inmuebles, Auto auto) {
         super(id, identificacion, nombreCompleto, fechaNacimiento, correoElectronico, contrasena, tipoUsuario);
-        this.inmueble = inmueble;
+        this.inmuebles = inmuebles == null ? new ArrayList<>() : inmuebles;
         this.auto = auto;
     }
 
@@ -110,26 +112,31 @@ public class Residente extends Usuario implements NoAdmin {
         return vigente;
     }
 
-    /** consultarHistorialPago(id : Long) : List&lt;Pago&gt; -> los pagos registrados del inmueble del residente. */
-    public List<Pago> consultarHistorialPago(Long id) {
+    /**
+     * consultarHistorialPago(inmueble : Inmueble, id : Long) : List&lt;Pago&gt;.
+     * Los pagos registrados del inmueble elegido del residente {@code id} (este).
+     */
+    public List<Pago> consultarHistorialPago(Inmueble inmueble, Long id) {
         exigirPropio(id);
+        exigirInmueble(inmueble);
         return inmueble == null ? List.of() : List.copyOf(inmueble.getRegistroPagos());
     }
 
     /**
-     * reservarZonaComun(id : Long) : ZonaComun.
-     * Devuelve la zona comun {@code id} que el residente puede reservar: tiene que estar activa y asignada a su
+     * reservarZonaComun(inmueble : Inmueble, id : Long) : ZonaComun.
+     * Devuelve la zona comun {@code id} que el residente puede reservar: tiene que estar activa y asignada a ESE
      * inmueble, y el residente habilitado (cuenta e inmueble activos y sin mora). Cupo, horario y reglas del
      * intervalo los valida ReservaZonaComun.
      */
-    public ZonaComun reservarZonaComun(Long id) {
+    public ZonaComun reservarZonaComun(Inmueble inmueble, Long id) {
+        exigirInmueble(inmueble);
         ZonaComun zona = inmueble == null ? null : inmueble.getZonaComunes().stream()
                 .filter(z -> id != null && id.equals(z.getId()) && Boolean.TRUE.equals(z.getIsActive()))
                 .findFirst().orElse(null);
         if (zona == null) {
             throw new IllegalArgumentException("La zona comun no existe, esta inactiva o no esta asignada a su inmueble");
         }
-        if (!new ReservaZonaComun(null, this, zona).estaHabilitado(this)) {
+        if (!new ReservaZonaComun(null, this, zona, inmueble).estaHabilitado(this)) {
             throw new IllegalStateException("No esta habilitado para reservar: cuenta o inmueble inactivo, o en mora");
         }
         return zona;
@@ -162,10 +169,11 @@ public class Residente extends Usuario implements NoAdmin {
 
     @Override
     protected boolean perteneceA(Inmueble otro) {
-        if (otro == null || inmueble == null) {
+        if (otro == null || inmuebles == null) {
             return false;
         }
-        return otro == inmueble || (otro.getId() != null && otro.getId().equals(inmueble.getId()));
+        return inmuebles.stream().anyMatch(i -> i == otro
+                || (i != null && otro.getId() != null && otro.getId().equals(i.getId())));
     }
 
     private void exigirPropio(Long id) {

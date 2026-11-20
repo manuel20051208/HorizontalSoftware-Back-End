@@ -144,4 +144,32 @@ public interface InmuebleRepository extends Repository<Inmueble, Long> {
             ON CONFLICT DO NOTHING
             """, nativeQuery = true)
     int asignarZonaATodos(@Param("zonaId") Long zonaId);
+
+    // ------------------------------------------------------------------ actualizar y eliminar
+
+    @Query(value = """
+            SELECT EXISTS (SELECT 1 FROM inmuebles WHERE LOWER(direccion_inmueble) = LOWER(:direccion) AND id <> :id)
+            """, nativeQuery = true)
+    boolean existePorDireccionEnOtro(@Param("direccion") String direccion, @Param("id") Long id);
+
+    @Modifying
+    @Query(value = "UPDATE inmuebles SET direccion_inmueble = :direccion, is_active = :activo WHERE id = :id",
+            nativeQuery = true)
+    int actualizarDatos(@Param("id") Long id, @Param("direccion") String direccion, @Param("activo") boolean activo);
+
+    @Query(value = "SELECT COUNT(*) FROM reservas_zona_comun WHERE inmueble_id = :inmuebleId", nativeQuery = true)
+    long contarReservas(@Param("inmuebleId") Long inmuebleId);
+
+    /** Inmueble ◇— Notificacion es agregacion: se borra solo el vinculo, la notificacion sigue existiendo. */
+    @Modifying
+    @Query(value = "DELETE FROM inmueble_notificaciones WHERE inmueble_id = :inmuebleId", nativeQuery = true)
+    int desvincularNotificaciones(@Param("inmuebleId") Long inmuebleId);
+
+    /**
+     * Borra el inmueble. La base borra en cascada sus partes por composicion (pagos, parqueadero y liquidaciones)
+     * y los vinculos usuario_inmuebles (agregacion: los usuarios siguen existiendo).
+     */
+    @Modifying
+    @Query(value = "DELETE FROM inmuebles WHERE id = :id", nativeQuery = true)
+    int eliminar(@Param("id") Long id);
 }

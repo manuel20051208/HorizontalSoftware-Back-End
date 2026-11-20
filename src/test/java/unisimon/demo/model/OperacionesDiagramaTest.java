@@ -26,7 +26,7 @@ class OperacionesDiagramaTest {
 
     private static Residente residente(long id, Inmueble inmueble) {
         Residente r = new Residente(id, 300L + id, "Residente " + id, null, "r" + id + "@mail.com", "hash",
-                Usuario.RESIDENTE, inmueble, null);
+                Usuario.RESIDENTE, List.of(inmueble), null);
         r.setActive(true);
         inmueble.getUsuariosRelacionado().add(r);
         return r;
@@ -34,7 +34,7 @@ class OperacionesDiagramaTest {
 
     private static UsuarioAutorizado invitado(long id, Inmueble inmueble, Residente anfitrion) {
         UsuarioAutorizado ua = new UsuarioAutorizado(id, 900L + id, "Invitado " + id, null, "i" + id + "@mail.com",
-                "hash", Usuario.USUARIO_AUTORIZADO, inmueble, null, HOY.plusDays(5));
+                "hash", Usuario.USUARIO_AUTORIZADO, List.of(inmueble), null, HOY.plusDays(5));
         ua.setActive(true);
         inmueble.getUsuariosRelacionado().add(ua);
         anfitrion.getInvitados().add(ua);
@@ -244,13 +244,13 @@ class OperacionesDiagramaTest {
 
         assertThat(r.consultarEstadoCuenta(inmueble, 3L)).isSameAs(l);
         assertThat(l.getTotal()).isEqualByComparingTo("320000");
-        assertThat(r.consultarHistorialPago(3L)).containsExactly(pago);
+        assertThat(r.consultarHistorialPago(inmueble, 3L)).containsExactly(pago);
         assertThat(r.consultarNotificacion(inmueble, 3L)).containsExactly(n);
 
         assertThatThrownBy(() -> r.consultarEstadoCuenta(inmueble, 4L)).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> r.consultarNotificacion(new Inmueble(2L, "B-101", null, true), 3L))
                 .isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> r.consultarHistorialPago(4L)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> r.consultarHistorialPago(inmueble, 4L)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -283,11 +283,11 @@ class OperacionesDiagramaTest {
         ZonaComun zona = zona(1L);
         inmueble.getZonaComunes().add(zona);
 
-        assertThat(r.reservarZonaComun(1L)).isSameAs(zona);
-        assertThatThrownBy(() -> r.reservarZonaComun(2L)).isInstanceOf(IllegalArgumentException.class);
+        assertThat(r.reservarZonaComun(inmueble, 1L)).isSameAs(zona);
+        assertThatThrownBy(() -> r.reservarZonaComun(inmueble, 2L)).isInstanceOf(IllegalArgumentException.class);
 
         liquidacion(inmueble, "300000").marcarEnMora();
-        assertThatThrownBy(() -> r.reservarZonaComun(1L)).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> r.reservarZonaComun(inmueble, 1L)).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
@@ -297,8 +297,10 @@ class OperacionesDiagramaTest {
         Residente r = residente(3L, inmueble);
         ZonaComun zona = zona(1L);
         LocalDateTime ahora = LocalDateTime.now();
-        ReservaZonaComun futura = new ReservaZonaComun(1L, r, zona, ahora.plusDays(1), ahora.plusDays(1).plusHours(2));
-        ReservaZonaComun enCurso = new ReservaZonaComun(2L, r, zona, ahora.minusHours(1), ahora.plusHours(1));
+        ReservaZonaComun futura = new ReservaZonaComun(1L, r, zona, inmueble,
+                ahora.plusDays(1), ahora.plusDays(1).plusHours(2));
+        ReservaZonaComun enCurso = new ReservaZonaComun(2L, r, zona, inmueble,
+                ahora.minusHours(1), ahora.plusHours(1));
         r.getReservas().addAll(List.of(futura, enCurso));
 
         assertThat(r.verReservas(3L)).containsExactly(futura, enCurso);
@@ -322,7 +324,8 @@ class OperacionesDiagramaTest {
         ZonaComun zona = zona(1L);
         LocalDateTime ahora = LocalDateTime.now();
         Vigilante v = vigilante();
-        ReservaZonaComun enCurso = new ReservaZonaComun(1L, r, zona, ahora.minusHours(1), ahora.plusHours(1));
+        ReservaZonaComun enCurso = new ReservaZonaComun(1L, r, zona, inmueble,
+                ahora.minusHours(1), ahora.plusHours(1));
         List<ReservaZonaComun> reservas = List.of(enCurso);
         List<UsuarioAutorizado> invitados = List.of(ua);
 
@@ -349,7 +352,8 @@ class OperacionesDiagramaTest {
         UsuarioAutorizado ua = invitado(10L, inmueble, r);
         UsuarioAutorizado otro = invitado(11L, inmueble, r);
         LocalDateTime ahora = LocalDateTime.now();
-        ReservaZonaComun reserva = new ReservaZonaComun(1L, r, zona(1L), ahora.plusDays(1), ahora.plusDays(1).plusHours(2));
+        ReservaZonaComun reserva = new ReservaZonaComun(1L, r, zona(1L), inmueble,
+                ahora.plusDays(1), ahora.plusDays(1).plusHours(2));
         Vigilante v = vigilante();
         assertThat(v.consultarInvitados(null)).isEmpty();
         assertThat(v.consultarReservas(null)).isEmpty();
@@ -389,12 +393,13 @@ class OperacionesDiagramaTest {
         inactiva.cambiarEstado();
         inmueble.getZonaComunes().addAll(List.of(activa, inactiva));
 
-        ReservaZonaComun reserva = new ReservaZonaComun(null, r, activa);
+        ReservaZonaComun reserva = new ReservaZonaComun(null, r, activa, inmueble);
         assertThat(reserva.mostrarZonasComunes()).containsExactly(activa);
         assertThat(reserva.validarHorario(LocalTime.of(10, 0))).isTrue();
         assertThat(reserva.validarHorario(LocalTime.of(23, 0))).isFalse();
         assertThat(reserva.verificarDisponibilidad(LocalTime.of(10, 0))).isTrue();
-        assertThat(new ReservaZonaComun(null, r, inactiva).verificarDisponibilidad(LocalTime.of(10, 0))).isFalse();
+        assertThat(new ReservaZonaComun(null, r, inactiva, inmueble)
+                .verificarDisponibilidad(LocalTime.of(10, 0))).isFalse();
     }
 
     @Test

@@ -19,10 +19,9 @@ import unisimon.demo.model.UsuarioAutorizado;
 import unisimon.demo.policy.GeneradorContrasena;
 import unisimon.demo.repository.InvitadoRepository;
 import unisimon.demo.repository.InvitadoRepository.InvitadoView;
-import unisimon.demo.repository.ResidenteRepository;
-import unisimon.demo.repository.ResidenteRepository.ContextoResidenteView;
 import unisimon.demo.repository.UsuarioRepository;
 import unisimon.demo.service.InvitadoService;
+import unisimon.demo.service.support.InmuebleDelResidente;
 import unisimon.demo.service.support.UsuarioPersistidor;
 
 import java.time.Clock;
@@ -40,7 +39,7 @@ public class InvitadoServiceImpl implements InvitadoService {
 
     private final InvitadoRepository invitados;
     private final UsuarioRepository usuarios;
-    private final ResidenteRepository residentes;
+    private final InmuebleDelResidente inmuebleDelResidente;
     private final UsuarioPersistidor persistidor;
     private final PasswordEncoder codificador;
     private final GeneradorContrasena generador;
@@ -48,8 +47,9 @@ public class InvitadoServiceImpl implements InvitadoService {
 
     @Override
     @Transactional
-    public InvitadoResponses.Invitado crearInvitado(Long residenteId, InvitadoRequests.CrearInvitado s) {
-        ContextoResidenteView residente = contexto(residenteId);
+    public InvitadoResponses.Invitado crearInvitado(Long residenteId, Long inmuebleId,
+                                                    InvitadoRequests.CrearInvitado s) {
+        Long elegido = inmuebleDelResidente.resolver(residenteId, inmuebleId).getId();
         if (s.venceAutorizacion() != null && s.venceAutorizacion().isBefore(LocalDate.now(reloj))) {
             throw new SolicitudInvalidaException("venceAutorizacion no puede estar en el pasado");
         }
@@ -64,19 +64,21 @@ public class InvitadoServiceImpl implements InvitadoService {
         }
         UsuarioAutorizado invitado = new UsuarioAutorizado(null, s.identificacion(), s.nombreCompleto().trim(),
                 s.fechaNacimiento(), correo, codificador.encode(generador.generar()), Usuario.USUARIO_AUTORIZADO,
-                Hidratador.referenciaInmueble(residente.getInmuebleId()), null, s.venceAutorizacion());
+                List.of(Hidratador.referenciaInmueble(elegido)), null, s.venceAutorizacion());
         invitado.setActive(true);   // lo autoriza el propio residente
-        Long id = persistidor.insertar(invitado);
+        Long id = persistidor.insertar(invitado, elegido);   // el invitado tambien se vincula al inmueble
         invitados.vincular(residenteId, id);
         return InvitadoMapper.invitado(invitados.buscarPorId(id).orElseThrow());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Pagina<InvitadoResponses.Invitado> listarInvitados(Long residenteId, SolicitudPagina pagina) {
-        List<InvitadoResponses.Invitado> filas = invitados.listarDeResidente(residenteId, pagina.limite(),
-                pagina.desplazamiento()).stream().map(InvitadoMapper::invitado).toList();
-        return Pagina.de(filas, invitados.contarDeResidente(residenteId), pagina);
+    public Pagina<InvitadoResponses.Invitado> listarInvitados(Long residenteId, Long inmuebleId,
+                                                              SolicitudPagina pagina) {
+        Long elegido = inmuebleDelResidente.resolver(residenteId, inmuebleId).getId();
+        List<InvitadoResponses.Invitado> filas = invitados.listarDeResidenteEnInmueble(residenteId, elegido,
+                pagina.limite(), pagina.desplazamiento()).stream().map(InvitadoMapper::invitado).toList();
+        return Pagina.de(filas, invitados.contarDeResidenteEnInmueble(residenteId, elegido), pagina);
     }
 
     @Override
@@ -120,8 +122,35 @@ public class InvitadoServiceImpl implements InvitadoService {
         return invitado;
     }
 
-    private ContextoResidenteView contexto(Long residenteId) {
-        return residentes.buscarContexto(residenteId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("El residente no tiene un inmueble asignado"));
+    @Override
+    @Transactional(readOnly = true)
+    public InvitadoResponses.Invitado consultarInvitado(Long residenteId, Long invitadoId) {
+        return InvitadoMapper.invitado(propio(residenteId, invitadoId));
+    }
+
+    @Override
+    @Transactional
+    public InvitadoResponses.Invitado actualizarInvitado(Long residenteId, Long invitadoId,
+                                                         InvitadoRequests.ActualizarInvitado s) {
+        propio(residenteId, invitadoId);
+        if (s.venceAutorizacion() != null && s.venceAutorizacion().isBefore(LocalDate.now(reloj))) {
+            throw new SolicitudInvalidaException("venceAutorizacion no puede estar en el pasado");
+        }
+        invitados.actualizarDatos(invitadoId, s.nombreCompleto().trim(), s.fechaNacimiento(), s.venceAutorizacion());
+        return InvitadoMapper.invitado(invitados.buscarPorId(invitadoId).orElseThrow());
+    }
+
+    /**
+     * Residente ◇— UsuarioAutorizado es agregacion: el residente quita SU vinculo y el invitado sigue existiendo.
+     * Si ya ningun residente lo autoriza, queda inactivo (no puede entrar).
+     */
+    @Override
+    @Transactional
+    public void eliminarInvitado(Long residenteId, Long invitadoId) {
+        propio(residenteId, invitadoId);
+        invitados.desvincular(residenteId, invitadoId);
+        if (invitados.contarAnfitriones(invitadoId) == 0) {
+            usuarios.actualizarActive(invitadoId, false);
+        }
     }
 }

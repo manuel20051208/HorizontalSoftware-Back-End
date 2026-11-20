@@ -4,27 +4,30 @@ import unisimon.demo.dto.response.UsuarioResponses;
 
 import java.util.List;
 
-/** Relacion de las cuentas de residente con un inmueble: consultar, listar, vincular, cambiar y desvincular. */
+/**
+ * Relacion N:M de las cuentas de residentes e invitados con los inmuebles: consultar, vincular, mudar, quitar y
+ * listar las personas de un inmueble. Todas las operaciones las autoriza el administrador que las pide.
+ */
 public interface RelacionInmuebleService {
 
-    /** El inmueble de la cuenta (null si no tiene). Solo cuentas de residente. */
-    UsuarioResponses.RelacionInmueble consultar(Long adminId, Long identificacion);
+    /** Los inmuebles de la cuenta (residentes e invitados pueden tener varios). */
+    UsuarioResponses.UsuarioInmuebles consultar(Long adminId, Long identificacion);
 
-    /** Los residentes de un inmueble, por nombre. */
-    List<UsuarioResponses.RelacionInmueble> listarPorInmueble(Long adminId, Long inmuebleId);
-
-    /** Vincula una cuenta de residente sin inmueble; no reactiva la cuenta. */
-    UsuarioResponses.RelacionInmueble vincular(Long adminId, Long identificacion, Long inmuebleId);
+    /** Agrega un inmueble a la cuenta; no activa ni verifica el correo. */
+    UsuarioResponses.UsuarioInmuebles vincular(Long adminId, Long identificacion, Long inmuebleId);
 
     /**
-     * Cambia el inmueble de un residente: los invitados exclusivos se mudan con el, el auto libera el parqueadero
-     * viejo y se cancelan las reservas futuras de zonas que no tenga el inmueble nuevo.
+     * Mudanza: quita el inmueble de origen y agrega el destino. Arrastra invitados, libera el parqueadero del
+     * origen y mueve (o cancela) las reservas futuras.
      */
-    UsuarioResponses.RelacionInmueble cambiar(Long adminId, Long identificacion, Long inmuebleId);
+    UsuarioResponses.UsuarioInmuebles mudar(Long adminId, Long identificacion, Long inmuebleOrigenId,
+                                            Long inmuebleDestinoId);
 
     /**
-     * Desvincula la cuenta: sus invitados exclusivos quedan inactivos, el auto libera el parqueadero, se cancelan
-     * sus reservas futuras y la cuenta, si estaba activa, queda inactiva y sin sesion.
+     * Quita un inmueble a la cuenta. Si se queda sin ninguno y estaba activa, la desactiva y cierra su sesion.
      */
-    void desvincular(Long adminId, Long identificacion);
+    void desvincular(Long adminId, Long identificacion, Long inmuebleId);
+
+    /** Residentes e invitados relacionados con el inmueble, por tipo y nombre. */
+    List<UsuarioResponses.UsuarioDeInmueble> listarUsuariosDeInmueble(Long adminId, Long inmuebleId);
 }

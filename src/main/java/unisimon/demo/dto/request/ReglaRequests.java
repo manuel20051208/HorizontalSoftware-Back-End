@@ -26,4 +26,8 @@ public final class ReglaRequests {
     public record ActualizarReglas(@NotNull @PositiveOrZero Integer anticipacionMinimaHoras,
                                    @NotNull @Positive Integer duracionMaximaHoras) {
     }
+
+    /** Aplica una regla existente a otra zona comun (crea el Rompimiento). */
+    public record AsignarZona(@NotNull Long zonaComunId, @Size(max = 500) String observaciones) {
+    }
 }

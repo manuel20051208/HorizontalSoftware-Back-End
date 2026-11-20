@@ -15,4 +15,10 @@ public interface InmuebleService {
 
     /** Detalle con usuarios (Inmueble.mostrarUsuarios), zonas asignadas y liquidacion vigente. */
     InmuebleResponses.Detalle detalle(Long inmuebleId);
+
+    /** Cambia la direccion y el estado (isActive) del inmueble. */
+    InmuebleResponses.Detalle actualizar(Long inmuebleId, InmuebleRequests.ActualizarInmueble solicitud);
+
+    /** Borra el inmueble respetando composicion y agregacion del diagrama de clases. */
+    void eliminar(Long inmuebleId);
 }

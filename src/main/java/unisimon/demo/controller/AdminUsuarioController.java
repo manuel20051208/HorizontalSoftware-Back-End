@@ -25,8 +25,7 @@ import unisimon.demo.service.UsuarioGestionService;
 
 import java.util.Map;
 
-/** El administrador crea cuentas, verifica su correo con el codigo de 4 cifras, autoriza o bloquea usuarios y
- * relaciona a los residentes con su inmueble. */
+/** El administrador crea cuentas, verifica su correo, autoriza o bloquea usuarios y gestiona sus inmuebles. */
 @RestController
 @RequestMapping("/api/admin/usuarios")
 @RequiredArgsConstructor
@@ -48,6 +47,26 @@ public class AdminUsuarioController {
                                                    @RequestParam(required = false) Boolean active,
                                                    SolicitudPagina pagina) {
         return usuarios.listar(tipo, active, pagina);
+    }
+
+    @SoloAdministrador
+    @GetMapping("/{identificacion}")
+    public UsuarioResponses.Usuario consultar(@PathVariable Long identificacion) {
+        return usuarios.consultar(identificacion);
+    }
+
+    @SoloAdministrador
+    @PutMapping("/{identificacion}")
+    public UsuarioResponses.Usuario actualizar(@PathVariable Long identificacion,
+                                               @Valid @RequestBody UsuarioRequests.ActualizarUsuario solicitud) {
+        return usuarios.actualizar(identificacion, solicitud);
+    }
+
+    @SoloAdministrador
+    @DeleteMapping("/{identificacion}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminar(UsuarioAutenticado usuario, @PathVariable Long identificacion) {
+        usuarios.eliminar(usuario.id(), identificacion);
     }
 
     /** Confirma el codigo que llego al correo del usuario: el correo queda verificado y la cuenta activa. */
@@ -73,38 +92,41 @@ public class AdminUsuarioController {
         return usuarios.modificarActive(identificacion);
     }
 
-    // ------------------------------------------------------------------ relacion con el inmueble
+    // ------------------------------------------------------------------ relacion N:M con los inmuebles
 
     @SoloAdministrador
-    @GetMapping("/{identificacion}/inmueble")
-    public UsuarioResponses.RelacionInmueble consultarInmueble(UsuarioAutenticado usuario,
-                                                               @PathVariable Long identificacion) {
+    @GetMapping("/{identificacion}/inmuebles")
+    public UsuarioResponses.UsuarioInmuebles consultarInmuebles(UsuarioAutenticado usuario,
+                                                                @PathVariable Long identificacion) {
         return relaciones.consultar(usuario.id(), identificacion);
     }
 
-    /** Vincula la cuenta con un inmueble; la cuenta no se reactiva por esto. */
+    /** Agrega un inmueble a la cuenta; no la reactiva ni verifica su correo. */
     @SoloAdministrador
-    @PostMapping("/{identificacion}/inmueble")
+    @PostMapping("/{identificacion}/inmuebles")
     @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioResponses.RelacionInmueble vincularInmueble(UsuarioAutenticado usuario,
-                                                              @PathVariable Long identificacion,
-                                                              @Valid @RequestBody UsuarioRequests.RelacionInmueble s) {
+    public UsuarioResponses.UsuarioInmuebles vincularInmueble(UsuarioAutenticado usuario,
+                                                             @PathVariable Long identificacion,
+                                                             @Valid @RequestBody UsuarioRequests.RelacionInmueble s) {
         return relaciones.vincular(usuario.id(), identificacion, s.inmuebleId());
     }
 
+    /** Mudanza del inmueble de la ruta al inmueble del cuerpo. */
     @SoloAdministrador
-    @PutMapping("/{identificacion}/inmueble")
-    public UsuarioResponses.RelacionInmueble cambiarInmueble(UsuarioAutenticado usuario,
-                                                             @PathVariable Long identificacion,
-                                                             @Valid @RequestBody UsuarioRequests.RelacionInmueble s) {
-        return relaciones.cambiar(usuario.id(), identificacion, s.inmuebleId());
+    @PutMapping("/{identificacion}/inmuebles/{inmuebleId}")
+    public UsuarioResponses.UsuarioInmuebles mudarInmueble(UsuarioAutenticado usuario,
+                                                          @PathVariable Long identificacion,
+                                                          @PathVariable Long inmuebleId,
+                                                          @Valid @RequestBody UsuarioRequests.RelacionInmueble s) {
+        return relaciones.mudar(usuario.id(), identificacion, inmuebleId, s.inmuebleId());
     }
 
-    /** Quita la cuenta del inmueble; si estaba activa queda inactiva y sin sesion. */
+    /** Quita ese inmueble; si la cuenta se queda sin ninguno y estaba activa, pierde su sesion. */
     @SoloAdministrador
-    @DeleteMapping("/{identificacion}/inmueble")
+    @DeleteMapping("/{identificacion}/inmuebles/{inmuebleId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void desvincularInmueble(UsuarioAutenticado usuario, @PathVariable Long identificacion) {
-        relaciones.desvincular(usuario.id(), identificacion);
+    public void desvincularInmueble(UsuarioAutenticado usuario, @PathVariable Long identificacion,
+                                   @PathVariable Long inmuebleId) {
+        relaciones.desvincular(usuario.id(), identificacion, inmuebleId);
     }
 }

@@ -18,6 +18,7 @@ import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.exception.SolicitudInvalidaException;
 import unisimon.demo.model.Liquidacion;
 import unisimon.demo.model.ReservaZonaComun;
+import unisimon.demo.repository.InmuebleRepository.InmuebleBasicoView;
 import unisimon.demo.repository.ReservaZonaComunRepository;
 import unisimon.demo.repository.ReservaZonaComunRepository.ReservaView;
 import unisimon.demo.repository.ResidenteRepository;
@@ -28,6 +29,7 @@ import unisimon.demo.repository.ZonaComunRepository;
 import unisimon.demo.repository.ZonaComunRepository.ZonaView;
 import unisimon.demo.service.NotificacionService;
 import unisimon.demo.service.ZonaComunService;
+import unisimon.demo.service.support.InmuebleDelResidente;
 import unisimon.demo.support.Proyecciones;
 
 import java.time.Clock;
@@ -44,6 +46,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -65,6 +68,8 @@ class ReservaZonaComunServiceImplTest {
     private NotificacionService notificaciones;
     @Mock
     private ZonaComunService zonasComunes;
+    @Mock
+    private InmuebleDelResidente inmuebleDelResidente;
 
     private ReservaZonaComunServiceImpl servicio;
 
@@ -72,7 +77,11 @@ class ReservaZonaComunServiceImplTest {
     void preparar() {
         Clock reloj = Clock.fixed(Instant.parse("2026-11-08T15:00:00Z"), ZoneOffset.UTC);
         servicio = new ReservaZonaComunServiceImpl(reservas, zonas, residentes, reglas, notificaciones, zonasComunes,
-                reloj);
+                inmuebleDelResidente, reloj);
+    }
+
+    private InmuebleBasicoView inmueble() {
+        return Proyecciones.de(InmuebleBasicoView.class, "id", 1L, "direccionInmueble", "A-302", "isActive", true);
     }
 
     private ContextoResidenteView residente(boolean activo, String estadoLiquidacion) {
@@ -102,7 +111,8 @@ class ReservaZonaComunServiceImplTest {
     }
 
     private void escenarioReservable() {
-        when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(true, Liquidacion.PENDIENTE)));
+        when(inmuebleDelResidente.resolver(5L, 1L)).thenReturn(inmueble());
+        when(residentes.buscarContexto(5L, 1L)).thenReturn(Optional.of(residente(true, Liquidacion.PENDIENTE)));
         when(zonas.buscarPorId(7L)).thenReturn(Optional.of(zona()));
         when(zonas.listarActivasDeInmueble(1L)).thenReturn(List.of(zona()));
     }
@@ -120,12 +130,13 @@ class ReservaZonaComunServiceImplTest {
         when(reservas.insertar(any(ReservaZonaComun.class))).thenReturn(40L);
         when(reservas.buscarPorId(40L)).thenReturn(Optional.of(reserva(inicio, fin)));
 
-        ReservaResponses.Reserva respuesta = servicio.reservarZonaComun(5L, pedir(inicio, fin.plusSeconds(30)));
+        ReservaResponses.Reserva respuesta = servicio.reservarZonaComun(5L, 1L, pedir(inicio, fin.plusSeconds(30)));
 
         ArgumentCaptor<ReservaZonaComun> guardada = ArgumentCaptor.forClass(ReservaZonaComun.class);
         verify(reservas).insertar(guardada.capture());
         assertThat(guardada.getValue().getFechaHoraInicio()).isEqualTo(inicio);
         assertThat(guardada.getValue().getFechaHoraFin()).isEqualTo(fin);   // truncada al minuto
+        assertThat(guardada.getValue().getInmueble().getId()).isEqualTo(1L);   // el inmueble elegido
         assertThat(respuesta.estado()).isEqualTo(ReservaZonaComun.PROGRAMADA);
         assertThat(respuesta.cancelable()).isTrue();
         assertThat(respuesta.enCurso()).isFalse();
@@ -135,11 +146,12 @@ class ReservaZonaComunServiceImplTest {
     @Test
     @DisplayName("no reserva si el fin no es posterior al inicio (400)")
     void reservarIntervaloInvalido() {
-        when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(true, Liquidacion.PENDIENTE)));
+        when(inmuebleDelResidente.resolver(5L, 1L)).thenReturn(inmueble());
+        when(residentes.buscarContexto(5L, 1L)).thenReturn(Optional.of(residente(true, Liquidacion.PENDIENTE)));
         when(zonas.buscarPorId(7L)).thenReturn(Optional.of(zona()));
         LocalDateTime inicio = PASADO_MANANA.atTime(10, 0);
 
-        assertThatThrownBy(() -> servicio.reservarZonaComun(5L, pedir(inicio, inicio)))
+        assertThatThrownBy(() -> servicio.reservarZonaComun(5L, 1L, pedir(inicio, inicio)))
                 .isInstanceOf(SolicitudInvalidaException.class);
         verify(reservas, never()).insertar(any());
     }
@@ -149,7 +161,7 @@ class ReservaZonaComunServiceImplTest {
     void reservarEnElPasado() {
         escenarioReservable();
 
-        assertThatThrownBy(() -> servicio.reservarZonaComun(5L, pedir(AHORA.minusHours(1), AHORA.plusHours(1))))
+        assertThatThrownBy(() -> servicio.reservarZonaComun(5L, 1L, pedir(AHORA.minusHours(1), AHORA.plusHours(1))))
                 .isInstanceOf(SolicitudInvalidaException.class)
                 .hasMessageContaining("futuro");
         verify(reservas, never()).insertar(any());
@@ -160,7 +172,7 @@ class ReservaZonaComunServiceImplTest {
     void reservarFueraDeHorario() {
         escenarioReservable();
 
-        assertThatThrownBy(() -> servicio.reservarZonaComun(5L,
+        assertThatThrownBy(() -> servicio.reservarZonaComun(5L, 1L,
                 pedir(PASADO_MANANA.atTime(21, 0), PASADO_MANANA.atTime(23, 0))))
                 .isInstanceOf(ConflictoException.class)
                 .hasMessageContaining("horario");
@@ -173,7 +185,7 @@ class ReservaZonaComunServiceImplTest {
         escenarioReservable();
         when(reglas.buscarLimitesDeZona(7L)).thenReturn(limites(72, null));
 
-        assertThatThrownBy(() -> servicio.reservarZonaComun(5L,
+        assertThatThrownBy(() -> servicio.reservarZonaComun(5L, 1L,
                 pedir(PASADO_MANANA.atTime(10, 0), PASADO_MANANA.atTime(12, 0))))
                 .isInstanceOf(ConflictoException.class)
                 .hasMessageContaining("72 horas de anticipacion");
@@ -185,7 +197,7 @@ class ReservaZonaComunServiceImplTest {
         escenarioReservable();
         when(reglas.buscarLimitesDeZona(7L)).thenReturn(limites(1, 2));
 
-        assertThatThrownBy(() -> servicio.reservarZonaComun(5L,
+        assertThatThrownBy(() -> servicio.reservarZonaComun(5L, 1L,
                 pedir(PASADO_MANANA.atTime(10, 0), PASADO_MANANA.atTime(13, 0))))
                 .isInstanceOf(ConflictoException.class)
                 .hasMessageContaining("maximo 2 horas");
@@ -199,7 +211,7 @@ class ReservaZonaComunServiceImplTest {
         LocalDateTime fin = PASADO_MANANA.atTime(12, 0);
         when(reservas.contarSolapadas(7L, inicio, fin)).thenReturn(2L);
 
-        assertThatThrownBy(() -> servicio.reservarZonaComun(5L, pedir(inicio, fin)))
+        assertThatThrownBy(() -> servicio.reservarZonaComun(5L, 1L, pedir(inicio, fin)))
                 .isInstanceOf(ConflictoException.class)
                 .hasMessageContaining("cupo");
     }
@@ -212,7 +224,7 @@ class ReservaZonaComunServiceImplTest {
         LocalDateTime fin = PASADO_MANANA.atTime(12, 0);
         when(reservas.existeSolapadaDeResidente(5L, 7L, inicio, fin)).thenReturn(true);
 
-        assertThatThrownBy(() -> servicio.reservarZonaComun(5L, pedir(inicio, fin)))
+        assertThatThrownBy(() -> servicio.reservarZonaComun(5L, 1L, pedir(inicio, fin)))
                 .isInstanceOf(ConflictoException.class)
                 .hasMessageContaining("se cruza");
     }
@@ -220,11 +232,12 @@ class ReservaZonaComunServiceImplTest {
     @Test
     @DisplayName("un residente en mora no esta habilitado para reservar (403)")
     void reservarEnMora() {
-        when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(true, Liquidacion.EN_MORA)));
+        when(inmuebleDelResidente.resolver(5L, 1L)).thenReturn(inmueble());
+        when(residentes.buscarContexto(5L, 1L)).thenReturn(Optional.of(residente(true, Liquidacion.EN_MORA)));
         when(zonas.buscarPorId(7L)).thenReturn(Optional.of(zona()));
         when(zonas.listarActivasDeInmueble(1L)).thenReturn(List.of(zona()));
 
-        assertThatThrownBy(() -> servicio.reservarZonaComun(5L,
+        assertThatThrownBy(() -> servicio.reservarZonaComun(5L, 1L,
                 pedir(PASADO_MANANA.atTime(10, 0), PASADO_MANANA.atTime(12, 0))))
                 .isInstanceOf(ProhibidoException.class);
     }
@@ -232,11 +245,12 @@ class ReservaZonaComunServiceImplTest {
     @Test
     @DisplayName("no reserva una zona que el inmueble no tiene asignada (403)")
     void reservarZonaNoAsignada() {
-        when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(true, Liquidacion.PENDIENTE)));
+        when(inmuebleDelResidente.resolver(5L, 1L)).thenReturn(inmueble());
+        when(residentes.buscarContexto(5L, 1L)).thenReturn(Optional.of(residente(true, Liquidacion.PENDIENTE)));
         when(zonas.buscarPorId(7L)).thenReturn(Optional.of(zona()));
         when(zonas.listarActivasDeInmueble(1L)).thenReturn(List.of());
 
-        assertThatThrownBy(() -> servicio.reservarZonaComun(5L,
+        assertThatThrownBy(() -> servicio.reservarZonaComun(5L, 1L,
                 pedir(PASADO_MANANA.atTime(10, 0), PASADO_MANANA.atTime(12, 0))))
                 .isInstanceOf(ProhibidoException.class);
     }
@@ -283,19 +297,19 @@ class ReservaZonaComunServiceImplTest {
         LocalDateTime inicio = PASADO_MANANA.atTime(10, 0);
         LocalDateTime fin = PASADO_MANANA.atTime(12, 0);
 
-        ReservaResponses.Disponibilidad libre = servicio.verificarDisponibilidad(5L, 7L, inicio, fin);
+        ReservaResponses.Disponibilidad libre = servicio.verificarDisponibilidad(5L, 1L, 7L, inicio, fin);
         assertThat(libre.disponible()).isTrue();
         assertThat(libre.habilitado()).isTrue();
         assertThat(libre.mensaje()).isEqualTo("Disponible");
 
-        ReservaResponses.Disponibilidad tarde = servicio.verificarDisponibilidad(5L, 7L,
+        ReservaResponses.Disponibilidad tarde = servicio.verificarDisponibilidad(5L, 1L, 7L,
                 PASADO_MANANA.atTime(21, 0), PASADO_MANANA.atTime(23, 0));
         assertThat(tarde.horarioValido()).isFalse();
         assertThat(tarde.hayCupo()).isTrue();
         assertThat(tarde.disponible()).isFalse();
 
         when(reservas.contarSolapadas(7L, inicio, fin)).thenReturn(2L);
-        ReservaResponses.Disponibilidad llena = servicio.verificarDisponibilidad(5L, 7L, inicio, fin);
+        ReservaResponses.Disponibilidad llena = servicio.verificarDisponibilidad(5L, 1L, 7L, inicio, fin);
         assertThat(llena.hayCupo()).isFalse();
         assertThat(llena.horarioValido()).isTrue();
         assertThat(llena.disponible()).isFalse();
@@ -303,17 +317,18 @@ class ReservaZonaComunServiceImplTest {
     }
 
     @Test
-    @DisplayName("verReservas filtra por estado con la hora actual y rechaza estados desconocidos")
+    @DisplayName("verReservas filtra por inmueble y estado con la hora actual, y rechaza estados desconocidos")
     void verReservas() {
         SolicitudPagina pagina = SolicitudPagina.primera();
-        assertThatThrownBy(() -> servicio.verReservas(5L, "CANCELADA", pagina))
+        assertThatThrownBy(() -> servicio.verReservas(5L, null, "CANCELADA", pagina))
                 .isInstanceOf(SolicitudInvalidaException.class);
 
-        when(reservas.listarPorResidente(5L, ReservaZonaComun.FINALIZADA, AHORA, 20, 0L))
+        when(inmuebleDelResidente.resolver(5L, 1L)).thenReturn(inmueble());
+        when(reservas.listarPorResidenteEnInmueble(5L, 1L, ReservaZonaComun.FINALIZADA, AHORA, 20, 0L))
                 .thenReturn(List.of(reserva(AHORA.minusHours(3), AHORA.minusHours(1))));
-        when(reservas.contarPorResidente(5L, ReservaZonaComun.FINALIZADA, AHORA)).thenReturn(1L);
+        when(reservas.contarPorResidenteEnInmueble(5L, 1L, ReservaZonaComun.FINALIZADA, AHORA)).thenReturn(1L);
 
-        var resultado = servicio.verReservas(5L, " finalizada ", pagina);
+        var resultado = servicio.verReservas(5L, 1L, " finalizada ", pagina);
 
         assertThat(resultado.totalElementos()).isEqualTo(1L);
         assertThat(resultado.contenido()).singleElement()
@@ -321,27 +336,130 @@ class ReservaZonaComunServiceImplTest {
                     assertThat(r.estado()).isEqualTo(ReservaZonaComun.FINALIZADA);
                     assertThat(r.cancelable()).isFalse();
                 });
+        verify(reservas, never()).listarPorResidenteEnInmueble(5L, 3L, ReservaZonaComun.FINALIZADA, AHORA, 20, 0L);
     }
 
     @Test
-    @DisplayName("zonasDisponibles lista las zonas del inmueble del residente")
+    @DisplayName("verReservas usa el inmueble elegido y cuenta solo las reservas de ese inmueble")
+    void verReservasDelInmuebleElegido() {
+        SolicitudPagina pagina = SolicitudPagina.primera();
+        when(inmuebleDelResidente.resolver(5L, 3L))
+                .thenReturn(Proyecciones.de(InmuebleBasicoView.class, "id", 3L, "direccionInmueble", "C-101",
+                        "isActive", true));
+        when(reservas.listarPorResidenteEnInmueble(5L, 3L, null, AHORA, 20, 0L))
+                .thenReturn(List.of(reserva(AHORA.minusHours(3), AHORA.minusHours(1))));
+        when(reservas.contarPorResidenteEnInmueble(5L, 3L, null, AHORA)).thenReturn(7L);
+
+        var resultado = servicio.verReservas(5L, 3L, null, pagina);
+
+        assertThat(resultado.totalElementos()).isEqualTo(7L);
+        assertThat(resultado.totalPaginas()).isEqualTo(1);
+        assertThat(resultado.contenido()).hasSize(1);
+        verify(reservas, never()).listarPorResidenteEnInmueble(5L, 1L, null, AHORA, 20, 0L);
+        verify(reservas, never()).contarPorResidenteEnInmueble(5L, 1L, null, AHORA);
+    }
+
+    @Test
+    @DisplayName("verReservas rechaza un inmueble ajeno antes de consultar las reservas")
+    void verReservasInmuebleAjeno() {
+        when(inmuebleDelResidente.resolver(5L, 9L)).thenThrow(new ProhibidoException("Ese inmueble no es suyo"));
+
+        assertThatThrownBy(() -> servicio.verReservas(5L, 9L, null, SolicitudPagina.primera()))
+                .isInstanceOf(ProhibidoException.class)
+                .hasMessageContaining("no es suyo");
+        verifyNoInteractions(reservas);
+    }
+
+    @Test
+    @DisplayName("zonasDisponibles lista las zonas del inmueble elegido")
     void zonasDisponibles() {
         SolicitudPagina pagina = SolicitudPagina.primera();
         Pagina<ZonaResponses.Zona> zonasDelInmueble = Pagina.de(List.of(), 0L, pagina);
-        when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(true, Liquidacion.PENDIENTE)));
+        when(inmuebleDelResidente.resolver(5L, 1L)).thenReturn(inmueble());
         when(zonasComunes.mostrarZonasComunes(1L, pagina)).thenReturn(zonasDelInmueble);
 
-        assertThat(servicio.zonasDisponibles(5L, pagina)).isSameAs(zonasDelInmueble);
+        assertThat(servicio.zonasDisponibles(5L, 1L, pagina)).isSameAs(zonasDelInmueble);
     }
 
     @Test
-    @DisplayName("zonasDisponibles sin inmueble asignado es 404")
+    @DisplayName("zonasDisponibles sin inmueble asignado es 409")
     void zonasDisponiblesSinInmueble() {
-        when(residentes.buscarContexto(5L)).thenReturn(Optional.empty());
+        when(inmuebleDelResidente.resolver(5L, null))
+                .thenThrow(new ConflictoException("Primero relacione la cuenta con un inmueble"));
 
-        assertThatThrownBy(() -> servicio.zonasDisponibles(5L, SolicitudPagina.primera()))
-                .isInstanceOf(RecursoNoEncontradoException.class)
-                .hasMessageContaining("no tiene un inmueble asignado");
+        assertThatThrownBy(() -> servicio.zonasDisponibles(5L, null, SolicitudPagina.primera()))
+                .isInstanceOf(ConflictoException.class)
+                .hasMessageContaining("Primero relacione la cuenta con un inmueble");
         verify(zonasComunes, never()).mostrarZonasComunes(any(), any());
+    }
+
+    // ------------------------------------------------------------------ consultar y reprogramar
+
+    @Test
+    @DisplayName("reprogramar valida sin contarse a si misma y guarda solo el nuevo intervalo")
+    void reprogramarCorrecto() {
+        escenarioReservable();
+        LocalDateTime inicio = PASADO_MANANA.atTime(10, 0);
+        LocalDateTime nuevoInicio = PASADO_MANANA.atTime(14, 0);
+        LocalDateTime nuevoFin = PASADO_MANANA.atTime(16, 0);
+        when(reservas.buscarPorId(40L)).thenReturn(Optional.of(reserva(inicio, inicio.plusHours(2))),
+                Optional.of(reserva(nuevoInicio, nuevoFin)));
+        when(reservas.contarSolapadasExcepto(7L, nuevoInicio, nuevoFin, 40L)).thenReturn(1L);
+
+        ReservaResponses.Reserva respuesta = servicio.reprogramarReserva(5L, 40L,
+                new ReservaRequests.Reprogramar(nuevoInicio, nuevoFin));
+
+        verify(reservas).actualizarIntervalo(40L, nuevoInicio, nuevoFin);
+        verify(reservas, never()).contarSolapadas(any(), any(), any());
+        assertThat(respuesta.fechaHoraInicio()).isEqualTo(nuevoInicio);
+    }
+
+    @Test
+    @DisplayName("no reprograma una reserva ajena (403)")
+    void reprogramarAjena() {
+        LocalDateTime inicio = PASADO_MANANA.atTime(10, 0);
+        when(reservas.buscarPorId(40L)).thenReturn(Optional.of(reserva(inicio, inicio.plusHours(2))));
+
+        assertThatThrownBy(() -> servicio.reprogramarReserva(9L, 40L,
+                new ReservaRequests.Reprogramar(inicio.plusHours(3), inicio.plusHours(4))))
+                .isInstanceOf(ProhibidoException.class);
+        verify(reservas, never()).actualizarIntervalo(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("no reprograma una reserva que ya empezo (409)")
+    void reprogramarEmpezada() {
+        when(reservas.buscarPorId(40L)).thenReturn(Optional.of(reserva(AHORA.minusHours(1), AHORA.plusHours(1))));
+
+        assertThatThrownBy(() -> servicio.reprogramarReserva(5L, 40L,
+                new ReservaRequests.Reprogramar(PASADO_MANANA.atTime(10, 0), PASADO_MANANA.atTime(11, 0))))
+                .isInstanceOf(ConflictoException.class);
+        verify(reservas, never()).actualizarIntervalo(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("reprogramar sin cupo en el nuevo horario responde 409 y no guarda")
+    void reprogramarSinCupo() {
+        escenarioReservable();
+        LocalDateTime inicio = PASADO_MANANA.atTime(10, 0);
+        LocalDateTime nuevoInicio = PASADO_MANANA.atTime(14, 0);
+        when(reservas.buscarPorId(40L)).thenReturn(Optional.of(reserva(inicio, inicio.plusHours(2))));
+        when(reservas.contarSolapadasExcepto(7L, nuevoInicio, nuevoInicio.plusHours(1), 40L)).thenReturn(2L);
+
+        assertThatThrownBy(() -> servicio.reprogramarReserva(5L, 40L,
+                new ReservaRequests.Reprogramar(nuevoInicio, nuevoInicio.plusHours(1))))
+                .isInstanceOf(ConflictoException.class)
+                .hasMessageContaining("cupo");
+        verify(reservas, never()).actualizarIntervalo(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("consultar una reserva ajena responde 403")
+    void consultarAjena() {
+        LocalDateTime inicio = PASADO_MANANA.atTime(10, 0);
+        when(reservas.buscarPorId(40L)).thenReturn(Optional.of(reserva(inicio, inicio.plusHours(2))));
+
+        assertThatThrownBy(() -> servicio.consultarReserva(9L, 40L)).isInstanceOf(ProhibidoException.class);
+        assertThat(servicio.consultarReserva(5L, 40L).id()).isEqualTo(40L);
     }
 }

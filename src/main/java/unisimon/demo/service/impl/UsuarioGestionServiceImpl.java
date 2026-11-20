@@ -18,12 +18,16 @@ import unisimon.demo.mapper.UsuarioMapper;
 import unisimon.demo.model.Usuario;
 import unisimon.demo.policy.PoliticaContrasena;
 import unisimon.demo.repository.InmuebleRepository;
+import unisimon.demo.repository.InvitadoRepository;
+import unisimon.demo.repository.NotificacionRepository;
+import unisimon.demo.repository.ReglaReservaRepository;
 import unisimon.demo.repository.UsuarioRepository;
 import unisimon.demo.repository.UsuarioRepository.CredencialesView;
 import unisimon.demo.service.CodigoVerificacionService;
 import unisimon.demo.service.UsuarioGestionService;
 import unisimon.demo.service.support.UsuarioPersistidor;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -46,6 +50,9 @@ public class UsuarioGestionServiceImpl implements UsuarioGestionService {
     private final PasswordEncoder codificador;
     private final PoliticaContrasena politica;
     private final CodigoVerificacionService codigos;
+    private final ReglaReservaRepository reglas;
+    private final InvitadoRepository invitados;
+    private final NotificacionRepository notificaciones;
 
     @Override
     @Transactional
@@ -61,7 +68,7 @@ public class UsuarioGestionServiceImpl implements UsuarioGestionService {
             throw new RecursoNoEncontradoException("El inmueble " + s.inmuebleId() + " no existe");
         }
         Usuario nuevo = fabrica.crear(s, codificador.encode(s.contrasena()));
-        Long id = persistidor.insertar(nuevo);
+        Long id = persistidor.insertar(nuevo, s.inmuebleId());   // residente: primer vinculo N:M
         codigos.emitir(id, nuevo.getCorreoElectronico());   // queda inactiva hasta verificar el correo
         return UsuarioMapper.de(usuarios.buscarCredencialesPorId(id).orElseThrow());
     }
@@ -70,7 +77,7 @@ public class UsuarioGestionServiceImpl implements UsuarioGestionService {
     @Transactional
     public UsuarioResponses.Usuario verificarCorreo(Long identificacion, String codigo) {
         CredencialesView usuario = pendienteDeVerificar(identificacion);
-        if (Usuario.RESIDENTE.equals(usuario.getTipoUsuario()) && usuario.getInmuebleId() == null) {
+        if (usuarios.contarInmueblesDe(usuario.getId()) == 0) {
             throw new ConflictoException("Primero relacione la cuenta con un inmueble");
         }
         codigos.verificar(usuario.getId(), codigo);   // REQUIRES_NEW: un intento fallido queda guardado
@@ -135,7 +142,9 @@ public class UsuarioGestionServiceImpl implements UsuarioGestionService {
         if (nuevoEstado && !esInvitado && !Boolean.TRUE.equals(usuario.getCorreoVerificado())) {
             throw new ConflictoException("Primero verifique el correo con el codigo que se le envio");
         }
-        if (nuevoEstado && Usuario.RESIDENTE.equals(usuario.getTipoUsuario()) && usuario.getInmuebleId() == null) {
+        if (nuevoEstado && (Usuario.RESIDENTE.equals(usuario.getTipoUsuario())
+                || Usuario.USUARIO_AUTORIZADO.equals(usuario.getTipoUsuario()))
+                && usuarios.contarInmueblesDe(usuario.getId()) == 0) {
             throw new ConflictoException("Primero relacione la cuenta con un inmueble");
         }
         usuarios.actualizarActive(usuario.getId(), nuevoEstado);
@@ -143,5 +152,73 @@ public class UsuarioGestionServiceImpl implements UsuarioGestionService {
             usuarios.actualizarToken(usuario.getId(), null); // un usuario desactivado pierde su sesion
         }
         return UsuarioMapper.estadoActivo(usuario.getId(), usuario.getNombreCompleto(), nuevoEstado);
+    }
+
+    // ------------------------------------------------------------------ consultar, actualizar y eliminar
+
+    @Override
+    @Transactional(readOnly = true)
+    public UsuarioResponses.Usuario consultar(Long identificacion) {
+        return UsuarioMapper.de(buscarPorIdentificacion(identificacion));
+    }
+
+    @Override
+    @Transactional
+    public UsuarioResponses.Usuario actualizar(Long identificacion, UsuarioRequests.ActualizarUsuario s) {
+        CredencialesView usuario = buscarPorIdentificacion(identificacion);
+        Long id = usuario.getId();
+        String correo = s.correoElectronico().trim().toLowerCase(Locale.ROOT);
+        if (usuarios.existePorCorreoEnOtro(correo, id)) {
+            throw new ConflictoException("Ya existe una cuenta con ese correo");
+        }
+        String tipo = usuario.getTipoUsuario();
+        if (Usuario.ADMINISTRADOR.equals(tipo) || Usuario.VIGILANTE.equals(tipo)) {
+            validarContrato(s.inicioContrato(), s.venceContrato());
+            if (Usuario.ADMINISTRADOR.equals(tipo)) {
+                usuarios.actualizarContratoAdministrador(id, s.inicioContrato(), s.venceContrato());
+            } else {
+                usuarios.actualizarContratoVigilante(id, s.inicioContrato(), s.venceContrato());
+            }
+        } else if (Usuario.USUARIO_AUTORIZADO.equals(tipo)) {
+            usuarios.actualizarVenceAutorizacion(id, s.venceAutorizacion());
+        }
+        usuarios.actualizarDatos(id, s.nombreCompleto().trim(), s.fechaNacimiento(), correo);
+        boolean cambioCorreo = !correo.equalsIgnoreCase(usuario.getCorreoElectronico());
+        if (cambioCorreo && !Usuario.USUARIO_AUTORIZADO.equals(tipo)) {
+            usuarios.reiniciarVerificacion(id);   // el correo nuevo se verifica otra vez con un codigo
+            codigos.emitir(id, correo);
+        }
+        return UsuarioMapper.de(usuarios.buscarCredencialesPorId(id).orElseThrow());
+    }
+
+    /**
+     * Borra la cuenta siguiendo el diagrama: sus partes por composicion (Auto y ReservaZonaComun del Residente) se
+     * borran en cascada en la base; en las agregaciones (Residente ◇— UsuarioAutorizado, Notificacion ◇— Usuario,
+     * Inmueble ◇— Residente) solo se quita el vinculo. ReglaReserva -> Administrador impide borrar (409) al
+     * administrador que creo reglas.
+     */
+    @Override
+    @Transactional
+    public void eliminar(Long adminId, Long identificacion) {
+        CredencialesView usuario = buscarPorIdentificacion(identificacion);
+        if (usuario.getId().equals(adminId)) {
+            throw new ConflictoException("No puede borrar su propia cuenta");
+        }
+        if (Usuario.ADMINISTRADOR.equals(usuario.getTipoUsuario())
+                && reglas.contarPorAdministrador(usuario.getId()) > 0) {
+            throw new ConflictoException("El administrador creo reglas de reserva; no se puede borrar su cuenta");
+        }
+        invitados.desvincularTodos(usuario.getId());
+        notificaciones.quitarDestinatario(usuario.getId());
+        usuarios.eliminar(usuario.getId());
+    }
+
+    private static void validarContrato(LocalDate inicio, LocalDate vence) {
+        if (inicio == null || vence == null) {
+            throw new SolicitudInvalidaException("inicioContrato y venceContrato son obligatorios para este tipo");
+        }
+        if (vence.isBefore(inicio)) {
+            throw new SolicitudInvalidaException("venceContrato no puede ser anterior a inicioContrato");
+        }
     }
 }

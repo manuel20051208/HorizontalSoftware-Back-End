@@ -17,6 +17,7 @@ import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.mapper.Hidratador;
 import unisimon.demo.mapper.InvitadoMapper;
 import unisimon.demo.mapper.ReservaMapper;
+import unisimon.demo.model.Inmueble;
 import unisimon.demo.model.Notificacion;
 import unisimon.demo.model.Usuario;
 import unisimon.demo.model.UsuarioAutorizado;
@@ -34,8 +35,9 @@ import unisimon.demo.service.VigilanteService;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 /** Porteria: consulta de reservas, verificacion de acceso a zonas e ingreso de invitados. */
 @Service
@@ -120,12 +122,17 @@ public class VigilanteServiceImpl implements VigilanteService {
                     vista.getNombreCompleto(), List.of());
         }
         List<AnfitrionView> anfitriones = invitados.listarAnfitriones(vista.getId());
-        List<String> avisados = anfitriones.stream().map(AnfitrionView::getInmuebleId).filter(Objects::nonNull)
-                .distinct()
-                .map(inmuebleId -> {
-                    notificaciones.notificarVisita(inmuebleId, vista.getNombreCompleto());   // Notificacion.notificarVisita
-                    return anfitriones.stream().filter(a -> inmuebleId.equals(a.getInmuebleId()))
-                            .findFirst().map(AnfitrionView::getDireccionInmueble).orElse(String.valueOf(inmuebleId));
+        // Un invitado puede tener varios anfitriones y cada uno varios inmuebles: avisar una sola vez por inmueble.
+        Map<Long, String> inmuebles = new LinkedHashMap<>();
+        for (AnfitrionView anfitrion : anfitriones) {
+            for (Inmueble inmueble : Hidratador.inmuebles(anfitrion.getInmuebles())) {
+                inmuebles.putIfAbsent(inmueble.getId(), inmueble.getDireccionInmueble());
+            }
+        }
+        List<String> avisados = inmuebles.entrySet().stream()
+                .map(entrada -> {
+                    notificaciones.notificarVisita(entrada.getKey(), vista.getNombreCompleto());
+                    return entrada.getValue();
                 })
                 .toList();
         return new VigilanteResponses.Ingreso(true, "Ingreso permitido", vista.getNombreCompleto(), avisados);

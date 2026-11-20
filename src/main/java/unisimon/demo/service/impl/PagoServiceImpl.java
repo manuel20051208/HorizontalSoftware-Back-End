@@ -19,16 +19,17 @@ import unisimon.demo.model.Pago;
 import unisimon.demo.model.PasarelaPago;
 import unisimon.demo.policy.AccesoInmueblePolicy;
 import unisimon.demo.repository.InmuebleRepository;
+import unisimon.demo.repository.InmuebleRepository.InmuebleBasicoView;
 import unisimon.demo.repository.LiquidacionRepository;
 import unisimon.demo.repository.PagoRepository;
 import unisimon.demo.repository.PagoRepository.PagoView;
 import unisimon.demo.repository.PasarelaPagoRepository;
 import unisimon.demo.repository.PasarelaPagoRepository.PasarelaView;
-import unisimon.demo.repository.ResidenteRepository;
-import unisimon.demo.repository.ResidenteRepository.ContextoResidenteView;
+import unisimon.demo.repository.UsuarioRepository;
 import unisimon.demo.security.UsuarioAutenticado;
 import unisimon.demo.service.LiquidacionService;
 import unisimon.demo.service.PagoService;
+import unisimon.demo.service.support.InmuebleDelResidente;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -50,27 +51,28 @@ public class PagoServiceImpl implements PagoService {
     private final PagoRepository pagos;
     private final LiquidacionRepository liquidaciones;
     private final PasarelaPagoRepository pasarelas;
-    private final ResidenteRepository residentes;
+    private final UsuarioRepository usuarios;
     private final InmuebleRepository inmuebles;
     private final LiquidacionService liquidacionService;
     private final AccesoInmueblePolicy accesoInmueble;
+    private final InmuebleDelResidente inmuebleDelResidente;
     private final Clock reloj;
     private final PasarelaProperties configPasarela;
 
     @Override
     @Transactional
-    public PagoResponses.IniciarPago registrarPago(Long residenteId, PagoRequests.IniciarPago s) {
+    public PagoResponses.IniciarPago registrarPago(Long residenteId, Long inmuebleId, PagoRequests.IniciarPago s) {
         String metodo = s.metodoPago().trim().toUpperCase(Locale.ROOT);
         if (!METODOS_PASARELA.contains(metodo)) {
             throw new SolicitudInvalidaException("metodoPago debe ser PSE, TARJETA o NEQUI");
         }
-        ContextoResidenteView residente = contexto(residenteId);
-        if (!Boolean.TRUE.equals(residente.getActive())) {
+        InmuebleBasicoView elegido = inmuebleDelResidente.resolver(residenteId, inmuebleId);
+        if (!Boolean.TRUE.equals(cuentaActiva(residenteId))) {
             throw new ProhibidoException("Su cuenta no esta activa");
         }
-        BigDecimal saldo = liquidaciones.saldoPendiente(residente.getInmuebleId());
+        BigDecimal saldo = liquidaciones.saldoPendiente(elegido.getId());
         if (saldo.signum() == 0) {
-            throw new ConflictoException("El inmueble " + residente.getDireccionInmueble() + " no tiene saldo pendiente");
+            throw new ConflictoException("El inmueble " + elegido.getDireccionInmueble() + " no tiene saldo pendiente");
         }
         PasarelaView vistaPasarela = pasarelas.buscarPrincipal()
                 .orElseThrow(() -> new ConflictoException("La pasarela de pagos aun no esta configurada"));
@@ -82,8 +84,8 @@ public class PagoServiceImpl implements PagoService {
         }
 
         // El valor lo fija el servidor (saldo pendiente), nunca el cliente.
-        Pago pago = new Pago(null, Hidratador.referenciaInmueble(residente.getInmuebleId()), saldo, null,
-                "Administracion " + residente.getDireccionInmueble(), metodo, null);
+        Pago pago = new Pago(null, Hidratador.referenciaInmueble(elegido.getId()), saldo, null,
+                "Administracion " + elegido.getDireccionInmueble(), metodo, null);
         pago.setId(pagos.insertar(pago));
         PasarelaPago pasarela = Hidratador.pasarela(vistaPasarela);
         // El .env es la fuente de verdad del checkout (la tabla solo aporta id y estado ACTIVA/INACTIVA).
@@ -170,7 +172,16 @@ public class PagoServiceImpl implements PagoService {
     @Override
     @Transactional(readOnly = true)
     public PagoResponses.Comprobante generarComprobante(Long pagoId, UsuarioAutenticado usuario) {
+        return generarComprobante(pagoId, usuario, null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PagoResponses.Comprobante generarComprobante(Long pagoId, UsuarioAutenticado usuario, Long inmuebleId) {
         PagoView vista = buscar(pagoId);
+        if (inmuebleId != null && !inmuebleId.equals(vista.getInmuebleId())) {
+            throw new ProhibidoException("Ese pago pertenece a otro inmueble");
+        }
         accesoInmueble.verificar(usuario, vista.getInmuebleId());
         String texto = Hidratador.pago(vista).generarComprobante();
         return new PagoResponses.Comprobante(vista.getReferencia(), texto);
@@ -178,18 +189,19 @@ public class PagoServiceImpl implements PagoService {
 
     @Override
     @Transactional(readOnly = true)
-    public Pagina<PagoResponses.Pago> consultarHistorialPago(Long residenteId, SolicitudPagina pagina) {
-        Long inmuebleId = contexto(residenteId).getInmuebleId();
-        List<PagoResponses.Pago> filas = pagos.listarPorInmueble(inmuebleId, pagina.limite(), pagina.desplazamiento())
+    public Pagina<PagoResponses.Pago> consultarHistorialPago(Long residenteId, Long inmuebleId,
+                                                             SolicitudPagina pagina) {
+        Long elegido = inmuebleDelResidente.resolver(residenteId, inmuebleId).getId();
+        List<PagoResponses.Pago> filas = pagos.listarPorInmueble(elegido, pagina.limite(), pagina.desplazamiento())
                 .stream().map(PagoMapper::de).toList();
-        return Pagina.de(filas, pagos.contarPorInmueble(inmuebleId), pagina);
+        return Pagina.de(filas, pagos.contarPorInmueble(elegido), pagina);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public PagoResponses.Pago consultarPagoDeResidente(Long residenteId, Long pagoId) {
+    public PagoResponses.Pago consultarPagoDeResidente(Long residenteId, Long inmuebleId, Long pagoId) {
         PagoView vista = buscar(pagoId);
-        if (!vista.getInmuebleId().equals(contexto(residenteId).getInmuebleId())) {
+        if (!vista.getInmuebleId().equals(inmuebleDelResidente.resolver(residenteId, inmuebleId).getId())) {
             throw new ProhibidoException("Este pago pertenece a otro inmueble");
         }
         return PagoMapper.de(vista);
@@ -212,9 +224,9 @@ public class PagoServiceImpl implements PagoService {
 
     // ------------------------------------------------------------------ internos
 
-    private ContextoResidenteView contexto(Long residenteId) {
-        return residentes.buscarContexto(residenteId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("El residente no tiene un inmueble asignado"));
+    private Boolean cuentaActiva(Long residenteId) {
+        return usuarios.buscarCredencialesPorId(residenteId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("El residente no existe")).getActive();
     }
 
     private PagoView buscar(Long pagoId) {

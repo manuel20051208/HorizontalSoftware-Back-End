@@ -10,6 +10,7 @@ import unisimon.demo.dto.request.ReglaRequests;
 import unisimon.demo.dto.request.SolicitudPagina;
 import unisimon.demo.dto.response.Pagina;
 import unisimon.demo.dto.response.ReglaResponses;
+import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.mapper.Hidratador;
 import unisimon.demo.mapper.ZonaMapper;
@@ -23,6 +24,7 @@ import unisimon.demo.repository.ZonaComunRepository;
 import unisimon.demo.service.ReglaReservaService;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -34,6 +36,7 @@ public class ReglaReservaServiceImpl implements ReglaReservaService {
     private final ReglaReservaRepository reglas;
     private final RompimientoRepository rompimientos;
     private final ZonaComunRepository zonas;
+    private final Clock reloj;
 
     @Override
     @Transactional
@@ -51,7 +54,7 @@ public class ReglaReservaServiceImpl implements ReglaReservaService {
         Long reglaId = reglas.insertar(regla);
         for (Long zonaId : zonaIds) {
             Rompimiento rompimiento = new Rompimiento(null, Hidratador.referenciaZona(zonaId),
-                    Hidratador.referenciaRegla(reglaId), LocalDate.now(), s.observaciones());
+                    Hidratador.referenciaRegla(reglaId), LocalDate.now(reloj), s.observaciones());
             rompimiento.aplicarRegla();
             rompimientos.insertar(rompimiento);
         }
@@ -96,6 +99,65 @@ public class ReglaReservaServiceImpl implements ReglaReservaService {
         rompimiento.inactivarRegla();
         rompimientos.actualizarActiva(rompimientoId, rompimiento.getActiva(), rompimiento.getFechaAplicacion());
         return ZonaMapper.rompimiento(rompimientos.buscarPorId(rompimientoId).orElseThrow());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ReglaResponses.Regla consultar(Long reglaId) {
+        existente(reglaId);
+        return respuesta(reglaId);
+    }
+
+    /** Rompimiento -> ReglaReserva es asociacion obligatoria (1): con asignaciones no se borra la regla (409). */
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = NombresCache.REGLAS_RESERVA, allEntries = true)
+    public void eliminar(Long reglaId) {
+        existente(reglaId);
+        if (rompimientos.contarPorRegla(reglaId) > 0) {
+            throw new ConflictoException("La regla sigue aplicada a zonas comunes; quite esas asignaciones primero");
+        }
+        reglas.eliminar(reglaId);
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = NombresCache.REGLAS_RESERVA, allEntries = true)
+    public ReglaResponses.Rompimiento asignarZona(Long reglaId, ReglaRequests.AsignarZona s) {
+        existente(reglaId);
+        if (zonas.buscarPorId(s.zonaComunId()).isEmpty()) {
+            throw new RecursoNoEncontradoException("La zona comun " + s.zonaComunId() + " no existe");
+        }
+        if (rompimientos.existePorZonaYRegla(s.zonaComunId(), reglaId)) {
+            throw new ConflictoException("La regla ya esta aplicada a esa zona comun");
+        }
+        Rompimiento rompimiento = new Rompimiento(null, Hidratador.referenciaZona(s.zonaComunId()),
+                Hidratador.referenciaRegla(reglaId), LocalDate.now(reloj), s.observaciones());
+        rompimiento.aplicarRegla();
+        Long id = rompimientos.insertar(rompimiento);
+        return ZonaMapper.rompimiento(rompimientos.buscarPorId(id).orElseThrow());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ReglaResponses.Rompimiento consultarRompimiento(Long rompimientoId) {
+        return ZonaMapper.rompimiento(rompimientos.buscarPorId(rompimientoId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("La asignacion " + rompimientoId + " no existe")));
+    }
+
+    /** ZonaComun ◇— Rompimiento es agregacion: borrar la asignacion no borra la zona ni la regla. */
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = NombresCache.REGLAS_RESERVA, allEntries = true)
+    public void eliminarRompimiento(Long rompimientoId) {
+        cargar(rompimientoId);
+        rompimientos.eliminar(rompimientoId);
+    }
+
+    private void existente(Long reglaId) {
+        if (reglas.buscarPorId(reglaId).isEmpty()) {
+            throw new RecursoNoEncontradoException("La regla " + reglaId + " no existe");
+        }
     }
 
     private Rompimiento cargar(Long rompimientoId) {

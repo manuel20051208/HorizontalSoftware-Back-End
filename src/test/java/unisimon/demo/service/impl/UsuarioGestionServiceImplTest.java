@@ -20,6 +20,9 @@ import unisimon.demo.model.Residente;
 import unisimon.demo.model.Usuario;
 import unisimon.demo.policy.PoliticaContrasena;
 import unisimon.demo.repository.InmuebleRepository;
+import unisimon.demo.repository.InvitadoRepository;
+import unisimon.demo.repository.NotificacionRepository;
+import unisimon.demo.repository.ReglaReservaRepository;
 import unisimon.demo.repository.UsuarioRepository;
 import unisimon.demo.repository.UsuarioRepository.CredencialesView;
 import unisimon.demo.service.CodigoVerificacionService;
@@ -52,13 +55,19 @@ class UsuarioGestionServiceImplTest {
     private PasswordEncoder codificador;
     @Mock
     private CodigoVerificacionService codigos;
+    @Mock
+    private ReglaReservaRepository reglas;
+    @Mock
+    private InvitadoRepository invitados;
+    @Mock
+    private NotificacionRepository notificaciones;
 
     private UsuarioGestionServiceImpl servicio;
 
     @BeforeEach
     void preparar() {
         servicio = new UsuarioGestionServiceImpl(usuarios, inmuebles, new UsuarioFactory(), persistidor, codificador,
-                new PoliticaContrasena(), codigos);
+                new PoliticaContrasena(), codigos, reglas, invitados, notificaciones);
     }
 
     private CrearUsuario residente(String clave) {
@@ -75,15 +84,15 @@ class UsuarioGestionServiceImplTest {
         return Proyecciones.de(CredencialesView.class, "id", id, "identificacion", 1001L,
                 "nombreCompleto", "Santiago Mendez", "correoElectronico", "santiago@mail.com", "tipoUsuario", tipo,
                 "active", activo, "notificacionLeida", false, "fechaCreacionCuenta", LocalDate.now(),
-                "contrasena", "hash", "correoVerificado", verificado, "inmuebleId", 5L);
+                "contrasena", "hash", "correoVerificado", verificado, "inmuebles", "5|A-302");
     }
 
-    /** Residente desvinculado de su inmueble (V10): no se puede activar ni verificar su correo. */
+    /** Residente sin vinculo (N:M): no se puede activar ni verificar su correo. */
     private CredencialesView vistaSinInmueble(Long id, String tipo, boolean activo, boolean verificado) {
         return Proyecciones.de(CredencialesView.class, "id", id, "identificacion", 1001L,
                 "nombreCompleto", "Santiago Mendez", "correoElectronico", "santiago@mail.com", "tipoUsuario", tipo,
                 "active", activo, "notificacionLeida", false, "fechaCreacionCuenta", LocalDate.now(),
-                "contrasena", "hash", "correoVerificado", verificado, "inmuebleId", null);
+                "contrasena", "hash", "correoVerificado", verificado, "inmuebles", null);
     }
 
     @Test
@@ -93,7 +102,7 @@ class UsuarioGestionServiceImplTest {
         when(usuarios.existePorIdentificacion(1001L)).thenReturn(false);
         when(inmuebles.existePorId(5L)).thenReturn(true);
         when(codificador.encode("Clave12345")).thenReturn("hash");
-        when(persistidor.insertar(any(Usuario.class))).thenReturn(9L);
+        when(persistidor.insertar(any(Usuario.class), anyLong())).thenReturn(9L);
         when(usuarios.buscarCredencialesPorId(9L)).thenReturn(Optional.of(vista(9L, "RESIDENTE", false)));
 
         UsuarioResponses.Usuario respuesta = servicio.gestionarCuentaUsuario(residente("Clave12345"));
@@ -101,7 +110,7 @@ class UsuarioGestionServiceImplTest {
         assertThat(respuesta.id()).isEqualTo(9L);
         assertThat(respuesta.active()).isFalse();
         ArgumentCaptor<Usuario> captor = ArgumentCaptor.forClass(Usuario.class);
-        verify(persistidor).insertar(captor.capture());
+        verify(persistidor).insertar(captor.capture(), org.mockito.ArgumentMatchers.eq(5L));
         assertThat(captor.getValue()).isInstanceOf(Residente.class);
         Residente creado = (Residente) captor.getValue();
         assertThat(creado.getTipoUsuario()).isEqualTo("RESIDENTE");
@@ -109,7 +118,7 @@ class UsuarioGestionServiceImplTest {
         assertThat(creado.getCorreoElectronico()).isEqualTo("santiago@mail.com");
         assertThat(creado.getContrasena()).isEqualTo("hash");
         assertThat(creado.isActive()).isFalse();
-        assertThat(creado.getInmueble().getId()).isEqualTo(5L);
+        assertThat(creado.getInmuebles()).extracting(unisimon.demo.model.Inmueble::getId).containsExactly(5L);
         verify(codigos).emitir(9L, "santiago@mail.com");
     }
 
@@ -124,7 +133,7 @@ class UsuarioGestionServiceImplTest {
         when(usuarios.existePorIdentificacion(1001L)).thenReturn(true);
         assertThatThrownBy(() -> servicio.gestionarCuentaUsuario(residente("Clave12345")))
                 .isInstanceOf(ConflictoException.class).hasMessageContaining("identificacion");
-        verify(persistidor, never()).insertar(any());
+        verify(persistidor, never()).insertar(any(), any());
         verify(codigos, never()).emitir(any(), any());
     }
 
@@ -139,7 +148,7 @@ class UsuarioGestionServiceImplTest {
         when(inmuebles.existePorId(5L)).thenReturn(false);
         assertThatThrownBy(() -> servicio.gestionarCuentaUsuario(residente("Clave12345")))
                 .isInstanceOf(RecursoNoEncontradoException.class);
-        verify(persistidor, never()).insertar(any());
+        verify(persistidor, never()).insertar(any(), any());
     }
 
     @Test
@@ -185,6 +194,7 @@ class UsuarioGestionServiceImplTest {
     void reactivarInvitado() {
         when(usuarios.buscarCredencialesPorIdentificacion(1001L))
                 .thenReturn(Optional.of(vista(4L, Usuario.USUARIO_AUTORIZADO, false, false)));
+        when(usuarios.contarInmueblesDe(4L)).thenReturn(1L);
 
         assertThat(servicio.modificarActive(1001L).active()).isTrue();
         verify(usuarios).actualizarActive(4L, true);
@@ -195,6 +205,7 @@ class UsuarioGestionServiceImplTest {
     void verificarCorreo() {
         when(usuarios.buscarCredencialesPorIdentificacion(1001L))
                 .thenReturn(Optional.of(vista(2L, "RESIDENTE", false, false)));
+        when(usuarios.contarInmueblesDe(2L)).thenReturn(1L);
         when(usuarios.buscarCredencialesPorId(2L)).thenReturn(Optional.of(vista(2L, "RESIDENTE", true, true)));
 
         UsuarioResponses.Usuario respuesta = servicio.verificarCorreo(1001L, "0427");
@@ -211,6 +222,7 @@ class UsuarioGestionServiceImplTest {
     void verificarCorreoIncorrecto() {
         when(usuarios.buscarCredencialesPorIdentificacion(1001L))
                 .thenReturn(Optional.of(vista(2L, "RESIDENTE", false, false)));
+        when(usuarios.contarInmueblesDe(2L)).thenReturn(1L);
         doThrow(new SolicitudInvalidaException("Codigo incorrecto. Quedan 4 intentos"))
                 .when(codigos).verificar(2L, "9999");
 

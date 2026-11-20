@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,8 +35,9 @@ public class ResidenteReservaController {
 
     @SoloResidente
     @GetMapping("/zonas-comunes")
-    public Pagina<ZonaResponses.Zona> zonasDisponibles(UsuarioAutenticado usuario, SolicitudPagina pagina) {
-        return reservas.zonasDisponibles(usuario.id(), pagina);
+    public Pagina<ZonaResponses.Zona> zonasDisponibles(UsuarioAutenticado usuario, SolicitudPagina pagina,
+                                                       @RequestParam(required = false) Long inmuebleId) {
+        return reservas.zonasDisponibles(usuario.id(), inmuebleId, pagina);
     }
 
     @SoloResidente
@@ -43,24 +45,27 @@ public class ResidenteReservaController {
     public ReservaResponses.Disponibilidad disponibilidad(
             UsuarioAutenticado usuario, @PathVariable Long id,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fin) {
-        return reservas.verificarDisponibilidad(usuario.id(), id, inicio, fin);
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fin,
+            @RequestParam(required = false) Long inmuebleId) {
+        return reservas.verificarDisponibilidad(usuario.id(), inmuebleId, id, inicio, fin);
     }
 
     @SoloResidente
     @GetMapping("/reservas")
     public Pagina<ReservaResponses.Reserva> misReservas(UsuarioAutenticado usuario,
                                                        @RequestParam(required = false) String estado,
-                                                       SolicitudPagina pagina) {
-        return reservas.verReservas(usuario.id(), estado, pagina);
+                                                       SolicitudPagina pagina,
+                                                       @RequestParam(required = false) Long inmuebleId) {
+        return reservas.verReservas(usuario.id(), inmuebleId, estado, pagina);
     }
 
     @SoloResidente
     @PostMapping("/reservas")
     @ResponseStatus(HttpStatus.CREATED)
     public ReservaResponses.Reserva reservar(UsuarioAutenticado usuario,
-                                             @Valid @RequestBody ReservaRequests.Reservar solicitud) {
-        return reservas.reservarZonaComun(usuario.id(), solicitud);
+                                             @Valid @RequestBody ReservaRequests.Reservar solicitud,
+                                             @RequestParam(required = false) Long inmuebleId) {
+        return reservas.reservarZonaComun(usuario.id(), inmuebleId, solicitud);
     }
 
     @SoloResidente
@@ -68,5 +73,18 @@ public class ResidenteReservaController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancelar(UsuarioAutenticado usuario, @PathVariable Long id) {
         reservas.cancelarReservaZonaComun(usuario.id(), id);
+    }
+
+    @SoloResidente
+    @GetMapping("/reservas/{id}")
+    public ReservaResponses.Reserva consultar(UsuarioAutenticado usuario, @PathVariable Long id) {
+        return reservas.consultarReserva(usuario.id(), id);
+    }
+
+    @SoloResidente
+    @PutMapping("/reservas/{id}")
+    public ReservaResponses.Reserva reprogramar(UsuarioAutenticado usuario, @PathVariable Long id,
+                                                @Valid @RequestBody ReservaRequests.Reprogramar solicitud) {
+        return reservas.reprogramarReserva(usuario.id(), id, solicitud);
     }
 }

@@ -30,4 +30,12 @@ public interface UsuarioGestionService {
      * No activa una cuenta cuyo correo no se ha verificado.
      */
     UsuarioResponses.EstadoActivo modificarActive(Long identificacion);
+
+    UsuarioResponses.Usuario consultar(Long identificacion);
+
+    /** Datos personales y de contrato; un correo nuevo deja la cuenta inactiva hasta verificarlo. */
+    UsuarioResponses.Usuario actualizar(Long identificacion, UsuarioRequests.ActualizarUsuario solicitud);
+
+    /** Borra la cuenta respetando composicion y agregacion; el administrador no puede borrarse a si mismo. */
+    void eliminar(Long adminId, Long identificacion);
 }

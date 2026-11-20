@@ -13,12 +13,12 @@ import unisimon.demo.mapper.InvitadoMapper;
 import unisimon.demo.model.Auto;
 import unisimon.demo.model.Paqueadero;
 import unisimon.demo.repository.AutoRepository;
+import unisimon.demo.repository.AutoRepository.AutoView;
 import unisimon.demo.repository.InmuebleRepository;
 import unisimon.demo.repository.ParqueaderoRepository;
 import unisimon.demo.repository.ParqueaderoRepository.ParqueaderoView;
-import unisimon.demo.repository.ResidenteRepository;
-import unisimon.demo.repository.ResidenteRepository.ContextoResidenteView;
 import unisimon.demo.service.AutoService;
+import unisimon.demo.service.support.InmuebleDelResidente;
 
 /** Autos de los residentes (uno por residente) y consulta de duenos. */
 @Service
@@ -27,13 +27,13 @@ public class AutoServiceImpl implements AutoService {
 
     private final AutoRepository autos;
     private final ParqueaderoRepository parqueaderos;
-    private final ResidenteRepository residentes;
+    private final InmuebleDelResidente inmuebleDelResidente;
     private final InmuebleRepository inmuebles;
 
     @Override
     @Transactional
-    public AutoResponses.Auto registrarAuto(Long residenteId, AutoRequests.RegistrarAuto s) {
-        ContextoResidenteView residente = contexto(residenteId);
+    public AutoResponses.Auto registrarAuto(Long residenteId, Long inmuebleId, AutoRequests.RegistrarAuto s) {
+        Long elegido = inmuebleDelResidente.resolver(residenteId, inmuebleId).getId();
         if (autos.buscarPorDueno(residenteId).isPresent()) {
             throw new ConflictoException("Ya tiene un auto registrado");
         }
@@ -44,7 +44,7 @@ public class AutoServiceImpl implements AutoService {
         if (s.parqueaderoId() != null) {
             ParqueaderoView vista = parqueaderos.buscarPorId(s.parqueaderoId())
                     .orElseThrow(() -> new RecursoNoEncontradoException("El parqueadero " + s.parqueaderoId() + " no existe"));
-            if (!vista.getInmuebleId().equals(residente.getInmuebleId())) {
+            if (!vista.getInmuebleId().equals(elegido)) {
                 throw new ProhibidoException("Ese parqueadero pertenece a otro inmueble");
             }
             if (autos.existePorParqueadero(vista.getId())) {
@@ -74,8 +74,37 @@ public class AutoServiceImpl implements AutoService {
                 autos.listarDuenos(inmuebleId, autoId).stream().map(InvitadoMapper::dueno).toList());
     }
 
-    private ContextoResidenteView contexto(Long residenteId) {
-        return residentes.buscarContexto(residenteId)
-                .orElseThrow(() -> new RecursoNoEncontradoException("El residente no tiene un inmueble asignado"));
+    @Override
+    @Transactional
+    public AutoResponses.Auto actualizarAuto(Long residenteId, AutoRequests.ActualizarAuto s) {
+        AutoView auto = autos.buscarPorDueno(residenteId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No tiene un auto registrado"));
+        if (autos.existePorPlacaEnOtro(s.placa(), auto.getId())) {
+            throw new ConflictoException("Ya existe un auto con esa placa");
+        }
+        Long parqueaderoId = s.parqueaderoId();
+        if (parqueaderoId != null && !parqueaderoId.equals(auto.getParqueaderoId())) {
+            ParqueaderoView vista = parqueaderos.buscarPorId(parqueaderoId)
+                    .orElseThrow(() -> new RecursoNoEncontradoException("El parqueadero " + parqueaderoId + " no existe"));
+            boolean esDeSuInmueble = inmuebleDelResidente.listar(residenteId).stream()
+                    .anyMatch(i -> i.getId().equals(vista.getInmuebleId()));
+            if (!esDeSuInmueble) {
+                throw new ProhibidoException("Ese parqueadero pertenece a otro inmueble");
+            }
+            if (autos.existePorParqueadero(parqueaderoId)) {
+                throw new ConflictoException("Ese parqueadero ya tiene un auto asignado");
+            }
+        }
+        autos.actualizarDatos(auto.getId(), s.placa(), parqueaderoId);
+        return InvitadoMapper.auto(autos.buscarPorId(auto.getId()).orElseThrow());
+    }
+
+    /** Residente ◆— Auto es composicion: el auto es parte del residente y se borra solo; el parqueadero queda libre. */
+    @Override
+    @Transactional
+    public void eliminarAuto(Long residenteId) {
+        AutoView auto = autos.buscarPorDueno(residenteId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No tiene un auto registrado"));
+        autos.eliminar(auto.getId());
     }
 }

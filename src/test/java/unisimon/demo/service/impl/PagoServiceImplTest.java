@@ -18,14 +18,16 @@ import unisimon.demo.exception.SolicitudInvalidaException;
 import unisimon.demo.model.Pago;
 import unisimon.demo.policy.AccesoInmueblePolicy;
 import unisimon.demo.repository.InmuebleRepository;
+import unisimon.demo.repository.InmuebleRepository.InmuebleBasicoView;
 import unisimon.demo.repository.LiquidacionRepository;
 import unisimon.demo.repository.PagoRepository;
 import unisimon.demo.repository.PagoRepository.PagoView;
 import unisimon.demo.repository.PasarelaPagoRepository;
 import unisimon.demo.repository.PasarelaPagoRepository.PasarelaView;
-import unisimon.demo.repository.ResidenteRepository;
-import unisimon.demo.repository.ResidenteRepository.ContextoResidenteView;
+import unisimon.demo.repository.UsuarioRepository;
+import unisimon.demo.repository.UsuarioRepository.CredencialesView;
 import unisimon.demo.service.LiquidacionService;
+import unisimon.demo.service.support.InmuebleDelResidente;
 import unisimon.demo.support.Proyecciones;
 
 import java.math.BigDecimal;
@@ -55,13 +57,15 @@ class PagoServiceImplTest {
     @Mock
     private PasarelaPagoRepository pasarelas;
     @Mock
-    private ResidenteRepository residentes;
+    private UsuarioRepository usuarios;
     @Mock
     private InmuebleRepository inmuebles;
     @Mock
     private LiquidacionService liquidacionService;
     @Mock
     private AccesoInmueblePolicy accesoInmueble;
+    @Mock
+    private InmuebleDelResidente inmuebleDelResidente;
 
     private PagoServiceImpl servicio;
 
@@ -72,15 +76,25 @@ class PagoServiceImplTest {
     }
 
     private PagoServiceImpl servicioCon(Clock reloj, String secreto) {
-        return new PagoServiceImpl(pagos, liquidaciones, pasarelas, residentes, inmuebles, liquidacionService,
-                accesoInmueble, reloj, new PasarelaProperties("Wompi", "https://checkout.wompi.co/p/",
-                "pub_test_123", secreto, "test_events_abc", "prv_test_abc", "https://sandbox.wompi.co/v1",
-                "https://front.test/pagos/resultado"));
+        return new PagoServiceImpl(pagos, liquidaciones, pasarelas, usuarios, inmuebles, liquidacionService,
+                accesoInmueble, inmuebleDelResidente, reloj,
+                new PasarelaProperties("Wompi", "https://checkout.wompi.co/p/",
+                        "pub_test_123", secreto, "test_events_abc", "prv_test_abc", "https://sandbox.wompi.co/v1",
+                        "https://front.test/pagos/resultado"));
     }
 
-    private ContextoResidenteView residente(boolean activo) {
-        return Proyecciones.de(ContextoResidenteView.class, "id", 5L, "active", activo, "inmuebleId", 1L,
-                "direccionInmueble", "A-302", "inmuebleActive", true);
+    private InmuebleBasicoView inmueble() {
+        return Proyecciones.de(InmuebleBasicoView.class, "id", 1L, "direccionInmueble", "A-302", "isActive", true);
+    }
+
+    private CredencialesView residente(boolean activo) {
+        return Proyecciones.de(CredencialesView.class, "id", 5L, "active", activo);
+    }
+
+    /** El residente opera sobre el inmueble 1, que es el que el selector le resuelve. */
+    private void escenarioResidente(boolean activo) {
+        when(inmuebleDelResidente.resolver(5L, 1L)).thenReturn(inmueble());
+        when(usuarios.buscarCredencialesPorId(5L)).thenReturn(Optional.of(residente(activo)));
     }
 
     private PagoView pago(long id, String estado) {
@@ -97,13 +111,13 @@ class PagoServiceImplTest {
     @Test
     @DisplayName("registrarPago fija el valor con el saldo del servidor y devuelve la URL del checkout")
     void registrarPagoUsaSaldoDelServidor() {
-        when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(true)));
+        escenarioResidente(true);
         when(liquidaciones.saldoPendiente(1L)).thenReturn(new BigDecimal("505000"));
         when(pasarelas.buscarPrincipal()).thenReturn(Optional.of(pasarela()));
         when(pagos.insertar(any(Pago.class))).thenReturn(10L);
         when(pagos.buscarPorId(10L)).thenReturn(Optional.of(pago(10, Pago.PENDIENTE)));
 
-        PagoResponses.IniciarPago respuesta = servicio.registrarPago(5L, new PagoRequests.IniciarPago("pse"));
+        PagoResponses.IniciarPago respuesta = servicio.registrarPago(5L, 1L, new PagoRequests.IniciarPago("pse"));
 
         ArgumentCaptor<Pago> insertado = ArgumentCaptor.forClass(Pago.class);
         verify(pagos).insertar(insertado.capture());
@@ -120,11 +134,11 @@ class PagoServiceImplTest {
     @DisplayName("registrarPago falla sin secreto de integridad y no deja un pago PENDIENTE huerfano")
     void registrarPagoSinSecreto() {
         PagoServiceImpl sinSecreto = servicioCon(Clock.systemUTC(), "");
-        when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(true)));
+        escenarioResidente(true);
         when(liquidaciones.saldoPendiente(1L)).thenReturn(new BigDecimal("1000"));
         when(pasarelas.buscarPrincipal()).thenReturn(Optional.of(pasarela()));
 
-        assertThatThrownBy(() -> sinSecreto.registrarPago(5L, new PagoRequests.IniciarPago("PSE")))
+        assertThatThrownBy(() -> sinSecreto.registrarPago(5L, 1L, new PagoRequests.IniciarPago("PSE")))
                 .isInstanceOf(ConflictoException.class).hasMessageContaining("secreto");
         verify(pagos, never()).insertar(any());
     }
@@ -132,7 +146,7 @@ class PagoServiceImplTest {
     @Test
     @DisplayName("el checkout usa la llave del .env aunque la tabla tenga otra vieja")
     void checkoutUsaLlaveDelEntorno() {
-        when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(true)));
+        escenarioResidente(true);
         when(liquidaciones.saldoPendiente(1L)).thenReturn(new BigDecimal("505000"));
         when(pasarelas.buscarPrincipal()).thenReturn(Optional.of(Proyecciones.de(PasarelaView.class, "id", 2L,
                 "nombrePasarela", "Wompi", "urlApi", "https://viejo.test/", "apiKey", "pub_test_VIEJA",
@@ -140,7 +154,7 @@ class PagoServiceImplTest {
         when(pagos.insertar(any(Pago.class))).thenReturn(10L);
         when(pagos.buscarPorId(10L)).thenReturn(Optional.of(pago(10, Pago.PENDIENTE)));
 
-        String url = servicio.registrarPago(5L, new PagoRequests.IniciarPago("PSE")).urlCheckout();
+        String url = servicio.registrarPago(5L, 1L, new PagoRequests.IniciarPago("PSE")).urlCheckout();
 
         assertThat(url).startsWith("https://checkout.wompi.co/p/?public-key=pub_test_123").doesNotContain("VIEJA");
     }
@@ -148,7 +162,7 @@ class PagoServiceImplTest {
     @Test
     @DisplayName("registrarPago rechaza metodos que no son de la pasarela")
     void registrarPagoMetodoInvalido() {
-        assertThatThrownBy(() -> servicio.registrarPago(5L, new PagoRequests.IniciarPago("EFECTIVO")))
+        assertThatThrownBy(() -> servicio.registrarPago(5L, 1L, new PagoRequests.IniciarPago("EFECTIVO")))
                 .isInstanceOf(SolicitudInvalidaException.class);
         verify(pagos, never()).insertar(any());
     }
@@ -156,30 +170,30 @@ class PagoServiceImplTest {
     @Test
     @DisplayName("registrarPago no deja pagar a una cuenta inactiva")
     void registrarPagoCuentaInactiva() {
-        when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(false)));
+        escenarioResidente(false);
 
-        assertThatThrownBy(() -> servicio.registrarPago(5L, new PagoRequests.IniciarPago("PSE")))
+        assertThatThrownBy(() -> servicio.registrarPago(5L, 1L, new PagoRequests.IniciarPago("PSE")))
                 .isInstanceOf(ProhibidoException.class);
     }
 
     @Test
     @DisplayName("registrarPago falla si no hay saldo pendiente")
     void registrarPagoSinSaldo() {
-        when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(true)));
+        escenarioResidente(true);
         when(liquidaciones.saldoPendiente(1L)).thenReturn(BigDecimal.ZERO);
 
-        assertThatThrownBy(() -> servicio.registrarPago(5L, new PagoRequests.IniciarPago("PSE")))
+        assertThatThrownBy(() -> servicio.registrarPago(5L, 1L, new PagoRequests.IniciarPago("PSE")))
                 .isInstanceOf(ConflictoException.class);
     }
 
     @Test
     @DisplayName("registrarPago falla si la pasarela no esta configurada")
     void registrarPagoSinPasarela() {
-        when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(true)));
+        escenarioResidente(true);
         when(liquidaciones.saldoPendiente(1L)).thenReturn(new BigDecimal("1000"));
         when(pasarelas.buscarPrincipal()).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> servicio.registrarPago(5L, new PagoRequests.IniciarPago("PSE")))
+        assertThatThrownBy(() -> servicio.registrarPago(5L, 1L, new PagoRequests.IniciarPago("PSE")))
                 .isInstanceOf(ConflictoException.class);
     }
 
@@ -272,9 +286,10 @@ class PagoServiceImplTest {
     void pagoDeOtroInmueble() {
         PagoView ajeno = Proyecciones.de(PagoView.class, "id", 20L, "inmuebleId", 99L, "estado", Pago.APROBADO);
         when(pagos.buscarPorId(20L)).thenReturn(Optional.of(ajeno));
-        when(residentes.buscarContexto(5L)).thenReturn(Optional.of(residente(true)));
+        when(inmuebleDelResidente.resolver(5L, 1L)).thenReturn(inmueble());
 
-        assertThatThrownBy(() -> servicio.consultarPagoDeResidente(5L, 20L)).isInstanceOf(ProhibidoException.class);
+        assertThatThrownBy(() -> servicio.consultarPagoDeResidente(5L, 1L, 20L))
+                .isInstanceOf(ProhibidoException.class);
     }
 
     @Test

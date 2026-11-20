@@ -135,4 +135,20 @@ public interface LiquidacionRepository extends Repository<Liquidacion, Long> {
     default int marcarPagadasDeInmueble(Long inmuebleId) {
         return marcarPagadasDeInmueble(inmuebleId, Liquidacion.AL_DIA);
     }
+
+    // ------------------------------------------------------------------ actualizar y eliminar
+
+    @Modifying
+    @Query(value = "UPDATE liquidaciones SET fecha_limite = :fechaLimite WHERE id = :id", nativeQuery = true)
+    int actualizarFechaLimite(@Param("id") Long id, @Param("fechaLimite") LocalDate fechaLimite);
+
+    /** La liquidacion mas reciente que le queda al inmueble (para volverla vigente al borrar la actual). */
+    @Query(value = """
+            SELECT id FROM liquidaciones WHERE inmueble_id = :inmuebleId ORDER BY periodo DESC, id DESC LIMIT 1
+            """, nativeQuery = true)
+    Optional<Long> buscarUltimaIdDeInmueble(@Param("inmuebleId") Long inmuebleId);
+
+    @Modifying
+    @Query(value = "DELETE FROM liquidaciones WHERE id = :id", nativeQuery = true)
+    int eliminar(@Param("id") Long id);
 }

@@ -9,6 +9,7 @@ import unisimon.demo.model.Residente;
 import unisimon.demo.model.Usuario;
 import unisimon.demo.model.UsuarioAutorizado;
 import unisimon.demo.model.Vigilante;
+import unisimon.demo.repository.InmuebleRepository.InmuebleBasicoView;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -38,7 +39,8 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
 
         String getToken();
 
-        Long getInmuebleId();
+        /** Inmuebles de la cuenta como "id|direccion;id|direccion" (vacio o null si no tiene). */
+        String getInmuebles();
 
         Boolean getNotificacionLeida();
 
@@ -62,15 +64,27 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
 
         Boolean getActive();
 
-        Long getInmuebleId();
-
-        String getDireccionInmueble();
+        /** Inmuebles de la cuenta como "id|direccion;id|direccion" (vacio o null si no tiene). */
+        String getInmuebles();
 
         LocalDate getFechaCreacionCuenta();
 
         LocalDate getVenceAutorizacion();
 
         Boolean getCorreoVerificado();
+    }
+
+    /** Persona relacionada con un inmueble (residente o invitado). */
+    interface UsuarioDeInmuebleView {
+        Long getId();
+
+        Long getIdentificacion();
+
+        String getNombreCompleto();
+
+        String getTipoUsuario();
+
+        Boolean getActive();
     }
 
     /** Lo necesario para Usuario.configurarPreferencias: si la cuenta esta activa y sus preferencias actuales. */
@@ -81,11 +95,20 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
         String getPreferencias();
     }
 
+    /** Inmuebles de la cuenta como texto, para no repetir la subconsulta en cada listado. */
+    String SUB_INMUEBLES = """
+            (SELECT string_agg(i.id || '|' || i.direccion_inmueble, ';' ORDER BY i.direccion_inmueble)
+             FROM usuario_inmuebles ui
+             JOIN inmuebles i ON i.id = ui.inmueble_id
+             WHERE ui.usuario_id = u.id)
+            """;
+
     String SELECT_CREDENCIALES = """
             SELECT u.id AS "id", u.identificacion AS "identificacion", u.nombre_completo AS "nombreCompleto",
                    u.correo_electronico AS "correoElectronico", u.contrasena AS "contrasena",
                    u.tipo_usuario AS "tipoUsuario", u.active AS "active", u.token AS "token",
-                   u.inmueble_id AS "inmuebleId", u.notificacion_leida AS "notificacionLeida",
+                   """ + SUB_INMUEBLES + """
+                   AS "inmuebles", u.notificacion_leida AS "notificacionLeida",
                    u.fecha_creacion_cuenta AS "fechaCreacionCuenta", u.correo_verificado AS "correoVerificado"
             FROM usuarios u
             """;
@@ -93,12 +116,11 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
     String SELECT_LISTA = """
             SELECT u.id AS "id", u.identificacion AS "identificacion", u.nombre_completo AS "nombreCompleto",
                    u.correo_electronico AS "correoElectronico", u.tipo_usuario AS "tipoUsuario",
-                   u.active AS "active", u.inmueble_id AS "inmuebleId",
-                   i.direccion_inmueble AS "direccionInmueble",
+                   u.active AS "active", """ + SUB_INMUEBLES + """
+                   AS "inmuebles",
                    u.fecha_creacion_cuenta AS "fechaCreacionCuenta", u.vence_autorizacion AS "venceAutorizacion",
                    u.correo_verificado AS "correoVerificado"
             FROM usuarios u
-            LEFT JOIN inmuebles i ON i.id = u.inmueble_id
             """;
 
     // ------------------------------------------------------------------ lecturas
@@ -139,15 +161,43 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
     @Query(value = "SELECT COUNT(*) FROM usuarios u " + FILTRO_LISTA, nativeQuery = true)
     long contar(@Param("tipo") String tipo, @Param("active") Boolean active);
 
-    @Query(value = SELECT_LISTA + "WHERE u.inmueble_id = :inmuebleId ORDER BY u.nombre_completo", nativeQuery = true)
+    @Query(value = SELECT_LISTA + """
+            JOIN usuario_inmuebles ui ON ui.usuario_id = u.id
+            WHERE ui.inmueble_id = :inmuebleId
+            ORDER BY u.nombre_completo
+            """, nativeQuery = true)
     List<UsuarioListaView> listarPorInmueble(@Param("inmuebleId") Long inmuebleId);
 
-    /** Solo las cuentas de residente del inmueble, por nombre (relacion inmueble <-> residentes). */
-    @Query(value = SELECT_LISTA + """
-            WHERE u.inmueble_id = :inmuebleId AND u.tipo_usuario = 'RESIDENTE'
-            ORDER BY u.nombre_completo, u.id
+    /** Residentes e invitados relacionados con el inmueble, por tipo y nombre. */
+    @Query(value = """
+            SELECT u.id AS "id", u.identificacion AS "identificacion", u.nombre_completo AS "nombreCompleto",
+                   u.tipo_usuario AS "tipoUsuario", u.active AS "active"
+            FROM usuario_inmuebles ui
+            JOIN usuarios u ON u.id = ui.usuario_id
+            WHERE ui.inmueble_id = :inmuebleId
+            ORDER BY u.tipo_usuario, u.nombre_completo, u.id
             """, nativeQuery = true)
-    List<UsuarioListaView> listarResidentesDeInmueble(@Param("inmuebleId") Long inmuebleId);
+    List<UsuarioDeInmuebleView> listarUsuariosDeInmueble(@Param("inmuebleId") Long inmuebleId);
+
+    /** Inmuebles de una cuenta (para el selector del residente y para hidratar sus respuestas). */
+    @Query(value = """
+            SELECT i.id AS "id", i.direccion_inmueble AS "direccionInmueble", i.is_active AS "isActive",
+                   i.liquidacion_actual_id AS "liquidacionActualId"
+            FROM usuario_inmuebles ui
+            JOIN inmuebles i ON i.id = ui.inmueble_id
+            WHERE ui.usuario_id = :usuarioId
+            ORDER BY i.direccion_inmueble
+            """, nativeQuery = true)
+    List<InmuebleBasicoView> listarInmueblesDe(@Param("usuarioId") Long usuarioId);
+
+    @Query(value = "SELECT COUNT(*) FROM usuario_inmuebles WHERE usuario_id = :usuarioId", nativeQuery = true)
+    long contarInmueblesDe(@Param("usuarioId") Long usuarioId);
+
+    @Query(value = """
+            SELECT EXISTS (SELECT 1 FROM usuario_inmuebles
+                           WHERE usuario_id = :usuarioId AND inmueble_id = :inmuebleId)
+            """, nativeQuery = true)
+    boolean estaRelacionado(@Param("usuarioId") Long usuarioId, @Param("inmuebleId") Long inmuebleId);
 
     @Query(value = """
             SELECT u.active AS "active", array_to_string(u.preferencias_notificacion, ',') AS "preferencias"
@@ -178,10 +228,10 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
 
     @Query(value = """
             INSERT INTO usuarios (tipo_usuario, identificacion, nombre_completo, fecha_nacimiento, correo_electronico,
-                                  contrasena, fecha_creacion_cuenta, active, notificacion_leida, inmueble_id)
+                                  contrasena, fecha_creacion_cuenta, active, notificacion_leida)
             VALUES (:#{#r.tipoUsuario}, :#{#r.identificacion}, :#{#r.nombreCompleto}, :#{#r.fechaNacimiento},
                     :#{#r.correoElectronico}, :#{#r.contrasena}, :#{#r.fechaCreacionCuenta}, :#{#r.active},
-                    :#{#r.notificacionLeida}, :#{#r.inmueble.id})
+                    :#{#r.notificacionLeida})
             RETURNING id
             """, nativeQuery = true)
     Long insertarResidente(@Param("r") Residente r);
@@ -200,10 +250,10 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
     @Query(value = """
             INSERT INTO usuarios (tipo_usuario, identificacion, nombre_completo, fecha_nacimiento, correo_electronico,
                                   contrasena, fecha_creacion_cuenta, active, notificacion_leida,
-                                  inmueble_id, vence_autorizacion)
+                                  vence_autorizacion)
             VALUES (:#{#u.tipoUsuario}, :#{#u.identificacion}, :#{#u.nombreCompleto}, :#{#u.fechaNacimiento},
                     :#{#u.correoElectronico}, :#{#u.contrasena}, :#{#u.fechaCreacionCuenta}, :#{#u.active},
-                    :#{#u.notificacionLeida}, :#{#u.inmueble.id}, :#{#u.venceAutorizacion})
+                    :#{#u.notificacionLeida}, :#{#u.venceAutorizacion})
             RETURNING id
             """, nativeQuery = true)
     Long insertarInvitado(@Param("u") UsuarioAutorizado u);
@@ -224,10 +274,19 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
     @Query(value = "UPDATE usuarios SET token = :token WHERE id = :id", nativeQuery = true)
     int actualizarToken(@Param("id") Long id, @Param("token") String token);
 
-    /** Inmueble de la cuenta (null la desvincula). Un residente desvinculado queda sin inmueble (V10). */
+    /** Agrega el vinculo cuenta <-> inmueble (idempotente). */
     @Modifying
-    @Query(value = "UPDATE usuarios SET inmueble_id = CAST(:inmuebleId AS BIGINT) WHERE id = :id", nativeQuery = true)
-    int actualizarInmueble(@Param("id") Long id, @Param("inmuebleId") Long inmuebleId);
+    @Query(value = """
+            INSERT INTO usuario_inmuebles (usuario_id, inmueble_id) VALUES (:usuarioId, :inmuebleId)
+            ON CONFLICT DO NOTHING
+            """, nativeQuery = true)
+    int vincularInmueble(@Param("usuarioId") Long usuarioId, @Param("inmuebleId") Long inmuebleId);
+
+    /** Quita el vinculo cuenta <-> inmueble; el usuario y el inmueble siguen existiendo. */
+    @Modifying
+    @Query(value = "DELETE FROM usuario_inmuebles WHERE usuario_id = :usuarioId AND inmueble_id = :inmuebleId",
+            nativeQuery = true)
+    int desvincularInmueble(@Param("usuarioId") Long usuarioId, @Param("inmuebleId") Long inmuebleId);
 
     @Modifying
     @Query(value = "UPDATE usuarios SET contrasena = :contrasena WHERE id = :id", nativeQuery = true)
@@ -248,4 +307,51 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
     @Modifying
     @Query(value = "UPDATE usuarios SET notificacion_leida = FALSE WHERE id IN (:ids)", nativeQuery = true)
     int marcarNoLeida(@Param("ids") List<Long> ids);
+
+    // ------------------------------------------------------------------ actualizar y eliminar
+
+    @Query(value = """
+            SELECT EXISTS (SELECT 1 FROM usuarios WHERE LOWER(correo_electronico) = LOWER(:correo) AND id <> :id)
+            """, nativeQuery = true)
+    boolean existePorCorreoEnOtro(@Param("correo") String correo, @Param("id") Long id);
+
+    @Modifying
+    @Query(value = """
+            UPDATE usuarios SET nombre_completo = :nombre, fecha_nacimiento = :fechaNacimiento,
+                                correo_electronico = :correo
+            WHERE id = :id
+            """, nativeQuery = true)
+    int actualizarDatos(@Param("id") Long id, @Param("nombre") String nombre,
+                        @Param("fechaNacimiento") LocalDate fechaNacimiento, @Param("correo") String correo);
+
+    @Modifying
+    @Query(value = "UPDATE usuarios SET admin_inicio_contrato = :inicio, admin_vence_contrato = :vence WHERE id = :id",
+            nativeQuery = true)
+    int actualizarContratoAdministrador(@Param("id") Long id, @Param("inicio") LocalDate inicio,
+                                        @Param("vence") LocalDate vence);
+
+    @Modifying
+    @Query(value = """
+            UPDATE usuarios SET vigilante_inicio_contrato = :inicio, vigilante_vence_contrato = :vence WHERE id = :id
+            """, nativeQuery = true)
+    int actualizarContratoVigilante(@Param("id") Long id, @Param("inicio") LocalDate inicio,
+                                    @Param("vence") LocalDate vence);
+
+    @Modifying
+    @Query(value = "UPDATE usuarios SET vence_autorizacion = :vence WHERE id = :id", nativeQuery = true)
+    int actualizarVenceAutorizacion(@Param("id") Long id, @Param("vence") LocalDate vence);
+
+    /** Un correo nuevo hay que verificarlo otra vez: la cuenta queda inactiva y sin sesion. */
+    @Modifying
+    @Query(value = "UPDATE usuarios SET correo_verificado = FALSE, active = FALSE, token = NULL WHERE id = :id",
+            nativeQuery = true)
+    int reiniciarVerificacion(@Param("id") Long id);
+
+    /**
+     * Borra la cuenta. La base borra en cascada sus partes por composicion (Residente ◆— Auto y
+     * Residente ◆— ReservaZonaComun), el vinculo con sus inmuebles y su codigo de verificacion.
+     */
+    @Modifying
+    @Query(value = "DELETE FROM usuarios WHERE id = :id", nativeQuery = true)
+    int eliminar(@Param("id") Long id);
 }

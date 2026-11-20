@@ -37,7 +37,19 @@ public final class UsuarioRequests {
                                   String codigo) {
     }
 
-    /** Inmueble con el que se vincula o al que se cambia una cuenta de residente. */
+    /** Inmueble que se agrega a la cuenta o destino de la mudanza (residentes e invitados). */
     public record RelacionInmueble(@NotNull @Positive Long inmuebleId) {
+    }
+
+    /**
+     * Datos editables de una cuenta. inicioContrato y venceContrato aplican a ADMINISTRADOR y VIGILANTE;
+     * venceAutorizacion a USUARIO_AUTORIZADO. Cambiar el correo obliga a verificarlo otra vez.
+     */
+    public record ActualizarUsuario(@NotBlank @Size(max = 150) String nombreCompleto,
+                                    @Past LocalDate fechaNacimiento,
+                                    @NotBlank @Email String correoElectronico,
+                                    LocalDate inicioContrato,
+                                    LocalDate venceContrato,
+                                    LocalDate venceAutorizacion) {
     }
 }

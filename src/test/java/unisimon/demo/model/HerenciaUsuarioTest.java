@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,30 +47,30 @@ class HerenciaUsuarioTest {
     }
 
     @Test
-    @DisplayName("Residente recibe los atributos de Usuario, su inmueble y su auto")
+    @DisplayName("Residente recibe los atributos de Usuario, sus inmuebles y su auto")
     void residente() {
         Inmueble inmueble = new Inmueble(1L, "A-302", null, true);
         Auto auto = new Auto(1L, null, 123456L, null);
         Residente r = new Residente(3L, 300L, "Santiago", NACIMIENTO, "s@mail.com", "hash", Usuario.RESIDENTE,
-                inmueble, auto);
+                List.of(inmueble), auto);
 
         assertThat(r).isInstanceOf(NoAdmin.class).isInstanceOf(Usuario.class);
         assertThat(r.getIdentificacion()).isEqualTo(300L);
-        assertThat(r.getInmueble()).isSameAs(inmueble);
+        assertThat(r.getInmuebles()).containsExactly(inmueble);
         assertThat(r.getAuto()).isSameAs(auto);
         assertThat(r.getInvitados()).isEmpty();
     }
 
     @Test
-    @DisplayName("UsuarioAutorizado hereda de Residente (y de Usuario): arrastra inmueble y auto")
+    @DisplayName("UsuarioAutorizado hereda de Residente (y de Usuario): arrastra inmuebles y auto")
     void usuarioAutorizado() {
         Inmueble inmueble = new Inmueble(1L, "A-302", null, true);
         LocalDate vence = LocalDate.now().plusDays(3);
         UsuarioAutorizado ua = new UsuarioAutorizado(4L, 400L, "Mariana", NACIMIENTO, "m@mail.com", "hash",
-                Usuario.USUARIO_AUTORIZADO, inmueble, null, vence);
+                Usuario.USUARIO_AUTORIZADO, List.of(inmueble), null, vence);
 
         assertThat(ua).isInstanceOf(Residente.class).isInstanceOf(NoAdmin.class);
-        assertThat(ua.getInmueble()).isSameAs(inmueble);
+        assertThat(ua.getInmuebles()).containsExactly(inmueble);
         assertThat(ua.getVenceAutorizacion()).isEqualTo(vence);
         assertThat(ua.getTipoUsuario()).isEqualTo(Usuario.USUARIO_AUTORIZADO);
     }

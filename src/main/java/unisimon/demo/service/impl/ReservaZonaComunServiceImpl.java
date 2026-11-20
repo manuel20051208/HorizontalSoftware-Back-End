@@ -17,7 +17,9 @@ import unisimon.demo.exception.RecursoNoEncontradoException;
 import unisimon.demo.exception.SolicitudInvalidaException;
 import unisimon.demo.mapper.Hidratador;
 import unisimon.demo.mapper.ReservaMapper;
+import unisimon.demo.model.Inmueble;
 import unisimon.demo.model.ReservaZonaComun;
+import unisimon.demo.model.Residente;
 import unisimon.demo.policy.EstadoReservaPolicy;
 import unisimon.demo.repository.ReservaZonaComunRepository;
 import unisimon.demo.repository.ReservaZonaComunRepository.ReservaView;
@@ -30,6 +32,7 @@ import unisimon.demo.repository.ZonaComunRepository.ZonaView;
 import unisimon.demo.service.NotificacionService;
 import unisimon.demo.service.ReservaZonaComunService;
 import unisimon.demo.service.ZonaComunService;
+import unisimon.demo.service.support.InmuebleDelResidente;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -56,18 +59,20 @@ public class ReservaZonaComunServiceImpl implements ReservaZonaComunService {
     private final RompimientoRepository reglas;
     private final NotificacionService notificaciones;
     private final ZonaComunService zonasComunes;
+    private final InmuebleDelResidente inmuebleDelResidente;
     private final Clock reloj;
 
     @Override
     @Transactional
     @CacheEvict(cacheNames = {NombresCache.ZONAS_COMUNES, NombresCache.ZONAS_POR_INMUEBLE}, allEntries = true)
-    public ReservaResponses.Reserva reservarZonaComun(Long residenteId, ReservaRequests.Reservar s) {
-        ContextoResidenteView contexto = contexto(residenteId);
+    public ReservaResponses.Reserva reservarZonaComun(Long residenteId, Long inmuebleId,
+                                                     ReservaRequests.Reservar s) {
+        ContextoResidenteView contexto = contexto(residenteId, inmuebleId);
         ZonaView vistaZona = zona(s.zonaComunId());
         LocalDateTime ahora = ahora();
         ReservaZonaComun reserva = construir(contexto, vistaZona, s.fechaHoraInicio(), s.fechaHoraFin());
 
-        List<Incumplimiento> incumplimientos = evaluar(residenteId, contexto, vistaZona, reserva, ahora);
+        List<Incumplimiento> incumplimientos = evaluar(residenteId, contexto, vistaZona, reserva, ahora, null);
         if (!incumplimientos.isEmpty()) {
             throw incumplimientos.get(0).excepcion();
         }
@@ -85,8 +90,9 @@ public class ReservaZonaComunServiceImpl implements ReservaZonaComunService {
         if (!vista.getDuenoReservaId().equals(residenteId)) {
             throw new ProhibidoException("Solo quien hizo la reserva puede cancelarla");
         }
-        ReservaZonaComun reserva = new ReservaZonaComun(vista.getId(), null, null, vista.getFechaHoraInicio(),
-                vista.getFechaHoraFin());
+        ReservaZonaComun reserva = new ReservaZonaComun(vista.getId(), null, null,
+                Hidratador.referenciaInmueble(vista.getInmuebleId()),
+                vista.getFechaHoraInicio(), vista.getFechaHoraFin());
         LocalDateTime ahora = ahora();
         if (!reserva.sePuedeCancelar(ahora)) {
             throw new ConflictoException("Solo se cancela una reserva que aun no empieza; esta "
@@ -97,24 +103,27 @@ public class ReservaZonaComunServiceImpl implements ReservaZonaComunService {
 
     @Override
     @Transactional(readOnly = true)
-    public Pagina<ReservaResponses.Reserva> verReservas(Long residenteId, String estado, SolicitudPagina pagina) {
+    public Pagina<ReservaResponses.Reserva> verReservas(Long residenteId, Long inmuebleId, String estado,
+                                                        SolicitudPagina pagina) {
         String filtro = EstadoReservaPolicy.normalizarFiltro(estado);
+        Long elegido = inmuebleDelResidente.resolver(residenteId, inmuebleId).getId();
         LocalDateTime ahora = ahora();
-        List<ReservaResponses.Reserva> filas = reservas.listarPorResidente(residenteId, filtro, ahora,
-                        pagina.limite(), pagina.desplazamiento())
+        List<ReservaResponses.Reserva> filas = reservas.listarPorResidenteEnInmueble(residenteId, elegido, filtro,
+                        ahora, pagina.limite(), pagina.desplazamiento())
                 .stream().map(v -> ReservaMapper.de(v, ahora)).toList();
-        return Pagina.de(filas, reservas.contarPorResidente(residenteId, filtro, ahora), pagina);
+        return Pagina.de(filas, reservas.contarPorResidenteEnInmueble(residenteId, elegido, filtro, ahora), pagina);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ReservaResponses.Disponibilidad verificarDisponibilidad(Long residenteId, Long zonaComunId,
+    public ReservaResponses.Disponibilidad verificarDisponibilidad(Long residenteId, Long inmuebleId,
+                                                                   Long zonaComunId,
                                                                    LocalDateTime inicio, LocalDateTime fin) {
-        ContextoResidenteView contexto = contexto(residenteId);
+        ContextoResidenteView contexto = contexto(residenteId, inmuebleId);
         ZonaView vistaZona = zona(zonaComunId);
         ReservaZonaComun reserva = construir(contexto, vistaZona, inicio, fin);
 
-        List<Incumplimiento> incumplimientos = evaluar(residenteId, contexto, vistaZona, reserva, ahora());
+        List<Incumplimiento> incumplimientos = evaluar(residenteId, contexto, vistaZona, reserva, ahora(), null);
         String mensaje = incumplimientos.isEmpty() ? "Disponible" : incumplimientos.get(0).mensaje();
         return new ReservaResponses.Disponibilidad(zonaComunId, reserva.getFechaHoraInicio(),
                 reserva.getFechaHoraFin(), cumple(incumplimientos, Motivo.HORARIO),
@@ -124,8 +133,50 @@ public class ReservaZonaComunServiceImpl implements ReservaZonaComunService {
 
     @Override
     @Transactional(readOnly = true)
-    public Pagina<ZonaResponses.Zona> zonasDisponibles(Long residenteId, SolicitudPagina pagina) {
-        return zonasComunes.mostrarZonasComunes(contexto(residenteId).getInmuebleId(), pagina);
+    public Pagina<ZonaResponses.Zona> zonasDisponibles(Long residenteId, Long inmuebleId, SolicitudPagina pagina) {
+        return zonasComunes.mostrarZonasComunes(
+                inmuebleDelResidente.resolver(residenteId, inmuebleId).getId(), pagina);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ReservaResponses.Reserva consultarReserva(Long residenteId, Long reservaId) {
+        return ReservaMapper.de(propia(residenteId, reservaId), ahora());
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = {NombresCache.ZONAS_COMUNES, NombresCache.ZONAS_POR_INMUEBLE}, allEntries = true)
+    public ReservaResponses.Reserva reprogramarReserva(Long residenteId, Long reservaId,
+                                                      ReservaRequests.Reprogramar s) {
+        ReservaView vista = propia(residenteId, reservaId);
+        ReservaZonaComun actual = new ReservaZonaComun(vista.getId(), null, null,
+                Hidratador.referenciaInmueble(vista.getInmuebleId()),
+                vista.getFechaHoraInicio(), vista.getFechaHoraFin());
+        LocalDateTime ahora = ahora();
+        if (!actual.sePuedeCancelar(ahora)) {
+            throw new ConflictoException("Solo se reprograma una reserva que aun no empieza; esta "
+                    + actual.estado(ahora));
+        }
+        ContextoResidenteView contexto = contexto(residenteId, vista.getInmuebleId());
+        ZonaView vistaZona = zona(vista.getZonaComunId());
+        ReservaZonaComun nueva = construir(contexto, vistaZona, s.fechaHoraInicio(), s.fechaHoraFin());
+        List<Incumplimiento> incumplimientos = evaluar(residenteId, contexto, vistaZona, nueva, ahora, reservaId);
+        if (!incumplimientos.isEmpty()) {
+            throw incumplimientos.get(0).excepcion();
+        }
+        reservas.actualizarIntervalo(reservaId, nueva.getFechaHoraInicio(), nueva.getFechaHoraFin());
+        return ReservaMapper.de(reservas.buscarPorId(reservaId).orElseThrow(), ahora);
+    }
+
+    /** La reserva existe y la hizo este residente. */
+    private ReservaView propia(Long residenteId, Long reservaId) {
+        ReservaView vista = reservas.buscarPorId(reservaId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("La reserva " + reservaId + " no existe"));
+        if (!vista.getDuenoReservaId().equals(residenteId)) {
+            throw new ProhibidoException("La reserva " + reservaId + " no es suya");
+        }
+        return vista;
     }
 
     // ------------------------------------------------------------------ validacion comun
@@ -159,17 +210,19 @@ public class ReservaZonaComunServiceImpl implements ReservaZonaComunService {
      */
     private ReservaZonaComun construir(ContextoResidenteView contexto, ZonaView vistaZona,
                                        LocalDateTime inicio, LocalDateTime fin) {
-        ReservaZonaComun reserva = new ReservaZonaComun(null, Hidratador.residente(contexto),
-                Hidratador.zona(vistaZona), inicio.truncatedTo(ChronoUnit.MINUTES),
-                fin.truncatedTo(ChronoUnit.MINUTES));
+        Residente dueno = Hidratador.residente(contexto);
+        Inmueble inmueble = dueno.getInmuebles().get(0);   // el elegido, con su estado y liquidacion
+        ReservaZonaComun reserva = new ReservaZonaComun(null, dueno, Hidratador.zona(vistaZona), inmueble,
+                inicio.truncatedTo(ChronoUnit.MINUTES), fin.truncatedTo(ChronoUnit.MINUTES));
         if (!reserva.intervaloValido()) {
             throw new SolicitudInvalidaException("fechaHoraFin debe ser posterior a fechaHoraInicio");
         }
         return reserva;
     }
 
+    /** {@code excluir}: id de la reserva que se reprograma (no cuenta contra el cupo ni el solape); nulo al reservar. */
     private List<Incumplimiento> evaluar(Long residenteId, ContextoResidenteView contexto, ZonaView vistaZona,
-                                         ReservaZonaComun reserva, LocalDateTime ahora) {
+                                         ReservaZonaComun reserva, LocalDateTime ahora, Long excluir) {
         List<Incumplimiento> incumplimientos = new ArrayList<>();
         String nombreZona = vistaZona.getNombreZonaComun();
 
@@ -201,13 +254,19 @@ public class ReservaZonaComunServiceImpl implements ReservaZonaComunService {
             incumplimientos.add(new Incumplimiento(Motivo.REGLAS, nombreZona + " permite reservas de maximo "
                     + duracionMaxima + " horas"));
         }
-        long solapadas = reservas.contarSolapadas(vistaZona.getId(), reserva.getFechaHoraInicio(),
-                reserva.getFechaHoraFin());
+        long solapadas = excluir == null
+                ? reservas.contarSolapadas(vistaZona.getId(), reserva.getFechaHoraInicio(), reserva.getFechaHoraFin())
+                : reservas.contarSolapadasExcepto(vistaZona.getId(), reserva.getFechaHoraInicio(),
+                        reserva.getFechaHoraFin(), excluir);
         if (solapadas >= vistaZona.getCapacidad()) {
             incumplimientos.add(new Incumplimiento(Motivo.CUPO, nombreZona + " no tiene cupo en ese horario"));
         }
-        if (reservas.existeSolapadaDeResidente(residenteId, vistaZona.getId(), reserva.getFechaHoraInicio(),
-                reserva.getFechaHoraFin())) {
+        boolean seCruza = excluir == null
+                ? reservas.existeSolapadaDeResidente(residenteId, vistaZona.getId(), reserva.getFechaHoraInicio(),
+                        reserva.getFechaHoraFin())
+                : reservas.existeSolapadaDeResidenteExcepto(residenteId, vistaZona.getId(),
+                        reserva.getFechaHoraInicio(), reserva.getFechaHoraFin(), excluir);
+        if (seCruza) {
             incumplimientos.add(new Incumplimiento(Motivo.SOLAPE,
                     "Ya tiene una reserva de " + nombreZona + " que se cruza con ese horario"));
         }
@@ -224,8 +283,9 @@ public class ReservaZonaComunServiceImpl implements ReservaZonaComunService {
         return LocalDateTime.now(reloj).truncatedTo(ChronoUnit.SECONDS);
     }
 
-    private ContextoResidenteView contexto(Long residenteId) {
-        return residentes.buscarContexto(residenteId)
+    private ContextoResidenteView contexto(Long residenteId, Long inmuebleId) {
+        Long elegido = inmuebleDelResidente.resolver(residenteId, inmuebleId).getId();
+        return residentes.buscarContexto(residenteId, elegido)
                 .orElseThrow(() -> new RecursoNoEncontradoException("El residente no tiene un inmueble asignado"));
     }
 

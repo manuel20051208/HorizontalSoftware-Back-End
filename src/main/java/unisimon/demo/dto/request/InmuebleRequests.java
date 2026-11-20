@@ -30,4 +30,9 @@ public final class InmuebleRequests {
 
     public record AsignarZonas(@NotEmpty List<@NotNull Long> zonaComunIds) {
     }
+
+    /** Datos editables del inmueble; isActive permite retirarlo sin borrarlo. */
+    public record ActualizarInmueble(@NotBlank @Size(max = 100) String direccionInmueble,
+                                     @NotNull Boolean isActive) {
+    }
 }

@@ -43,4 +43,12 @@ public interface NotificacionService {
 
     /** Administrador.consultarIncidencias(): las incidencias operativas registradas por la porteria. */
     Pagina<NotificacionResponses.Notificacion> consultarIncidencias(SolicitudPagina pagina);
+
+    /** Todas las notificaciones, las mas recientes primero. */
+    Pagina<NotificacionResponses.Notificacion> listar(SolicitudPagina pagina);
+
+    NotificacionResponses.Notificacion consultar(Long notificacionId);
+
+    /** Borra la notificacion y sus vinculos con usuarios e inmuebles (agregacion). */
+    void eliminar(Long notificacionId);
 }

@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 public final class ReservaMapper {
 
     public static ReservaResponses.Reserva de(ReservaView v, LocalDateTime ahora) {
-        ReservaZonaComun reserva = new ReservaZonaComun(v.getId(), null, null, v.getFechaHoraInicio(),
-                v.getFechaHoraFin());
+        ReservaZonaComun reserva = new ReservaZonaComun(v.getId(), null, null,
+                Hidratador.referenciaInmueble(v.getInmuebleId()), v.getFechaHoraInicio(), v.getFechaHoraFin());
         String estado = reserva.estado(ahora);
         boolean enCurso = ReservaZonaComun.EN_CURSO.equals(estado) && Boolean.TRUE.equals(v.getZonaActiva());
         return new ReservaResponses.Reserva(v.getId(), v.getZonaComunId(), v.getNombreZonaComun(),

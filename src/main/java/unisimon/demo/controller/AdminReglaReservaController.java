@@ -3,6 +3,7 @@ package unisimon.demo.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,5 +59,39 @@ public class AdminReglaReservaController {
     @PatchMapping("/rompimientos/{id}/inactivar")
     public ReglaResponses.Rompimiento inactivar(@PathVariable Long id) {
         return reglas.inactivarRegla(id);
+    }
+
+    @SoloAdministrador
+    @GetMapping("/reglas-reserva/{id}")
+    public ReglaResponses.Regla consultar(@PathVariable Long id) {
+        return reglas.consultar(id);
+    }
+
+    @SoloAdministrador
+    @DeleteMapping("/reglas-reserva/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminar(@PathVariable Long id) {
+        reglas.eliminar(id);
+    }
+
+    @SoloAdministrador
+    @PostMapping("/reglas-reserva/{id}/zonas")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ReglaResponses.Rompimiento asignarZona(@PathVariable Long id,
+                                                  @Valid @RequestBody ReglaRequests.AsignarZona solicitud) {
+        return reglas.asignarZona(id, solicitud);
+    }
+
+    @SoloAdministrador
+    @GetMapping("/rompimientos/{id}")
+    public ReglaResponses.Rompimiento consultarRompimiento(@PathVariable Long id) {
+        return reglas.consultarRompimiento(id);
+    }
+
+    @SoloAdministrador
+    @DeleteMapping("/rompimientos/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminarRompimiento(@PathVariable Long id) {
+        reglas.eliminarRompimiento(id);
     }
 }

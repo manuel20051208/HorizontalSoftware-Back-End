@@ -21,4 +21,16 @@ public interface ReglaReservaService {
 
     /** Rompimiento.inactivarRegla() */
     ReglaResponses.Rompimiento inactivarRegla(Long rompimientoId);
+
+    ReglaResponses.Regla consultar(Long reglaId);
+
+    /** Solo si la regla ya no esta aplicada a ninguna zona. */
+    void eliminar(Long reglaId);
+
+    /** Crea el Rompimiento: aplica la regla a otra zona comun. */
+    ReglaResponses.Rompimiento asignarZona(Long reglaId, ReglaRequests.AsignarZona solicitud);
+
+    ReglaResponses.Rompimiento consultarRompimiento(Long rompimientoId);
+
+    void eliminarRompimiento(Long rompimientoId);
 }

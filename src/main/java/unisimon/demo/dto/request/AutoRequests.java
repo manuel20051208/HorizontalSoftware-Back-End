@@ -12,4 +12,8 @@ public final class AutoRequests {
     /** placa es numerica porque asi esta en el diagrama. parqueaderoId es opcional. */
     public record RegistrarAuto(@NotNull @Positive Long placa, Long parqueaderoId) {
     }
+
+    /** parqueaderoId nulo deja el auto sin parqueadero. */
+    public record ActualizarAuto(@NotNull @Positive Long placa, Long parqueaderoId) {
+    }
 }

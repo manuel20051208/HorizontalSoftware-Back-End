@@ -92,4 +92,46 @@ public class ZonaComunServiceImpl implements ZonaComunService {
         inmuebles.asignarZonas(inmuebleId, ids);
         return zonas.listarActivasDeInmueble(inmuebleId).stream().map(ZonaMapper::zona).toList();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ZonaResponses.Zona consultar(Long zonaId) {
+        return ZonaMapper.zona(cargar(zonaId));
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = {NombresCache.ZONAS_COMUNES, NombresCache.ZONAS_POR_INMUEBLE}, allEntries = true)
+    public ZonaResponses.Zona actualizar(Long zonaId, ZonaRequests.ActualizarZona s) {
+        cargar(zonaId);
+        String nombre = s.nombreZonaComun().trim();
+        if (s.horaInicio().equals(s.horaFin())) {
+            throw new SolicitudInvalidaException("horaInicio y horaFin no pueden ser iguales");
+        }
+        if (zonas.existePorNombreEnOtra(nombre, zonaId)) {
+            throw new ConflictoException("Ya existe la zona comun " + nombre);
+        }
+        zonas.actualizarDatos(zonaId, nombre, s.capacidad(), s.horaInicio(), s.horaFin());
+        return ZonaMapper.zona(zonas.buscarPorId(zonaId).orElseThrow());
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = {NombresCache.ZONAS_COMUNES, NombresCache.ZONAS_POR_INMUEBLE}, allEntries = true)
+    public void eliminar(Long zonaId) {
+        cargar(zonaId);
+        if (zonas.contarReservas(zonaId) > 0) {
+            throw new ConflictoException("La zona tiene reservas registradas; desactivela en lugar de borrarla");
+        }
+        if (zonas.contarRompimientos(zonaId) > 0) {
+            throw new ConflictoException("La zona tiene reglas de reserva asignadas; quitelas primero");
+        }
+        zonas.desvincularInmuebles(zonaId);   // agregacion: los inmuebles siguen existiendo
+        zonas.eliminar(zonaId);
+    }
+
+    private ZonaComunRepository.ZonaView cargar(Long zonaId) {
+        return zonas.buscarPorId(zonaId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("La zona comun " + zonaId + " no existe"));
+    }
 }

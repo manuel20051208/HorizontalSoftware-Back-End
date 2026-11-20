@@ -4,10 +4,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -81,5 +83,25 @@ public class AdminLiquidacionController {
     @PatchMapping("/liquidaciones/{id}/al-dia")
     public LiquidacionResponses.Liquidacion marcarAlDia(@PathVariable Long id) {
         return liquidaciones.marcarAlDia(id);
+    }
+
+    @SoloAdministrador
+    @GetMapping("/liquidaciones/{id}")
+    public LiquidacionResponses.Liquidacion consultar(@PathVariable Long id) {
+        return liquidaciones.consultar(id);
+    }
+
+    @SoloAdministrador
+    @PutMapping("/liquidaciones/{id}")
+    public LiquidacionResponses.Liquidacion actualizar(@PathVariable Long id,
+                                                       @Valid @RequestBody LiquidacionRequests.Actualizar solicitud) {
+        return liquidaciones.actualizar(id, solicitud);
+    }
+
+    @SoloAdministrador
+    @DeleteMapping("/liquidaciones/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminar(@PathVariable Long id) {
+        liquidaciones.eliminar(id);
     }
 }

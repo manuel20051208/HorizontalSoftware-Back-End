@@ -18,12 +18,13 @@ public final class InvitadoMapper {
         UsuarioAutorizado dominio = Hidratador.invitado(v);
         boolean vigente = dominio.isActive() && dominio.autorizacionVigente();
         return new InvitadoResponses.Invitado(v.getId(), v.getIdentificacion(), v.getNombreCompleto(),
-                v.getCorreoElectronico(), v.getActive(), v.getVenceAutorizacion(), vigente);
+                v.getCorreoElectronico(), v.getActive(), v.getVenceAutorizacion(), vigente,
+                UsuarioMapper.inmuebles(v.getInmuebles()));
     }
 
     public static InvitadoResponses.Anfitrion anfitrion(AnfitrionView v) {
         return new InvitadoResponses.Anfitrion(v.getId(), v.getIdentificacion(), v.getNombreCompleto(),
-                v.getInmuebleId(), v.getDireccionInmueble());
+                UsuarioMapper.inmuebles(v.getInmuebles()));
     }
 
     public static AutoResponses.Auto auto(AutoView v) {

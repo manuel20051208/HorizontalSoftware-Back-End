@@ -59,4 +59,12 @@ public interface ReglaReservaRepository extends Repository<ReglaReserva, Long> {
             WHERE id = :id
             """, nativeQuery = true)
     int actualizarReglas(@Param("id") Long id, @Param("anticipacion") int anticipacion, @Param("duracion") int duracion);
+
+    /** ReglaReserva -> Administrador: reglas que creo ese administrador (impiden borrar su cuenta). */
+    @Query(value = "SELECT COUNT(*) FROM reglas_reserva WHERE admin_id = :adminId", nativeQuery = true)
+    long contarPorAdministrador(@Param("adminId") Long adminId);
+
+    @Modifying
+    @Query(value = "DELETE FROM reglas_reserva WHERE id = :id", nativeQuery = true)
+    int eliminar(@Param("id") Long id);
 }

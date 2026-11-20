@@ -28,7 +28,7 @@ import java.util.List;
  * <p>
  * Notas de mapeo respecto al diagrama:
  * <ul>
- *   <li>{@code usuariosRelacionado} son los residentes (e invitados) cuyo {@code inmueble} es este.</li>
+ *   <li>{@code usuariosRelacionado} son los residentes (e invitados) relacionados con este inmueble.</li>
  *   <li>{@code liquidacion} es la liquidacion VIGENTE (la mas reciente); el historial esta en {@link Liquidacion}.</li>
  *   <li>{@code zonaComunes} es muchos a muchos: las zonas son compartidas por varios inmuebles.</li>
  * </ul>
@@ -50,7 +50,7 @@ public class Inmueble {
      * List&lt;Usuario&gt; como en el diagrama; en la base son los residentes e invitados de este inmueble.
      * Inmueble ◇— Residente es AGREGACION (Inmueble es el todo): sin cascada ni orphanRemoval, borrar uno no borra al otro.
      */
-    @OneToMany(mappedBy = "inmueble", targetEntity = Residente.class)
+    @ManyToMany(mappedBy = "inmuebles", targetEntity = Residente.class)
     private List<Usuario> usuariosRelacionado = new ArrayList<>();
 
     @Column(nullable = false, unique = true)

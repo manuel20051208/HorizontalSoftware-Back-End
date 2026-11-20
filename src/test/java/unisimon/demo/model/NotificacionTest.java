@@ -83,7 +83,8 @@ class NotificacionTest {
     void notificarReserva() {
         ZonaComun zona = new ZonaComun();
         zona.setNombreZonaComun("Salon social");
-        ReservaZonaComun reserva = new ReservaZonaComun(1L, residente(7, true, false), zona);
+        ReservaZonaComun reserva = new ReservaZonaComun(1L, residente(7, true, false), zona,
+                new Inmueble(1L, "A-302", null, true));
         Notificacion n = new Notificacion();
 
         n.notificarReserva(reserva);

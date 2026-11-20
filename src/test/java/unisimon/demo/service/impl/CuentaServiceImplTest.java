@@ -52,7 +52,7 @@ class CuentaServiceImplTest {
     private CredencialesView usuario(String tipo, boolean activo, LocalDate creacion) {
         return Proyecciones.de(CredencialesView.class, "id", 1L, "nombreCompleto", "Santiago",
                 "correoElectronico", "s@mail.com", "contrasena", "hash", "tipoUsuario", tipo, "active", activo,
-                "fechaCreacionCuenta", creacion, "notificacionLeida", false, "inmuebleId", 5L);
+                "fechaCreacionCuenta", creacion, "notificacionLeida", false, "inmuebles", "5|A-302");
     }
 
     @Test

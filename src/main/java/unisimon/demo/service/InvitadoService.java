@@ -10,9 +10,12 @@ import java.util.List;
 /** Invitados (UsuarioAutorizado) de un residente. */
 public interface InvitadoService {
 
-    InvitadoResponses.Invitado crearInvitado(Long residenteId, InvitadoRequests.CrearInvitado solicitud);
+    /** Crea el invitado en el inmueble elegido por el residente. */
+    InvitadoResponses.Invitado crearInvitado(Long residenteId, Long inmuebleId,
+                                             InvitadoRequests.CrearInvitado solicitud);
 
-    Pagina<InvitadoResponses.Invitado> listarInvitados(Long residenteId, SolicitudPagina pagina);
+    /** Los invitados del residente en el inmueble elegido por {@code inmuebleId} (nulo: el unico suyo). */
+    Pagina<InvitadoResponses.Invitado> listarInvitados(Long residenteId, Long inmuebleId, SolicitudPagina pagina);
 
     /** Residente.cambiarEstadoInvitado(invitado, id): invierte el estado de un invitado propio. */
     InvitadoResponses.CambioEstado cambiarEstadoInvitado(Long residenteId, Long invitadoId);
@@ -22,4 +25,12 @@ public interface InvitadoService {
 
     /** UsuarioAutorizado.buscarRelacionResidente(): residentes que autorizaron a este invitado. */
     Pagina<InvitadoResponses.Anfitrion> buscarRelacionResidente(Long invitadoId, SolicitudPagina pagina);
+
+    InvitadoResponses.Invitado consultarInvitado(Long residenteId, Long invitadoId);
+
+    InvitadoResponses.Invitado actualizarInvitado(Long residenteId, Long invitadoId,
+                                                  InvitadoRequests.ActualizarInvitado solicitud);
+
+    /** Quita la autorizacion del residente; el invitado no se borra (agregacion). */
+    void eliminarInvitado(Long residenteId, Long invitadoId);
 }

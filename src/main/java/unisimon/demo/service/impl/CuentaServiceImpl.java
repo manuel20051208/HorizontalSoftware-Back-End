@@ -65,9 +65,10 @@ public class CuentaServiceImpl implements CuentaService {
             throw new NoAutenticadoException("La contrasena actual es incorrecta");
         }
         politica.validar(contrasenaNueva);
-        // Usuario.cambiarContrasena(inmueble, id): exige cuenta activa (y su inmueble, si es residente) y cierra la sesion.
+        // Usuario.cambiarContrasena(inmueble, id): exige cuenta activa (y uno de sus inmuebles, si es residente).
         Usuario dominio = Hidratador.usuario(usuario);
-        Inmueble inmueble = dominio instanceof Residente residente ? residente.getInmueble() : null;
+        Inmueble inmueble = dominio instanceof Residente residente
+                ? residente.getInmuebles().stream().findFirst().orElse(null) : null;
         dominio.cambiarContrasena(inmueble, usuarioId);
         usuarios.actualizarContrasena(usuarioId, codificador.encode(contrasenaNueva));
         usuarios.actualizarToken(usuarioId, dominio.getToken());

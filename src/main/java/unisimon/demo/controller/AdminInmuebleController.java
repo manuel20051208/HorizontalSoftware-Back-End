@@ -3,6 +3,7 @@ package unisimon.demo.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,6 +66,21 @@ public class AdminInmuebleController {
     }
 
     @SoloAdministrador
+    @PutMapping("/{id}")
+    public InmuebleResponses.Detalle actualizar(@PathVariable Long id,
+                                                @Valid @RequestBody InmuebleRequests.ActualizarInmueble solicitud) {
+        return inmuebles.actualizar(id, solicitud);
+    }
+
+    /** Borra el inmueble con sus partes (pagos, parqueadero, liquidaciones); sus residentes siguen existiendo. */
+    @SoloAdministrador
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminar(@PathVariable Long id) {
+        inmuebles.eliminar(id);
+    }
+
+    @SoloAdministrador
     @PutMapping("/{id}/tarifas")
     public LiquidacionResponses.Liquidacion configurarTarifas(@PathVariable Long id,
                                                               @Valid @RequestBody InmuebleRequests.Tarifas tarifas) {
@@ -99,10 +115,10 @@ public class AdminInmuebleController {
         return pagos.conciliarPagosAdministracion(id, s);
     }
 
-    /** Los residentes relacionados con el inmueble, por nombre. */
+    /** Residentes e invitados relacionados con el inmueble, por tipo y nombre. */
     @SoloAdministrador
-    @GetMapping("/{id}/residentes")
-    public List<UsuarioResponses.RelacionInmueble> residentes(UsuarioAutenticado usuario, @PathVariable Long id) {
-        return relaciones.listarPorInmueble(usuario.id(), id);
+    @GetMapping("/{id}/usuarios")
+    public List<UsuarioResponses.UsuarioDeInmueble> usuarios(UsuarioAutenticado usuario, @PathVariable Long id) {
+        return relaciones.listarUsuariosDeInmueble(usuario.id(), id);
     }
 }

@@ -22,4 +22,14 @@ public interface ZonaComunService {
 
     /** Administrador.ConfigurarZonasComunes(inmueble, adminId): define que zonas puede usar un inmueble. */
     List<ZonaResponses.Zona> configurarZonasComunes(Long inmuebleId, List<Long> zonaComunIds);
+
+    ZonaResponses.Zona consultar(Long zonaId);
+
+    ZonaResponses.Zona actualizar(Long zonaId, ZonaRequests.ActualizarZona solicitud);
+
+    /**
+     * Inmueble ◇— ZonaComun es agregacion: se quitan los vinculos con los inmuebles. ZonaComun ◇— Rompimiento y
+     * ReservaZonaComun -> ZonaComun impiden el borrado (409) mientras existan.
+     */
+    void eliminar(Long zonaId);
 }

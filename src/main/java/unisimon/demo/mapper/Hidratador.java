@@ -56,7 +56,8 @@ public final class Hidratador {
 
     /**
      * Usuario de su tipo (Administrador, Residente, Vigilante o UsuarioAutorizado) con sus credenciales, para
-     * ejecutar las operaciones de cuenta del diagrama. Un residente lleva la referencia de su inmueble.
+     * ejecutar las operaciones de cuenta del diagrama. Un residente o invitado lleva la referencia de todos sus
+     * inmuebles.
      */
     public static Usuario usuario(CredencialesView v) {
         String tipo = v.getTipoUsuario() == null ? "" : v.getTipoUsuario();
@@ -76,10 +77,27 @@ public final class Hidratador {
         usuario.setToken(v.getToken());
         usuario.setActive(Boolean.TRUE.equals(v.getActive()));
         usuario.setNotificacionLeida(Boolean.TRUE.equals(v.getNotificacionLeida()));
-        if (usuario instanceof Residente residente && v.getInmuebleId() != null) {
-            residente.setInmueble(referenciaInmueble(v.getInmuebleId()));
+        if (usuario instanceof Residente residente) {
+            residente.setInmuebles(inmuebles(v.getInmuebles()));
         }
         return usuario;
+    }
+
+    /** Convierte "id|direccion;id|direccion" (string_agg de las consultas) en referencias de inmueble. */
+    public static List<Inmueble> inmuebles(String agregado) {
+        if (agregado == null || agregado.isBlank()) {
+            return new ArrayList<>();
+        }
+        return Arrays.stream(agregado.split(";"))
+                .filter(fila -> !fila.isBlank())
+                .map(fila -> fila.split("\\|", 2))
+                .filter(partes -> partes.length == 2)
+                .map(partes -> {
+                    Inmueble inmueble = referenciaInmueble(Long.valueOf(partes[0]));
+                    inmueble.setDireccionInmueble(partes[1]);
+                    return inmueble;
+                })
+                .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
     }
 
     /** Usuario con lo que necesita configurarPreferencias: si esta activo y sus preferencias actuales. */
@@ -185,7 +203,7 @@ public final class Hidratador {
         residente.setId(v.getId());
         residente.setNombreCompleto(v.getNombreCompleto());
         residente.setActive(v.getActive());
-        residente.setInmueble(inmueble);
+        residente.setInmuebles(List.of(inmueble));
         return residente;
     }
 
@@ -196,6 +214,7 @@ public final class Hidratador {
         ua.setNombreCompleto(v.getNombreCompleto());
         ua.setActive(v.getActive());
         ua.setVenceAutorizacion(v.getVenceAutorizacion());
+        ua.setInmuebles(inmuebles(v.getInmuebles()));
         return ua;
     }
 
@@ -214,7 +233,7 @@ public final class Hidratador {
             r.setId(u.getId());
             r.setNombreCompleto(u.getNombreCompleto());
             r.setActive(u.getActive());
-            r.setInmueble(inmueble);
+            r.setInmuebles(List.of(inmueble));
             inmueble.getUsuariosRelacionado().add(r);
         }
         liquidacionVigente.map(Hidratador::liquidacion).ifPresent(inmueble::setLiquidacion);

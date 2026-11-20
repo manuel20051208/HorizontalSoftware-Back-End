@@ -116,7 +116,8 @@ class CacheServiciosTest {
                                         LiquidacionRepository liquidaciones) {
             return new InmuebleServiceImpl(inmuebles, mock(ParqueaderoRepository.class),
                     mock(UsuarioRepository.class), zonas, liquidaciones,
-                    new EstadoPagoPolicy(Clock.systemDefaultZone()));
+                    new EstadoPagoPolicy(Clock.systemDefaultZone()),
+                    mock(unisimon.demo.repository.AutoRepository.class));
         }
 
         @Bean
@@ -128,13 +129,14 @@ class CacheServiciosTest {
         ReservaZonaComunService reservaService(ReservaZonaComunRepository reservas, ZonaComunRepository zonas,
                                                RompimientoRepository rompimientos, ZonaComunService zonaComunService) {
             return new ReservaZonaComunServiceImpl(reservas, zonas, mock(ResidenteRepository.class), rompimientos,
-                    mock(NotificacionService.class), zonaComunService, Clock.systemDefaultZone());
+                    mock(NotificacionService.class), zonaComunService,
+                    mock(unisimon.demo.service.support.InmuebleDelResidente.class), Clock.systemDefaultZone());
         }
 
         @Bean
         ReglaReservaService reglaService(ReglaReservaRepository reglas, RompimientoRepository rompimientos,
                                          ZonaComunRepository zonas) {
-            return new ReglaReservaServiceImpl(reglas, rompimientos, zonas);
+            return new ReglaReservaServiceImpl(reglas, rompimientos, zonas, Clock.systemDefaultZone());
         }
 
         @Bean

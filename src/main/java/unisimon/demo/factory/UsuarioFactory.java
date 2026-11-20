@@ -9,6 +9,7 @@ import unisimon.demo.model.Residente;
 import unisimon.demo.model.Usuario;
 import unisimon.demo.model.Vigilante;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -39,7 +40,7 @@ public class UsuarioFactory {
                     throw new SolicitudInvalidaException("inmuebleId es obligatorio para un RESIDENTE");
                 }
                 yield new Residente(null, s.identificacion(), nombre, s.fechaNacimiento(), correo,
-                        contrasenaCodificada, tipo, Hidratador.referenciaInmueble(s.inmuebleId()), null);
+                        contrasenaCodificada, tipo, List.of(Hidratador.referenciaInmueble(s.inmuebleId())), null);
             }
             default -> throw new SolicitudInvalidaException(
                     "tipoUsuario debe ser ADMINISTRADOR, RESIDENTE o VIGILANTE");

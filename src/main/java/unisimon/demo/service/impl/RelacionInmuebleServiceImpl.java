@@ -25,13 +25,14 @@ import unisimon.demo.service.RelacionInmuebleService;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Relacion Residente <> Inmueble. Solo las cuentas de residente se relacionan con un inmueble; los invitados
- * siguen a su residente. Cambiar o desvincular arrastra, en la misma transaccion, a los invitados exclusivos, el
- * parqueadero del auto y las reservas futuras. Toda operacion la autoriza el administrador que la pide con
- * {@link Administrador#gestionarCuentaUsuario()}.
+ * Relacion Residente/Invitado <> Inmueble en la tabla puente {@code usuario_inmuebles}. Residentes e invitados
+ * pueden tener varios inmuebles; admin y vigilante no se relacionan. Quitar un inmueble arrastra, en la misma
+ * transaccion, a los invitados, el parqueadero y las reservas futuras. Toda operacion la autoriza el
+ * administrador con {@link Administrador#gestionarCuentaUsuario()}.
  */
 @Service
 @RequiredArgsConstructor
@@ -46,81 +47,64 @@ public class RelacionInmuebleServiceImpl implements RelacionInmuebleService {
 
     @Override
     @Transactional(readOnly = true)
-    public UsuarioResponses.RelacionInmueble consultar(Long adminId, Long identificacion) {
+    public UsuarioResponses.UsuarioInmuebles consultar(Long adminId, Long identificacion) {
         administrador(adminId);
-        CredencialesView residente = buscarResidente(identificacion);
-        InmuebleBasicoView inmueble = residente.getInmuebleId() == null ? null
-                : inmuebles.buscarBasico(residente.getInmuebleId()).orElse(null);
-        return relacion(residente, inmueble);
+        return respuesta(buscarCuenta(identificacion));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<UsuarioResponses.RelacionInmueble> listarPorInmueble(Long adminId, Long inmuebleId) {
+    public List<UsuarioResponses.UsuarioDeInmueble> listarUsuariosDeInmueble(Long adminId, Long inmuebleId) {
         administrador(adminId);
         if (!inmuebles.existePorId(inmuebleId)) {
             throw new RecursoNoEncontradoException("El inmueble " + inmuebleId + " no existe");
         }
-        return usuarios.listarResidentesDeInmueble(inmuebleId).stream()
-                .map(UsuarioMapper::relacionInmueble).toList();
+        return usuarios.listarUsuariosDeInmueble(inmuebleId).stream()
+                .map(UsuarioMapper::usuarioDeInmueble).toList();
     }
 
     @Override
     @Transactional
-    public UsuarioResponses.RelacionInmueble vincular(Long adminId, Long identificacion, Long inmuebleId) {
+    public UsuarioResponses.UsuarioInmuebles vincular(Long adminId, Long identificacion, Long inmuebleId) {
         administrador(adminId);
-        CredencialesView residente = buscarResidente(identificacion);
-        if (residente.getInmuebleId() != null) {
-            throw new ConflictoException("La cuenta ya tiene un inmueble; use cambiar");
-        }
-        InmuebleBasicoView inmueble = inmuebleDisponible(inmuebleId);
-        usuarios.actualizarInmueble(residente.getId(), inmuebleId);   // la cuenta sigue inactiva hasta verificar
-        return relacion(residente, inmueble);
-    }
-
-    @Override
-    @Transactional
-    @CacheEvict(cacheNames = {NombresCache.ZONAS_COMUNES, NombresCache.ZONAS_POR_INMUEBLE}, allEntries = true)
-    public UsuarioResponses.RelacionInmueble cambiar(Long adminId, Long identificacion, Long inmuebleId) {
-        administrador(adminId);
-        CredencialesView residente = buscarResidente(identificacion);
-        if (residente.getInmuebleId() == null) {
-            throw new ConflictoException("La cuenta no tiene un inmueble; use vincular");
-        }
-        if (residente.getInmuebleId().equals(inmuebleId)) {
+        CredencialesView cuenta = buscarCuenta(identificacion);
+        inmuebleDisponible(inmuebleId);
+        if (usuarios.estaRelacionado(cuenta.getId(), inmuebleId)) {
             throw new ConflictoException("La cuenta ya esta relacionada con ese inmueble");
         }
-        InmuebleBasicoView inmueble = inmuebleDisponible(inmuebleId);
-        mudarInvitados(residente.getId(), inmuebleId);
-        autos.liberarParqueaderoDe(residente.getId());
-        reservas.cancelarProgramadasFuturas(residente.getId(), inmuebleId, ahora());
-        usuarios.actualizarInmueble(residente.getId(), inmuebleId);
-        return relacion(residente, inmueble);
+        usuarios.vincularInmueble(cuenta.getId(), inmuebleId);   // no reactiva ni verifica el correo
+        return respuesta(cuenta);
     }
 
     @Override
     @Transactional
     @CacheEvict(cacheNames = {NombresCache.ZONAS_COMUNES, NombresCache.ZONAS_POR_INMUEBLE}, allEntries = true)
-    public void desvincular(Long adminId, Long identificacion) {
+    public UsuarioResponses.UsuarioInmuebles mudar(Long adminId, Long identificacion, Long inmuebleOrigenId,
+                                                   Long inmuebleDestinoId) {
         Administrador admin = administrador(adminId);
-        CredencialesView residente = buscarResidente(identificacion);
-        if (residente.getInmuebleId() == null) {
-            throw new ConflictoException("La cuenta no tiene un inmueble relacionado");
+        CredencialesView cuenta = buscarCuenta(identificacion);
+        if (!usuarios.estaRelacionado(cuenta.getId(), inmuebleOrigenId)) {
+            throw new ConflictoException("La cuenta no estaba relacionada con el inmueble de origen");
         }
-        List<Long> exclusivos = invitados.listarExclusivosDeResidente(residente.getId());
-        if (!exclusivos.isEmpty()) {
-            invitados.desactivar(exclusivos);   // conservan el inmueble viejo
+        if (usuarios.estaRelacionado(cuenta.getId(), inmuebleDestinoId)) {
+            throw new ConflictoException("La cuenta ya esta relacionada con el inmueble de destino");
         }
-        invitados.borrarVinculosDeResidente(residente.getId());   // exclusivos y compartidos
-        autos.liberarParqueaderoDe(residente.getId());
-        reservas.cancelarProgramadasFuturas(residente.getId(), null, ahora());
-        if (Boolean.TRUE.equals(residente.getActive())) {
-            Usuario cuenta = Hidratador.usuario(residente);
-            admin.modificarActive(identificacion, adminId, List.of(cuenta));   // la deja inactiva
-            usuarios.actualizarActive(residente.getId(), false);
-            usuarios.actualizarToken(residente.getId(), cuenta.getToken());   // cerrarSesion() lo dejo en null
+        inmuebleDisponible(inmuebleDestinoId);
+        quitarDeInmueble(admin, cuenta, inmuebleOrigenId, inmuebleDestinoId);
+        usuarios.vincularInmueble(cuenta.getId(), inmuebleDestinoId);
+        return respuesta(cuenta);
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = {NombresCache.ZONAS_COMUNES, NombresCache.ZONAS_POR_INMUEBLE}, allEntries = true)
+    public void desvincular(Long adminId, Long identificacion, Long inmuebleId) {
+        Administrador admin = administrador(adminId);
+        CredencialesView cuenta = buscarCuenta(identificacion);
+        if (!usuarios.estaRelacionado(cuenta.getId(), inmuebleId)) {
+            throw new ConflictoException("La cuenta no estaba relacionada con ese inmueble");
         }
-        usuarios.actualizarInmueble(residente.getId(), null);
+        quitarDeInmueble(admin, cuenta, inmuebleId, null);
     }
 
     // ------------------------------------------------------------------ apoyo
@@ -136,15 +120,13 @@ public class RelacionInmuebleServiceImpl implements RelacionInmuebleService {
         return administrador;
     }
 
-    /** Solo las cuentas de residente se relacionan con un inmueble; un invitado sigue a su residente. */
-    private CredencialesView buscarResidente(Long identificacion) {
+    /** Solo residentes e invitados se relacionan con inmuebles. */
+    private CredencialesView buscarCuenta(Long identificacion) {
         CredencialesView cuenta = usuarios.buscarCredencialesPorIdentificacion(identificacion)
                 .orElseThrow(() -> new RecursoNoEncontradoException("No existe un usuario con esa identificacion"));
-        if (Usuario.USUARIO_AUTORIZADO.equals(cuenta.getTipoUsuario())) {
-            throw new ProhibidoException("Los invitados siguen a su residente: no se relacionan con un inmueble");
-        }
-        if (!Usuario.RESIDENTE.equals(cuenta.getTipoUsuario())) {
-            throw new ConflictoException("Solo los residentes se relacionan con un inmueble");
+        if (!Usuario.RESIDENTE.equals(cuenta.getTipoUsuario())
+                && !Usuario.USUARIO_AUTORIZADO.equals(cuenta.getTipoUsuario())) {
+            throw new ConflictoException("Solo residentes e invitados se relacionan con inmuebles");
         }
         return cuenta;
     }
@@ -158,22 +140,57 @@ public class RelacionInmuebleServiceImpl implements RelacionInmuebleService {
         return inmueble;
     }
 
-    /** Los invitados exclusivos se mudan; los compartidos pierden solo el vinculo con este residente. */
-    private void mudarInvitados(Long residenteId, Long inmuebleId) {
-        List<Long> exclusivos = invitados.listarExclusivosDeResidente(residenteId);
-        for (Long invitadoId : invitados.listarIdsDeResidente(residenteId)) {
-            if (!exclusivos.contains(invitadoId)) {
-                invitados.borrarVinculo(residenteId, invitadoId);
+    /**
+     * Reglas de la salida de X: invitados, parqueadero, reservas y desactivacion si la cuenta se queda sin
+     * inmuebles. En mudanza los invitados y las reservas ganan Y, asi que nadie se desactiva. Solo se tocan los
+     * invitados que compartian X con el residente: un invitado ligado solo a otro inmueble Z del residente no
+     * pierde X (que no tenia) ni gana Y (que no le corresponde).
+     */
+    private void quitarDeInmueble(Administrador admin, CredencialesView cuenta, Long origenId, Long destinoId) {
+        Long usuarioId = cuenta.getId();
+        List<Long> invitadosAfectados = new ArrayList<>();
+        if (Usuario.RESIDENTE.equals(cuenta.getTipoUsuario())) {
+            List<Long> invitadosDelOrigen = invitados.listarIdsDeResidenteEnInmueble(usuarioId, origenId);
+            for (Long invitadoId : invitadosDelOrigen) {
+                if (!invitados.tieneOtroAnfitrionEnInmueble(invitadoId, usuarioId, origenId)) {
+                    invitadosAfectados.add(invitadoId);
+                }
+                if (destinoId != null) {
+                    invitados.vincularAInmueble(List.of(invitadoId), destinoId);
+                }
             }
+            if (!invitadosAfectados.isEmpty()) {
+                invitados.desvincularDeInmueble(invitadosAfectados, origenId);
+            }
+            autos.liberarParqueaderoDeInmueble(usuarioId, origenId);
+            if (destinoId != null) {
+                reservas.moverFuturasAInmueble(usuarioId, origenId, destinoId, ahora());
+            }
+            reservas.cancelarFuturasDeInmueble(usuarioId, origenId, ahora());
         }
-        if (!exclusivos.isEmpty()) {
-            invitados.moverAInmueble(exclusivos, inmuebleId);
+        usuarios.desvincularInmueble(usuarioId, origenId);
+        if (destinoId == null) {
+            desactivarSiSinInmuebles(admin, cuenta);
+            for (Long invitadoId : invitadosAfectados) {
+                usuarios.buscarCredencialesPorId(invitadoId).ifPresent(invitado ->
+                        desactivarSiSinInmuebles(admin, invitado));
+            }
         }
     }
 
-    private UsuarioResponses.RelacionInmueble relacion(CredencialesView residente, InmuebleBasicoView inmueble) {
-        return UsuarioMapper.relacionInmueble(residente, inmueble == null ? null : inmueble.getId(),
-                inmueble == null ? null : inmueble.getDireccionInmueble());
+    /** La cuenta activa que se queda sin inmuebles se desactiva con la operacion del modelo y pierde su sesion. */
+    private void desactivarSiSinInmuebles(Administrador admin, CredencialesView cuenta) {
+        if (!Boolean.TRUE.equals(cuenta.getActive()) || usuarios.contarInmueblesDe(cuenta.getId()) > 0) {
+            return;
+        }
+        Usuario dominio = Hidratador.usuario(cuenta);
+        admin.modificarActive(cuenta.getIdentificacion(), admin.getId(), List.of(dominio));
+        usuarios.actualizarActive(cuenta.getId(), false);
+        usuarios.actualizarToken(cuenta.getId(), dominio.getToken());   // cerrarSesion() lo dejo en null
+    }
+
+    private UsuarioResponses.UsuarioInmuebles respuesta(CredencialesView cuenta) {
+        return UsuarioMapper.usuarioInmuebles(cuenta, usuarios.listarInmueblesDe(cuenta.getId()));
     }
 
     private LocalDateTime ahora() {

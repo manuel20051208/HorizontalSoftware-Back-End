@@ -139,7 +139,8 @@ public class NotificacionServiceImpl implements NotificacionService {
     public void marcarNotificacionLeida(Long usuarioId) {
         Usuario usuario = usuarios.buscarCredencialesPorId(usuarioId).map(Hidratador::usuario)
                 .orElseThrow(() -> new NoAutenticadoException("Sesion invalida"));
-        Inmueble inmueble = usuario instanceof Residente residente ? residente.getInmueble() : null;
+        Inmueble inmueble = usuario instanceof Residente residente
+                ? residente.getInmuebles().stream().findFirst().orElse(null) : null;
         usuario.marcarNotificacionLeida(inmueble, usuarioId);        // Usuario.marcarNotificacionLeida(inmueble, id)
         usuarios.actualizarNotificacionLeida(usuarioId, usuario.getNotificacionLeida());
     }
@@ -159,6 +160,37 @@ public class NotificacionServiceImpl implements NotificacionService {
         List<NotificacionResponses.Notificacion> filas = notificaciones.listarPorTipo(Notificacion.INCIDENCIA,
                 pagina.limite(), pagina.desplazamiento()).stream().map(NotificacionMapper::de).toList();
         return Pagina.de(filas, notificaciones.contarPorTipo(Notificacion.INCIDENCIA), pagina);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Pagina<NotificacionResponses.Notificacion> listar(SolicitudPagina pagina) {
+        List<NotificacionResponses.Notificacion> filas = notificaciones.listar(pagina.limite(),
+                pagina.desplazamiento()).stream().map(NotificacionMapper::de).toList();
+        return Pagina.de(filas, notificaciones.contar(), pagina);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public NotificacionResponses.Notificacion consultar(Long notificacionId) {
+        return NotificacionMapper.de(notificaciones.buscarPorId(notificacionId)
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                        "La notificacion " + notificacionId + " no existe")));
+    }
+
+    /**
+     * Notificacion ◇— Usuario e Inmueble ◇— Notificacion son agregaciones: se quitan los vinculos y se borra la
+     * notificacion; usuarios e inmuebles siguen existiendo.
+     */
+    @Override
+    @Transactional
+    public void eliminar(Long notificacionId) {
+        if (!notificaciones.existePorId(notificacionId)) {
+            throw new RecursoNoEncontradoException("La notificacion " + notificacionId + " no existe");
+        }
+        notificaciones.desvincularUsuarios(notificacionId);
+        notificaciones.desvincularInmuebles(notificacionId);
+        notificaciones.eliminar(notificacionId);
     }
 
     // ------------------------------------------------------------------ internos
@@ -193,6 +225,7 @@ public class NotificacionServiceImpl implements NotificacionService {
         ZonaComun zona = Hidratador.referenciaZona(vista.getZonaComunId());
         zona.setNombreZonaComun(vista.getNombreZonaComun());
         return new ReservaZonaComun(vista.getId(), Hidratador.referenciaResidente(vista.getDuenoReservaId()), zona,
+                Hidratador.referenciaInmueble(vista.getInmuebleId()),
                 vista.getFechaHoraInicio(), vista.getFechaHoraFin());
     }
 

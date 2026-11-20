@@ -26,4 +26,13 @@ public class UsuarioPersistidor {
             default -> throw new IllegalStateException("Tipo de usuario no soportado: " + usuario.getClass());
         };
     }
+
+    /** Inserta la cuenta y, si se da, su primer vinculo con un inmueble (tabla puente). */
+    public Long insertar(Usuario usuario, Long inmuebleId) {
+        Long id = insertar(usuario);
+        if (inmuebleId != null) {
+            usuarios.vincularInmueble(id, inmuebleId);
+        }
+        return id;
+    }
 }

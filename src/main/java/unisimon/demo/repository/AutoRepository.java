@@ -42,11 +42,18 @@ public interface AutoRepository extends Repository<Auto, Long> {
 
     String SELECT_AUTO = """
             SELECT a.id AS "id", a.dueno_id AS "duenoId", u.nombre_completo AS "nombreDueno", a.placa AS "placa",
-                   a.parqueadero_id AS "parqueaderoId", u.inmueble_id AS "inmuebleId",
+                   a.parqueadero_id AS "parqueaderoId", i.id AS "inmuebleId",
                    i.direccion_inmueble AS "direccionInmueble"
             FROM autos a
             LEFT JOIN usuarios u ON u.id = a.dueno_id
-            LEFT JOIN inmuebles i ON i.id = u.inmueble_id
+            LEFT JOIN LATERAL (
+                SELECT i.id, i.direccion_inmueble
+                FROM usuario_inmuebles ui
+                JOIN inmuebles i ON i.id = ui.inmueble_id
+                WHERE ui.usuario_id = a.dueno_id
+                ORDER BY i.direccion_inmueble
+                LIMIT 1
+            ) i ON TRUE
             """;
 
     @Query(value = """
@@ -68,19 +75,49 @@ public interface AutoRepository extends Repository<Auto, Long> {
     @Query(value = "SELECT EXISTS (SELECT 1 FROM autos WHERE parqueadero_id = :parqueaderoId)", nativeQuery = true)
     boolean existePorParqueadero(@Param("parqueaderoId") Long parqueaderoId);
 
-    /** El auto del residente deja libre el parqueadero de su inmueble anterior; el auto sigue siendo suyo. */
+    /** El auto del residente deja libre el parqueadero de ese inmueble; el auto sigue siendo suyo. */
     @Modifying
-    @Query(value = "UPDATE autos SET parqueadero_id = NULL WHERE dueno_id = :duenoId", nativeQuery = true)
-    int liberarParqueaderoDe(@Param("duenoId") Long duenoId);
+    @Query(value = """
+            UPDATE autos SET parqueadero_id = NULL
+            WHERE dueno_id = :duenoId
+              AND parqueadero_id IN (SELECT p.id FROM parqueaderos p WHERE p.inmueble_id = :inmuebleId)
+            """, nativeQuery = true)
+    int liberarParqueaderoDeInmueble(@Param("duenoId") Long duenoId, @Param("inmuebleId") Long inmuebleId);
 
     /** consultarDuenos(inmueble, id): quien es el dueno del auto dentro de ese inmueble. */
     @Query(value = """
             SELECT u.id AS "id", u.identificacion AS "identificacion", u.nombre_completo AS "nombreCompleto",
-                   u.inmueble_id AS "inmuebleId", i.direccion_inmueble AS "direccionInmueble"
+                   i.id AS "inmuebleId", i.direccion_inmueble AS "direccionInmueble"
             FROM autos a
             JOIN usuarios u ON u.id = a.dueno_id
-            JOIN inmuebles i ON i.id = u.inmueble_id
-            WHERE a.id = :autoId AND u.inmueble_id = :inmuebleId
+            JOIN usuario_inmuebles ui ON ui.usuario_id = u.id AND ui.inmueble_id = :inmuebleId
+            JOIN inmuebles i ON i.id = ui.inmueble_id
+            WHERE a.id = :autoId
             """, nativeQuery = true)
     List<DuenoView> listarDuenos(@Param("inmuebleId") Long inmuebleId, @Param("autoId") Long autoId);
+
+    @Query(value = "SELECT EXISTS (SELECT 1 FROM autos WHERE placa = :placa AND id <> :id)", nativeQuery = true)
+    boolean existePorPlacaEnOtro(@Param("placa") Long placa, @Param("id") Long id);
+
+    @Modifying
+    @Query(value = "UPDATE autos SET placa = :placa, parqueadero_id = :parqueaderoId WHERE id = :id",
+            nativeQuery = true)
+    int actualizarDatos(@Param("id") Long id, @Param("placa") Long placa, @Param("parqueaderoId") Long parqueaderoId);
+
+    /** Auto -> Paqueadero es asociacion: al borrar el parqueadero el auto queda sin parqueadero, no se borra. */
+    @Modifying
+    @Query(value = "UPDATE autos SET parqueadero_id = NULL WHERE parqueadero_id = :parqueaderoId", nativeQuery = true)
+    int liberarParqueadero(@Param("parqueaderoId") Long parqueaderoId);
+
+    /** Libera el parqueadero del inmueble, sea de quien sea el auto (antes de borrar el inmueble). */
+    @Modifying
+    @Query(value = """
+            UPDATE autos SET parqueadero_id = NULL
+            WHERE parqueadero_id IN (SELECT p.id FROM parqueaderos p WHERE p.inmueble_id = :inmuebleId)
+            """, nativeQuery = true)
+    int liberarParqueaderosDeInmueble(@Param("inmuebleId") Long inmuebleId);
+
+    @Modifying
+    @Query(value = "DELETE FROM autos WHERE id = :id", nativeQuery = true)
+    int eliminar(@Param("id") Long id);
 }

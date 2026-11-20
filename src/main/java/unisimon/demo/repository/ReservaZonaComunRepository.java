@@ -66,11 +66,11 @@ public interface ReservaZonaComunRepository extends Repository<ReservaZonaComun,
                    z.hora_inicio AS "horaInicio", z.hora_fin AS "horaFin", z.is_active AS "zonaActiva",
                    r.fecha_hora_inicio AS "fechaHoraInicio", r.fecha_hora_fin AS "fechaHoraFin",
                    r.dueno_reserva_id AS "duenoReservaId", u.nombre_completo AS "nombreDueno",
-                   u.inmueble_id AS "inmuebleId", i.direccion_inmueble AS "direccionInmueble"
+                   r.inmueble_id AS "inmuebleId", i.direccion_inmueble AS "direccionInmueble"
             FROM reservas_zona_comun r
             JOIN zonas_comunes z ON z.id = r.zona_comun_id
             JOIN usuarios u ON u.id = r.dueno_reserva_id
-            LEFT JOIN inmuebles i ON i.id = u.inmueble_id
+            JOIN inmuebles i ON i.id = r.inmueble_id
             """;
 
     /**
@@ -88,8 +88,10 @@ public interface ReservaZonaComunRepository extends Repository<ReservaZonaComun,
             """;
 
     @Query(value = """
-            INSERT INTO reservas_zona_comun (dueno_reserva_id, zona_comun_id, fecha_hora_inicio, fecha_hora_fin)
-            VALUES (:#{#r.duenoReserva.id}, :#{#r.zonaComun.id}, :#{#r.fechaHoraInicio}, :#{#r.fechaHoraFin})
+            INSERT INTO reservas_zona_comun (dueno_reserva_id, zona_comun_id, inmueble_id,
+                                             fecha_hora_inicio, fecha_hora_fin)
+            VALUES (:#{#r.duenoReserva.id}, :#{#r.zonaComun.id}, :#{#r.inmueble.id},
+                    :#{#r.fechaHoraInicio}, :#{#r.fechaHoraFin})
             RETURNING id
             """, nativeQuery = true)
     Long insertar(@Param("r") ReservaZonaComun r);
@@ -105,31 +107,38 @@ public interface ReservaZonaComunRepository extends Repository<ReservaZonaComun,
 
     // ------------------------------------------------------------------ listados paginados
 
-    @Query(value = SELECT_RESERVA + "WHERE r.dueno_reserva_id = :residenteId AND " + FILTRO_ESTADO
+    /** Las reservas del residente en el inmueble elegido, opcionalmente solo las de un estado. */
+    @Query(value = SELECT_RESERVA + "WHERE r.dueno_reserva_id = :residenteId AND r.inmueble_id = :inmuebleId AND "
+            + FILTRO_ESTADO
             + "ORDER BY r.fecha_hora_inicio DESC, r.id DESC" + SqlPaginacion.LIMITE_DESPLAZAMIENTO, nativeQuery = true)
-    List<ReservaView> listarPorResidente(@Param("residenteId") Long residenteId, @Param("estado") String estado,
-                                         @Param("ahora") LocalDateTime ahora,
-                                         @Param("programada") String programada, @Param("enCurso") String enCurso,
-                                         @Param("finalizada") String finalizada,
-                                         @Param("limite") int limite, @Param("desplazamiento") long desplazamiento);
+    List<ReservaView> listarPorResidenteEnInmueble(@Param("residenteId") Long residenteId,
+                                                   @Param("inmuebleId") Long inmuebleId,
+                                                   @Param("estado") String estado,
+                                                   @Param("ahora") LocalDateTime ahora,
+                                                   @Param("programada") String programada,
+                                                   @Param("enCurso") String enCurso,
+                                                   @Param("finalizada") String finalizada,
+                                                   @Param("limite") int limite,
+                                                   @Param("desplazamiento") long desplazamiento);
 
-    @Query(value = "SELECT COUNT(*) FROM reservas_zona_comun r WHERE r.dueno_reserva_id = :residenteId AND "
-            + FILTRO_ESTADO, nativeQuery = true)
-    long contarPorResidente(@Param("residenteId") Long residenteId, @Param("estado") String estado,
-                            @Param("ahora") LocalDateTime ahora,
-                            @Param("programada") String programada, @Param("enCurso") String enCurso,
-                            @Param("finalizada") String finalizada);
+    /** El mismo filtro de inmueble y estado que el listado, para el total de la pagina. */
+    @Query(value = "SELECT COUNT(*) FROM reservas_zona_comun r WHERE r.dueno_reserva_id = :residenteId "
+            + "AND r.inmueble_id = :inmuebleId AND " + FILTRO_ESTADO, nativeQuery = true)
+    long contarPorResidenteEnInmueble(@Param("residenteId") Long residenteId, @Param("inmuebleId") Long inmuebleId,
+                                      @Param("estado") String estado, @Param("ahora") LocalDateTime ahora,
+                                      @Param("programada") String programada, @Param("enCurso") String enCurso,
+                                      @Param("finalizada") String finalizada);
 
-    /** Las reservas del residente (mas recientes primero), opcionalmente solo las de un estado. */
-    default List<ReservaView> listarPorResidente(Long residenteId, String estado, LocalDateTime ahora,
-                                                 int limite, long desplazamiento) {
-        return listarPorResidente(residenteId, estado, ahora, ReservaZonaComun.PROGRAMADA, ReservaZonaComun.EN_CURSO,
-                ReservaZonaComun.FINALIZADA, limite, desplazamiento);
+    default List<ReservaView> listarPorResidenteEnInmueble(Long residenteId, Long inmuebleId, String estado,
+                                                           LocalDateTime ahora, int limite, long desplazamiento) {
+        return listarPorResidenteEnInmueble(residenteId, inmuebleId, estado, ahora, ReservaZonaComun.PROGRAMADA,
+                ReservaZonaComun.EN_CURSO, ReservaZonaComun.FINALIZADA, limite, desplazamiento);
     }
 
-    default long contarPorResidente(Long residenteId, String estado, LocalDateTime ahora) {
-        return contarPorResidente(residenteId, estado, ahora, ReservaZonaComun.PROGRAMADA, ReservaZonaComun.EN_CURSO,
-                ReservaZonaComun.FINALIZADA);
+    default long contarPorResidenteEnInmueble(Long residenteId, Long inmuebleId, String estado,
+                                              LocalDateTime ahora) {
+        return contarPorResidenteEnInmueble(residenteId, inmuebleId, estado, ahora, ReservaZonaComun.PROGRAMADA,
+                ReservaZonaComun.EN_CURSO, ReservaZonaComun.FINALIZADA);
     }
 
     @Query(value = SELECT_RESERVA + "WHERE " + FILTRO_ESTADO + "ORDER BY r.fecha_hora_inicio, r.id"
@@ -190,6 +199,7 @@ public interface ReservaZonaComunRepository extends Repository<ReservaZonaComun,
             FROM usuarios invitado
             JOIN residente_invitados ri ON ri.invitado_id = invitado.id
             JOIN reservas_zona_comun r ON r.dueno_reserva_id = ri.residente_id
+            JOIN usuario_inmuebles ui ON ui.usuario_id = invitado.id AND ui.inmueble_id = r.inmueble_id
             JOIN zonas_comunes z ON z.id = r.zona_comun_id
             WHERE invitado.identificacion = :identificacion AND invitado.active
               AND r.fecha_hora_inicio <= :ahora AND r.fecha_hora_fin > :ahora
@@ -202,19 +212,55 @@ public interface ReservaZonaComunRepository extends Repository<ReservaZonaComun,
     int eliminar(@Param("id") Long id);
 
     /**
-     * Cancela las reservas PROGRAMADA (aun no empiezan) del residente cuyas zonas no estan asignadas al inmueble
-     * dado; con inmuebleId null cancela todas. Las EN_CURSO no se tocan.
+     * En una mudanza X -> Y: las reservas futuras del residente en X cuya zona tambien esta asignada a Y pasan a
+     * Y. Las EN_CURSO no se tocan.
      */
+    @Modifying
+    @Query(value = """
+            UPDATE reservas_zona_comun r SET inmueble_id = :destinoId
+            WHERE r.dueno_reserva_id = :residenteId
+              AND r.inmueble_id = :origenId
+              AND r.fecha_hora_inicio > :ahora
+              AND EXISTS (SELECT 1 FROM inmueble_zonas_comunes iz
+                          WHERE iz.inmueble_id = :destinoId AND iz.zona_comun_id = r.zona_comun_id)
+            """, nativeQuery = true)
+    int moverFuturasAInmueble(@Param("residenteId") Long residenteId, @Param("origenId") Long origenId,
+                              @Param("destinoId") Long destinoId, @Param("ahora") LocalDateTime ahora);
+
+    /** Cancela las reservas futuras (aun no empiezan) del residente en ese inmueble. Las EN_CURSO no se tocan. */
     @Modifying
     @Query(value = """
             DELETE FROM reservas_zona_comun r
             WHERE r.dueno_reserva_id = :residenteId
+              AND r.inmueble_id = :inmuebleId
               AND r.fecha_hora_inicio > :ahora
-              AND (CAST(:inmuebleId AS BIGINT) IS NULL
-                   OR NOT EXISTS (SELECT 1 FROM inmueble_zonas_comunes iz
-                                  WHERE iz.inmueble_id = CAST(:inmuebleId AS BIGINT)
-                                    AND iz.zona_comun_id = r.zona_comun_id))
             """, nativeQuery = true)
-    int cancelarProgramadasFuturas(@Param("residenteId") Long residenteId, @Param("inmuebleId") Long inmuebleId,
-                                   @Param("ahora") LocalDateTime ahora);
+    int cancelarFuturasDeInmueble(@Param("residenteId") Long residenteId, @Param("inmuebleId") Long inmuebleId,
+                                  @Param("ahora") LocalDateTime ahora);
+
+    // ------------------------------------------------------------------ reprogramar
+
+    /** Igual que {@link #contarSolapadas} pero sin contar la reserva que se esta reprogramando. */
+    @Query(value = """
+            SELECT COUNT(*) FROM reservas_zona_comun
+            WHERE zona_comun_id = :zonaId AND fecha_hora_inicio < :fin AND fecha_hora_fin > :inicio AND id <> :excluir
+            """, nativeQuery = true)
+    long contarSolapadasExcepto(@Param("zonaId") Long zonaId, @Param("inicio") LocalDateTime inicio,
+                                @Param("fin") LocalDateTime fin, @Param("excluir") Long excluir);
+
+    /** Igual que {@link #existeSolapadaDeResidente} pero sin contar la reserva que se esta reprogramando. */
+    @Query(value = """
+            SELECT EXISTS (SELECT 1 FROM reservas_zona_comun
+                           WHERE dueno_reserva_id = :residenteId AND zona_comun_id = :zonaId
+                             AND fecha_hora_inicio < :fin AND fecha_hora_fin > :inicio AND id <> :excluir)
+            """, nativeQuery = true)
+    boolean existeSolapadaDeResidenteExcepto(@Param("residenteId") Long residenteId, @Param("zonaId") Long zonaId,
+                                             @Param("inicio") LocalDateTime inicio, @Param("fin") LocalDateTime fin,
+                                             @Param("excluir") Long excluir);
+
+    @Modifying
+    @Query(value = "UPDATE reservas_zona_comun SET fecha_hora_inicio = :inicio, fecha_hora_fin = :fin WHERE id = :id",
+            nativeQuery = true)
+    int actualizarIntervalo(@Param("id") Long id, @Param("inicio") LocalDateTime inicio,
+                            @Param("fin") LocalDateTime fin);
 }

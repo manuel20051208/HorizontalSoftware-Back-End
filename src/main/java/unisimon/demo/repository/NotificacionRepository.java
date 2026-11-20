@@ -8,6 +8,7 @@ import unisimon.demo.model.Notificacion;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /** Notificaciones y sus destinatarios. SQL nativo. */
 public interface NotificacionRepository extends Repository<Notificacion, Long> {
@@ -91,4 +92,41 @@ public interface NotificacionRepository extends Repository<Notificacion, Long> {
 
     @Query(value = "SELECT EXISTS (SELECT 1 FROM notificaciones WHERE id = :id)", nativeQuery = true)
     boolean existePorId(@Param("id") Long id);
+
+    // ------------------------------------------------------------------ consulta general y borrado
+
+    String SELECT_NOTIFICACION = """
+            SELECT n.id AS "id", n.mensaje AS "mensaje", n.tipo_notificacion AS "tipoNotificacion",
+                   n.fecha_envio AS "fechaEnvio"
+            FROM notificaciones n
+            """;
+
+    @Query(value = SELECT_NOTIFICACION + "ORDER BY n.fecha_envio DESC, n.id DESC" + SqlPaginacion.LIMITE_DESPLAZAMIENTO,
+            nativeQuery = true)
+    List<NotificacionView> listar(@Param("limite") int limite, @Param("desplazamiento") long desplazamiento);
+
+    @Query(value = "SELECT COUNT(*) FROM notificaciones", nativeQuery = true)
+    long contar();
+
+    @Query(value = SELECT_NOTIFICACION + "WHERE n.id = :id", nativeQuery = true)
+    Optional<NotificacionView> buscarPorId(@Param("id") Long id);
+
+    /** Notificacion ◇— Usuario es agregacion: se borran los vinculos, los usuarios siguen existiendo. */
+    @Modifying
+    @Query(value = "DELETE FROM notificacion_usuarios WHERE notificacion_id = :id", nativeQuery = true)
+    int desvincularUsuarios(@Param("id") Long id);
+
+    /** Inmueble ◇— Notificacion es agregacion: se borran los vinculos, los inmuebles siguen existiendo. */
+    @Modifying
+    @Query(value = "DELETE FROM inmueble_notificaciones WHERE notificacion_id = :id", nativeQuery = true)
+    int desvincularInmuebles(@Param("id") Long id);
+
+    /** El usuario deja de ser destinatario de todas sus notificaciones (antes de borrar su cuenta). */
+    @Modifying
+    @Query(value = "DELETE FROM notificacion_usuarios WHERE usuario_id = :usuarioId", nativeQuery = true)
+    int quitarDestinatario(@Param("usuarioId") Long usuarioId);
+
+    @Modifying
+    @Query(value = "DELETE FROM notificaciones WHERE id = :id", nativeQuery = true)
+    int eliminar(@Param("id") Long id);
 }

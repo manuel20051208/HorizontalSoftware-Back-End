@@ -20,4 +20,10 @@ public final class ZonaRequests {
                             @NotNull LocalTime horaFin,
                             Boolean aplicarATodosLosInmuebles) {
     }
+
+    public record ActualizarZona(@NotBlank @Size(max = 100) String nombreZonaComun,
+                                 @NotNull @Positive Integer capacidad,
+                                 @NotNull LocalTime horaInicio,
+                                 @NotNull LocalTime horaFin) {
+    }
 }

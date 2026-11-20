@@ -25,4 +25,11 @@ public final class LiquidacionRequests {
 
     public record GenerarMasiva(@NotNull LocalDate periodo, LocalDate fechaLimite) {
     }
+
+    /** Valores editables de una liquidacion que aun no esta pagada. */
+    public record Actualizar(@NotNull LocalDate fechaLimite,
+                             @NotNull @PositiveOrZero BigDecimal cuotaAdministracion,
+                             @NotNull @PositiveOrZero BigDecimal valorServiciosComunes,
+                             @NotNull @PositiveOrZero BigDecimal valorMultas) {
+    }
 }
