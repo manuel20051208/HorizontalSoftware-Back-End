@@ -282,6 +282,7 @@ Las llaves y la URL de Wompi deben ser del mismo ambiente; si no, el back no dej
 ```bash
 ./mvnw clean package
 docker compose up --build
+/doceker compose
 ```
 
 Usa `postgres:16-alpine`: la v18 cambió la ruta de datos y rompe el volumen.
