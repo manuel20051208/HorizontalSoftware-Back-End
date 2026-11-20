@@ -8,6 +8,7 @@ import unisimon.demo.model.Pago;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,13 +35,16 @@ public interface PagoRepository extends Repository<Pago, Long> {
         String getEstado();
 
         String getReferencia();
+
+        /** Momento en que se creo el pago; sirve para vencer los pagos en linea abandonados. */
+        LocalDateTime getCreadoEn();
     }
 
     String SELECT_PAGO = """
             SELECT p.id AS "id", p.inmueble_id AS "inmuebleId", i.direccion_inmueble AS "direccionInmueble",
                    p.pasarela_id AS "pasarelaId", p.monto AS "monto", p.fecha_pago AS "fechaPago",
                    p.concepto AS "concepto", p.metodo_pago AS "metodoPago", p.estado AS "estado",
-                   p.referencia AS "referencia"
+                   p.referencia AS "referencia", p.creado_en AS "creadoEn"
             FROM pagos p
             JOIN inmuebles i ON i.id = p.inmueble_id
             """;
@@ -58,6 +62,13 @@ public interface PagoRepository extends Repository<Pago, Long> {
 
     @Query(value = SELECT_PAGO + "WHERE p.referencia = :referencia", nativeQuery = true)
     Optional<PagoView> buscarPorReferencia(@Param("referencia") String referencia);
+
+    /** Pagos en linea (iniciados en la pasarela) que siguen PENDIENTES: los que la sincronizacion con Wompi revisa. */
+    @Query(value = SELECT_PAGO + """
+            WHERE p.estado = 'PENDIENTE' AND p.referencia IS NOT NULL AND p.pasarela_id IS NOT NULL
+            ORDER BY p.id LIMIT :limite
+            """, nativeQuery = true)
+    List<PagoView> listarPendientesEnLinea(@Param("limite") int limite);
 
     @Query(value = SELECT_PAGO + "WHERE p.inmueble_id = :inmuebleId ORDER BY p.id DESC"
             + SqlPaginacion.LIMITE_DESPLAZAMIENTO, nativeQuery = true)
@@ -112,4 +123,8 @@ public interface PagoRepository extends Repository<Pago, Long> {
             nativeQuery = true)
     int actualizarTransaccion(@Param("id") Long id, @Param("referencia") String referencia,
                               @Param("pasarelaId") Long pasarelaId);
+
+    @Modifying
+    @Query(value = "UPDATE pagos SET creado_en = :creadoEn WHERE id = :id", nativeQuery = true)
+    int registrarCreacion(@Param("id") Long id, @Param("creadoEn") LocalDateTime creadoEn);
 }

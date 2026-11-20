@@ -19,7 +19,13 @@ public interface PasarelaPagoService {
      */
     void confirmarTransaccion(Map<String, Object> evento);
 
-    /** PasarelaPago.consultarEstado(referencia) */
+    /**
+     * Respaldo del webhook (tarea programada): consulta en Wompi los pagos en linea PENDIENTES, aplica su resultado
+     * y anula los abandonados. Devuelve cuantos pagos cambiaron de estado.
+     */
+    int sincronizarPendientes();
+
+    /** PasarelaPago.consultarEstado(referencia); si el pago sigue PENDIENTE, primero lo verifica en Wompi. */
     PagoResponses.EstadoPago consultarEstado(String referencia, UsuarioAutenticado usuario);
 
     /** Igual que la anterior; si se indico inmueble, la referencia debe ser de ese inmueble. */

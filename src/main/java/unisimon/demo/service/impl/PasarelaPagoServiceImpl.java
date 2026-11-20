@@ -35,7 +35,12 @@ import unisimon.demo.service.NotificacionService;
 import unisimon.demo.service.PagoService;
 import unisimon.demo.service.PasarelaPagoService;
 
+import java.time.Clock;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,6 +53,10 @@ public class PasarelaPagoServiceImpl implements PasarelaPagoService {
     private static final Set<String> ESTADOS_PASARELA = Set.of(PasarelaPago.ACTIVA, PasarelaPago.INACTIVA);
     static final String EVENTO_TRANSACCION = "transaction.updated";
     private static final String MONEDA = "COP";
+    /** Un pago en linea sin transaccion en Wompi pasado este tiempo se da por abandonado y se anula. */
+    static final Duration VENCIMIENTO_SIN_TRANSACCION = Duration.ofHours(2);
+    /** Tope de pagos revisados por corrida, para no saturar la API de Wompi. */
+    static final int LOTE_SINCRONIZACION = 100;
 
     private final PasarelaPagoRepository pasarelas;
     private final PagoRepository pagos;
@@ -57,6 +66,7 @@ public class PasarelaPagoServiceImpl implements PasarelaPagoService {
     private final AccesoInmueblePolicy accesoInmueble;
     private final PasarelaProperties config;
     private final ClienteWompi clienteWompi;
+    private final Clock reloj;
 
     @Override
     @Transactional(readOnly = true)
@@ -110,35 +120,81 @@ public class PasarelaPagoServiceImpl implements PasarelaPagoService {
         }
         PagoView pago = pagos.buscarPorReferencia(tx.referencia())
                 .orElseThrow(() -> new RecursoNoEncontradoException("No existe un pago con esa referencia"));
-        if (!Pago.PENDIENTE.equals(pago.getEstado())) {
-            return;   // idempotente: Wompi puede reenviar el mismo evento
-        }
+        aplicarResultado(pago, tx);
+    }
 
+    /**
+     * Respaldo del webhook: revisa en Wompi los pagos en linea que siguen PENDIENTES. Aplica el resultado si Wompi
+     * ya lo tiene, y anula los que nunca llegaron a crear una transaccion (checkout abandonado) pasado
+     * {@link #VENCIMIENTO_SIN_TRANSACCION}. Un pago que Wompi reporta PENDING no se anula: aun puede aprobarse.
+     */
+    @Override
+    @Transactional
+    public int sincronizarPendientes() {
+        if (PasarelaProperties.vacio(config.privateKey()) || PasarelaProperties.vacio(config.urlApiRest())) {
+            return 0;   // sin llave privada no se puede consultar Wompi
+        }
+        LocalDateTime limite = LocalDateTime.now(reloj).minus(VENCIMIENTO_SIN_TRANSACCION);
+        int actualizados = 0;
+        for (PagoView pago : pagos.listarPendientesEnLinea(LOTE_SINCRONIZACION)) {
+            Optional<TransaccionWompi> tx;
+            try {
+                tx = clienteWompi.buscarPorReferencia(pago.getReferencia());
+            } catch (PasarelaNoDisponibleException e) {
+                log.warn("Wompi no respondio al sincronizar los pagos pendientes; se reintenta en la proxima corrida");
+                break;   // si Wompi esta caido, los demas tambien fallarian
+            }
+            if (tx.isPresent()) {
+                if (aplicarResultado(pago, tx.get())) {
+                    actualizados++;
+                }
+            } else if (pago.getCreadoEn() != null && pago.getCreadoEn().isBefore(limite)) {
+                pagoService.anularPago(pago.getId());
+                notificaciones.notificarActualizacionDePago(pago.getInmuebleId());
+                actualizados++;
+            }
+        }
+        return actualizados;
+    }
+
+    /**
+     * Aplica al pago el resultado que Wompi confirma. Aprueba solo si el monto y la moneda coinciden con el pago
+     * del servidor. Devuelve true si el pago cambio de estado.
+     */
+    private boolean aplicarResultado(PagoView pago, TransaccionWompi tx) {
+        if (!Pago.PENDIENTE.equals(pago.getEstado())) {
+            return false;   // idempotente: Wompi puede reenviar el mismo evento
+        }
         if (tx.aprobada()) {
             long esperado = pago.getMonto().movePointRight(2).longValueExact();
             if (tx.montoEnCentavos() != esperado || !MONEDA.equals(tx.moneda())) {
                 log.warn("Transaccion {} aprobada con monto/moneda ({} {}) distintos al pago {} ({} {}); "
                                 + "el pago queda PENDIENTE para revision manual",
                         tx.id(), tx.montoEnCentavos(), tx.moneda(), pago.getId(), esperado, MONEDA);
-                return;
+                return false;
             }
             pagoService.aprobarPago(pago.getId());
         } else if (tx.fallida()) {
             pagoService.rechazarPago(pago.getId());
         } else {
-            return;   // PENDING: llegara otro evento cuando termine
+            return false;   // PENDING: llegara otro evento (o la proxima sincronizacion) cuando termine
         }
         notificaciones.notificarActualizacionDePago(pago.getInmuebleId());   // notificarResultado(pago)
+        return true;
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public PagoResponses.EstadoPago consultarEstado(String referencia, UsuarioAutenticado usuario) {
         return consultarEstado(referencia, usuario, null);
     }
 
+    /**
+     * Si el pago sigue PENDIENTE, pregunta a Wompi antes de responder: al volver del checkout el residente ve el
+     * resultado de una vez, sin esperar al webhook. Si Wompi no responde, se devuelve el estado guardado.
+     */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public PagoResponses.EstadoPago consultarEstado(String referencia, UsuarioAutenticado usuario, Long inmuebleId) {
         PagoView pago = pagos.buscarPorReferencia(referencia)
                 .orElseThrow(() -> new RecursoNoEncontradoException("No existe un pago con esa referencia"));
@@ -146,6 +202,17 @@ public class PasarelaPagoServiceImpl implements PasarelaPagoService {
             throw new ProhibidoException("Ese pago pertenece a otro inmueble");
         }
         accesoInmueble.verificar(usuario, pago.getInmuebleId());
+        if (Pago.PENDIENTE.equals(pago.getEstado()) && pago.getPasarelaId() != null
+                && !PasarelaProperties.vacio(config.privateKey()) && !PasarelaProperties.vacio(config.urlApiRest())) {
+            try {
+                Optional<TransaccionWompi> tx = clienteWompi.buscarPorReferencia(referencia);
+                if (tx.isPresent() && aplicarResultado(pago, tx.get())) {
+                    pago = pagos.buscarPorReferencia(referencia).orElseThrow();
+                }
+            } catch (PasarelaNoDisponibleException e) {
+                log.warn("Wompi no respondio al consultar el pago {}; se devuelve el estado guardado", referencia);
+            }
+        }
         return new PagoResponses.EstadoPago(referencia, pago.getEstado());
     }
 

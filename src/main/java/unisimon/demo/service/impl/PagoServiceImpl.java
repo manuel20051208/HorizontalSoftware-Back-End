@@ -34,6 +34,7 @@ import unisimon.demo.service.support.InmuebleDelResidente;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -87,6 +88,7 @@ public class PagoServiceImpl implements PagoService {
         Pago pago = new Pago(null, Hidratador.referenciaInmueble(elegido.getId()), saldo, null,
                 "Administracion " + elegido.getDireccionInmueble(), metodo, null);
         pago.setId(pagos.insertar(pago));
+        pagos.registrarCreacion(pago.getId(), LocalDateTime.now(reloj));   // para vencerlo si se abandona
         PasarelaPago pasarela = Hidratador.pasarela(vistaPasarela);
         // El .env es la fuente de verdad del checkout (la tabla solo aporta id y estado ACTIVA/INACTIVA).
         pasarela.setUrlApi(configPasarela.urlApi().trim());

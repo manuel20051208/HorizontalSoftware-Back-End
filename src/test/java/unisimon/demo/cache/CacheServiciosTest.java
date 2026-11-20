@@ -145,7 +145,7 @@ class CacheServiciosTest {
                     liquidaciones, mock(NotificacionService.class), mock(AccesoInmueblePolicy.class),
                     new unisimon.demo.bootstrap.PasarelaProperties("Wompi", "https://pasarela.test/", "pub_test_1234",
                             null, null, null, null, null),
-                    mock(unisimon.demo.integration.wompi.ClienteWompi.class));
+                    mock(unisimon.demo.integration.wompi.ClienteWompi.class), Clock.systemDefaultZone());
         }
     }
 

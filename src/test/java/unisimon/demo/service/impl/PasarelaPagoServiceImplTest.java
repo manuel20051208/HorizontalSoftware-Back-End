@@ -30,6 +30,11 @@ import unisimon.demo.service.PagoService;
 import unisimon.demo.support.Proyecciones;
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -61,6 +66,9 @@ class PasarelaPagoServiceImplTest {
     private ClienteWompi clienteWompi;
 
     private static final String TX_ID = "1234-1610641025-49201";
+    /** 2026-11-20 12:00 en Bogota. */
+    private static final Clock RELOJ = Clock.fixed(Instant.parse("2026-11-20T17:00:00Z"), ZoneId.of("America/Bogota"));
+    private static final LocalDateTime AHORA = LocalDateTime.now(RELOJ);
 
     private PasarelaPagoServiceImpl servicio;
 
@@ -73,7 +81,7 @@ class PasarelaPagoServiceImplTest {
         PasarelaProperties config = new PasarelaProperties("Wompi", "https://checkout.wompi.co/p/", "pub_test_123",
                 "test_integrity_abc", secretoEventos, "prv_test_abc", "https://sandbox.wompi.co/v1", null);
         return new PasarelaPagoServiceImpl(pasarelas, pagos, pagoService, liquidacionService, notificaciones,
-                accesoInmueble, config, clienteWompi);
+                accesoInmueble, config, clienteWompi, RELOJ);
     }
 
     private PasarelaView pasarela() {
@@ -84,6 +92,13 @@ class PasarelaPagoServiceImplTest {
     private PagoView pago(String estado) {
         return Proyecciones.de(PagoView.class, "id", 10L, "inmuebleId", 1L, "direccionInmueble", "A-302",
                 "monto", new BigDecimal("505000"), "estado", estado, "referencia", "PAGO-10");
+    }
+
+    /** Pago en linea (con pasarela) PENDIENTE creado en el momento indicado. */
+    private PagoView pagoEnLinea(LocalDateTime creadoEn) {
+        return Proyecciones.de(PagoView.class, "id", 10L, "inmuebleId", 1L, "direccionInmueble", "A-302",
+                "pasarelaId", 2L, "monto", new BigDecimal("505000"), "estado", Pago.PENDIENTE,
+                "referencia", "PAGO-10", "creadoEn", creadoEn);
     }
 
     private Map<String, Object> eventoFirmado() {
@@ -238,5 +253,115 @@ class PasarelaPagoServiceImplTest {
 
         assertThatThrownBy(() -> servicio.configurar(new PagoRequests.ConfigurarPasarela("ACTIVA")))
                 .isInstanceOf(ConflictoException.class);
+    }
+
+    // ------------------------------------------------------------------ sincronizacion (respaldo del webhook)
+
+    @Test
+    @DisplayName("sincronizar: Wompi ya aprobo la transaccion con el monto correcto, el pago se aprueba y se notifica")
+    void sincronizarAprueba() {
+        when(pagos.listarPendientesEnLinea(PasarelaPagoServiceImpl.LOTE_SINCRONIZACION))
+                .thenReturn(List.of(pagoEnLinea(AHORA.minusMinutes(10))));
+        when(clienteWompi.buscarPorReferencia("PAGO-10")).thenReturn(Optional.of(tx("APPROVED", 50500000)));
+
+        assertThat(servicio.sincronizarPendientes()).isEqualTo(1);
+
+        verify(pagoService).aprobarPago(10L);
+        verify(notificaciones).notificarActualizacionDePago(1L);
+    }
+
+    @Test
+    @DisplayName("sincronizar: Wompi rechazo la transaccion, el pago se rechaza")
+    void sincronizarRechaza() {
+        when(pagos.listarPendientesEnLinea(PasarelaPagoServiceImpl.LOTE_SINCRONIZACION))
+                .thenReturn(List.of(pagoEnLinea(AHORA.minusMinutes(10))));
+        when(clienteWompi.buscarPorReferencia("PAGO-10")).thenReturn(Optional.of(tx("DECLINED", 50500000)));
+
+        assertThat(servicio.sincronizarPendientes()).isEqualTo(1);
+
+        verify(pagoService).rechazarPago(10L);
+    }
+
+    @Test
+    @DisplayName("sincronizar: sin transaccion en Wompi y vencido el plazo, el checkout se da por abandonado y se anula")
+    void sincronizarAnulaAbandonado() {
+        when(pagos.listarPendientesEnLinea(PasarelaPagoServiceImpl.LOTE_SINCRONIZACION))
+                .thenReturn(List.of(pagoEnLinea(AHORA.minusHours(3))));
+        when(clienteWompi.buscarPorReferencia("PAGO-10")).thenReturn(Optional.empty());
+
+        assertThat(servicio.sincronizarPendientes()).isEqualTo(1);
+
+        verify(pagoService).anularPago(10L);
+        verify(notificaciones).notificarActualizacionDePago(1L);
+    }
+
+    @Test
+    @DisplayName("sincronizar: sin transaccion pero recien creado, o PENDING en Wompi, el pago no se toca")
+    void sincronizarNoTocaRecientesNiPending() {
+        when(pagos.listarPendientesEnLinea(PasarelaPagoServiceImpl.LOTE_SINCRONIZACION))
+                .thenReturn(List.of(pagoEnLinea(AHORA.minusMinutes(30))));
+        when(clienteWompi.buscarPorReferencia("PAGO-10")).thenReturn(Optional.empty());
+        assertThat(servicio.sincronizarPendientes()).isZero();
+
+        when(pagos.listarPendientesEnLinea(PasarelaPagoServiceImpl.LOTE_SINCRONIZACION))
+                .thenReturn(List.of(pagoEnLinea(AHORA.minusDays(2))));
+        when(clienteWompi.buscarPorReferencia("PAGO-10")).thenReturn(Optional.of(tx("PENDING", 50500000)));
+        assertThat(servicio.sincronizarPendientes()).isZero();
+
+        verifyNoInteractions(pagoService, notificaciones);
+    }
+
+    @Test
+    @DisplayName("sincronizar: si Wompi no responde se corta la corrida sin cambiar nada")
+    void sincronizarWompiCaido() {
+        when(pagos.listarPendientesEnLinea(PasarelaPagoServiceImpl.LOTE_SINCRONIZACION))
+                .thenReturn(List.of(pagoEnLinea(AHORA.minusHours(3)), pagoEnLinea(AHORA.minusHours(3))));
+        when(clienteWompi.buscarPorReferencia("PAGO-10")).thenThrow(new PasarelaNoDisponibleException("caido"));
+
+        assertThat(servicio.sincronizarPendientes()).isZero();
+
+        verify(clienteWompi).buscarPorReferencia("PAGO-10");   // una sola vez: no insiste con los demas
+        verifyNoInteractions(pagoService);
+    }
+
+    @Test
+    @DisplayName("sincronizar: sin llave privada no consulta nada")
+    void sincronizarSinLlavePrivada() {
+        PasarelaProperties sinLlave = new PasarelaProperties("Wompi", "https://checkout.wompi.co/p/", "pub_test_123",
+                "test_integrity_abc", FirmaEventosWompiTest.SECRETO, null, "https://sandbox.wompi.co/v1", null);
+        PasarelaPagoServiceImpl sinPrivada = new PasarelaPagoServiceImpl(pasarelas, pagos, pagoService,
+                liquidacionService, notificaciones, accesoInmueble, sinLlave, clienteWompi, RELOJ);
+
+        assertThat(sinPrivada.sincronizarPendientes()).isZero();
+
+        verifyNoInteractions(pagos, clienteWompi);
+    }
+
+    @Test
+    @DisplayName("consultarEstado de un pago PENDIENTE lo verifica en Wompi y devuelve el estado ya actualizado")
+    void consultarEstadoVerificaEnWompi() {
+        UsuarioAutenticado usuario = new UsuarioAutenticado(5L, "RESIDENTE");
+        PagoView aprobado = Proyecciones.de(PagoView.class, "id", 10L, "inmuebleId", 1L, "pasarelaId", 2L,
+                "monto", new BigDecimal("505000"), "estado", Pago.APROBADO, "referencia", "PAGO-10");
+        when(pagos.buscarPorReferencia("PAGO-10"))
+                .thenReturn(Optional.of(pagoEnLinea(AHORA)), Optional.of(aprobado));
+        when(clienteWompi.buscarPorReferencia("PAGO-10")).thenReturn(Optional.of(tx("APPROVED", 50500000)));
+
+        assertThat(servicio.consultarEstado("PAGO-10", usuario).estado()).isEqualTo(Pago.APROBADO);
+
+        verify(accesoInmueble).verificar(usuario, 1L);
+        verify(pagoService).aprobarPago(10L);
+    }
+
+    @Test
+    @DisplayName("consultarEstado: si Wompi no responde devuelve el estado guardado sin fallar")
+    void consultarEstadoWompiCaido() {
+        UsuarioAutenticado usuario = new UsuarioAutenticado(5L, "RESIDENTE");
+        when(pagos.buscarPorReferencia("PAGO-10")).thenReturn(Optional.of(pagoEnLinea(AHORA)));
+        when(clienteWompi.buscarPorReferencia("PAGO-10")).thenThrow(new PasarelaNoDisponibleException("caido"));
+
+        assertThat(servicio.consultarEstado("PAGO-10", usuario).estado()).isEqualTo(Pago.PENDIENTE);
+
+        verifyNoInteractions(pagoService);
     }
 }

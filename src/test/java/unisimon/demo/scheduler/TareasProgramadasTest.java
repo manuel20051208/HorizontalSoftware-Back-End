@@ -10,6 +10,7 @@ import unisimon.demo.dto.response.LiquidacionResponses;
 import unisimon.demo.exception.ConflictoException;
 import unisimon.demo.service.LiquidacionService;
 import unisimon.demo.service.NotificacionService;
+import unisimon.demo.service.PasarelaPagoService;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -35,6 +36,8 @@ class TareasProgramadasTest {
     private LiquidacionService liquidaciones;
     @Mock
     private NotificacionService notificaciones;
+    @Mock
+    private PasarelaPagoService pasarela;
 
     @Test
     @DisplayName("el dia 1 genera la liquidacion del mes para todos los inmuebles activos, con el vencimiento por defecto")
@@ -81,5 +84,15 @@ class TareasProgramadasTest {
 
         verify(notificaciones).recordarReservasProximas(LocalDateTime.of(2026, 12, 2, 0, 0),
                 LocalDateTime.of(2026, 12, 2, 1, 0));
+    }
+
+    @Test
+    @DisplayName("la sincronizacion de pagos delega en la pasarela la revision de los pendientes")
+    void sincronizaPagosPendientes() {
+        when(pasarela.sincronizarPendientes()).thenReturn(2);
+
+        new PagoScheduler(pasarela).sincronizarPagosPendientes();
+
+        verify(pasarela).sincronizarPendientes();
     }
 }
